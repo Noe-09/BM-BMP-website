@@ -494,7 +494,7 @@ desktop-02.webp
 mobile-01.webp
 detail-01.webp
 detail-02.webp
-interaction.mp4
+walkthrough.mp4
 ```
 
 Not every project requires every file.
@@ -557,7 +557,7 @@ desktop-02.webp
 mobile-01.webp
 detail-01.webp
 detail-02.webp
-interaction.mp4
+ưalkthrough.mp4
 ```
 
 ---

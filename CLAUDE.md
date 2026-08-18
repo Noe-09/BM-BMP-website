@@ -507,3 +507,15 @@ STOP.
 Report the contradiction before implementing.
 
 Do not silently choose one interpretation.
+## Agent OS Scope
+
+The `/agent-os` directory contains broader company operating agents and workflows.
+
+For the current BM Visuals website build:
+
+- Do not modify `/agent-os`.
+- Do not use Sales, Finance, Market Intelligence or BMP workflows as website requirements.
+- `agent-os/agents/frontend-builder.md` and `brand-guardian.md` may be consulted only if explicitly useful.
+- Website source-of-truth remains CLAUDE.md and `/docs`.
+
+Do not expand website scope based on `/agent-os`.
