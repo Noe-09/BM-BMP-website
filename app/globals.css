@@ -1,0 +1,317 @@
+@import "tailwindcss";
+
+/* -------------------------------------------------
+   BM Visuals — Design Foundation (Phase 02)
+   Source: docs/DESIGN_SYSTEM.md + DESIGN_DIRECTION.md
+   No brand fonts, no motion, no WebGL.
+-------------------------------------------------- */
+
+:root {
+  /* --- Colors --- */
+  --background: #0a0a0a;
+  --foreground: #f2f0eb;
+  --foreground-muted: rgba(242, 240, 235, 0.6);
+  --foreground-subtle: rgba(242, 240, 235, 0.4);
+  --foreground-faint: rgba(242, 240, 235, 0.14);
+  --border: rgba(242, 240, 235, 0.16);
+  --border-strong: rgba(242, 240, 235, 0.3);
+  --surface-light: #f2f0eb;
+  --surface-dark-text: #111111;
+
+  /* --- Typography families (system placeholders, easy to swap) --- */
+  --font-display: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue",
+    Helvetica, Arial, sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue",
+    Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+
+  /* --- Fluid type scale --- */
+  --text-display-xl: clamp(4rem, 10vw, 10rem);
+  --text-display-l: clamp(3.25rem, 7.5vw, 7.5rem);
+  --text-display-m: clamp(2.5rem, 5vw, 5rem);
+  --text-heading: clamp(2rem, 3.5vw, 3.5rem);
+  --text-body-lg: clamp(1.15rem, 1.5vw, 1.5rem);
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-meta: 0.78rem;
+  --text-meta-sm: 0.7rem;
+
+  /* --- Line heights --- */
+  --leading-display: 0.92;
+  --leading-display-l: 0.95;
+  --leading-heading: 1.02;
+  --leading-body-lg: 1.45;
+  --leading-body: 1.62;
+  --leading-small: 1.5;
+  --leading-meta: 1.35;
+
+  /* --- Letter spacing --- */
+  --tracking-display: -0.03em;
+  --tracking-heading: -0.02em;
+  --tracking-body: -0.01em;
+  --tracking-meta: 0.14em;
+  --tracking-meta-tight: 0.08em;
+
+  /* --- Container --- */
+  --container-max: 1600px;
+  --container-pad: 16px;
+  --container-pad-tablet: 24px;
+  --container-pad-desktop: 32px;
+
+  /* --- Section spacing --- */
+  --space-section-lg: clamp(7rem, 12vw, 14rem);
+  --space-section-md: clamp(5rem, 8vw, 10rem);
+  --space-section-sm: clamp(3rem, 5vw, 6rem);
+  --space-section-xs: clamp(2rem, 3.5vw, 3.5rem);
+
+  /* --- Grid --- */
+  --grid-gap: 16px;
+  --grid-gap-tablet: 20px;
+  --grid-gap-desktop: 24px;
+
+  /* --- Radii --- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  /* --- Focus --- */
+  --focus-ring: #f2f0eb;
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--foreground-muted);
+  --color-subtle: var(--foreground-subtle);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-surface-light: var(--surface-light);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1440px;
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+}
+
+/* ---------- Base ---------- */
+* {
+  min-width: 0;
+}
+
+html {
+  scrollbar-gutter: stable;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}
+
+/* ---------- Selection ---------- */
+::selection {
+  background: var(--foreground);
+  color: var(--surface-dark-text);
+}
+
+/* ---------- Focus (accessible, visible) ---------- */
+:focus-visible {
+  outline: 1.5px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Links / buttons keep focus ring even with custom styles */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 1.5px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* ---------- Typography utilities ---------- */
+.text-display-xl {
+  font-family: var(--font-display);
+  font-size: var(--text-display-xl);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  font-weight: 700;
+}
+
+.text-display-l {
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: var(--leading-display-l);
+  letter-spacing: var(--tracking-display);
+  font-weight: 700;
+}
+
+.text-display-m {
+  font-family: var(--font-display);
+  font-size: var(--text-display-m);
+  line-height: var(--leading-display-l);
+  letter-spacing: var(--tracking-heading);
+  font-weight: 700;
+}
+
+.text-heading {
+  font-family: var(--font-display);
+  font-size: var(--text-heading);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+  font-weight: 600;
+}
+
+.text-body-lg {
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body-lg);
+  letter-spacing: var(--tracking-body);
+}
+
+.text-small {
+  font-size: var(--text-small);
+  line-height: var(--leading-small);
+}
+
+.text-meta {
+  font-size: var(--text-meta);
+  line-height: var(--leading-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.text-meta-tight {
+  font-size: var(--text-meta);
+  line-height: var(--leading-meta);
+  letter-spacing: var(--tracking-meta-tight);
+  text-transform: uppercase;
+}
+
+/* ---------- Container ---------- */
+.bm-container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+@media (min-width: 640px) {
+  .bm-container {
+    padding-inline: var(--container-pad-tablet);
+  }
+}
+
+@media (min-width: 1024px) {
+  .bm-container {
+    padding-inline: var(--container-pad-desktop);
+  }
+}
+
+/* ---------- Grid: 4 / 8 / 12 ---------- */
+.bm-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--grid-gap);
+}
+
+@media (min-width: 640px) {
+  .bm-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: var(--grid-gap-tablet);
+  }
+}
+
+@media (min-width: 1024px) {
+  .bm-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--grid-gap-desktop);
+  }
+}
+
+/* ---------- Section spacing ---------- */
+.bm-section-lg {
+  padding-block: var(--space-section-lg);
+}
+
+.bm-section-md {
+  padding-block: var(--space-section-md);
+}
+
+.bm-section-sm {
+  padding-block: var(--space-section-sm);
+}
+
+/* ---------- Hairline / borders ---------- */
+.bm-rule {
+  border-top: 1px solid var(--border);
+}
+
+.bm-rule-strong {
+  border-top: 1px solid var(--border-strong);
+}
+
+/* ---------- Interaction: underline + arrow ---------- */
+.bm-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  transition: opacity 150ms ease, color 150ms ease;
+}
+
+.bm-link:hover {
+  opacity: 1;
+}
+
+.bm-link-underline {
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+}
+
+.bm-link-underline:hover {
+  text-decoration-color: var(--foreground);
+}
+
+.bm-link-arrow {
+  display: inline-block;
+  transition: transform 200ms ease;
+}
+
+.bm-link:hover .bm-link-arrow {
+  transform: translateX(3px);
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
