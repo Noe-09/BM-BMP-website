@@ -423,3 +423,370 @@ type Project = {
   liveUrl?: string
   status: 'draft' | 'published'
 }
+```
+
+---
+
+# PROJECT STATUS RULES
+
+Use:
+
+DRAFT
+
+Project exists but should not appear publicly.
+
+READY
+
+Project has enough content and media to build a case study.
+
+PUBLISHED
+
+Project is allowed to appear publicly.
+
+ARCHIVED
+
+Project remains available internally but should not appear publicly.
+
+---
+
+# PROJECT PUBLISHING RULE
+
+A project must not appear publicly simply because media exists.
+
+Before publishing, verify:
+
+- clear title
+- project type
+- correct concept/commercial status
+- industry
+- services
+- short description
+- sufficient visual media
+- case study quality
+- live URL if applicable
+
+---
+
+# PRODUCTION FILE STRUCTURE
+
+Use:
+
+```text
+/public/projects/
+
+fashion/
+aurelia/
+personal-branding/
+experimental/
+dental/
+coffee/
+spa/
+corporate/
+```
+
+Preferred media naming:
+
+```text
+hero.webp
+thumbnail.webp
+desktop-01.webp
+desktop-02.webp
+mobile-01.webp
+detail-01.webp
+detail-02.webp
+interaction.mp4
+```
+
+Not every project requires every file.
+
+Only include media that strengthens the case study.
+
+---
+
+# FASHION PROJECT
+
+Current state:
+
+DRAFT until production media exists.
+
+Do not block website development while Fashion is unfinished.
+
+When ready:
+
+featured:
+true
+
+priority:
+1
+
+status:
+published
+
+Until then, homepage may temporarily use the strongest available published project.
+
+---
+
+# AURELIA SKIN
+
+Recommended:
+
+Tier:
+A
+
+featured:
+true
+
+priority:
+2
+
+Status:
+
+READY once project metadata and media are finalized.
+
+Before publishing:
+
+rename / optimize inconsistent files where necessary.
+
+Preferred structure:
+
+```text
+hero.webp
+thumbnail.webp
+desktop-01.webp
+desktop-02.webp
+mobile-01.webp
+detail-01.webp
+detail-02.webp
+interaction.mp4
+```
+
+---
+
+# PERSONAL BRANDING
+
+Select only one strongest version.
+
+Rename generic screenshot filenames before production.
+
+Do not keep production references such as:
+
+```text
+Screenshot 2026-08-03 192357.png
+```
+
+Preferred naming:
+
+```text
+hero.webp
+thumbnail.webp
+desktop-01.webp
+desktop-02.webp
+mobile-01.webp
+detail-01.webp
+```
+
+Status:
+
+READY after media cleanup.
+
+---
+
+# DENTAL
+
+Tier:
+
+B
+
+featured:
+
+false by default
+
+Status:
+
+READY
+
+Purpose:
+
+commercial credibility
+
+Emphasize:
+
+- trust
+- clarity
+- responsive design
+- service-business conversion
+
+---
+
+# COFFEE
+
+Tier:
+
+B / Lab
+
+Type:
+
+Concept
+
+Do not use:
+
+coffee-demo
+
+as public project title.
+
+Create a proper project identity before publishing.
+
+Possible role:
+
+hospitality concept demonstrating atmosphere and storytelling.
+
+---
+
+# SPA
+
+Tier:
+
+B / Lab
+
+Type:
+
+Concept
+
+Do not use:
+
+spa-demo
+
+as public-facing title.
+
+Create proper project identity before publishing.
+
+---
+
+# CORPORATE
+
+Select only:
+
+webxnk
+
+OR
+
+web-cty
+
+based on final visual quality.
+
+Do not publish both unless they clearly demonstrate different capabilities.
+
+---
+
+# EXPERIMENTAL FLAGSHIP
+
+Status:
+
+DRAFT
+
+Do not force an experimental project into V1.
+
+Only publish if the quality strengthens BM.
+
+Possible directions:
+
+- creative coding
+- generative typography
+- WebGL
+- interactive fashion concept
+- visual system experiment
+
+---
+
+# CASE STUDY CONTENT MODEL
+
+Recommended content structure:
+
+```ts
+type ProjectCaseStudy = {
+  context?: string
+  challenge?: string
+  creativeDirection?: string
+  experience?: string
+  development?: string
+  outcome?: string
+
+  media?: {
+    type: 'image' | 'video'
+    src: string
+    alt?: string
+    caption?: string
+  }[]
+}
+```
+
+Do not over-engineer the content system for V1.
+
+---
+
+# CASE STUDY REQUIREMENTS
+
+A strong flagship case study should include:
+
+1. Project Hero
+2. Project Metadata
+3. Context
+4. Creative Direction
+5. Main Experience
+6. Desktop Screens
+7. Mobile Experience
+8. Detail Moments
+9. Motion / Interaction
+10. Live Link if available
+11. Next Project
+
+---
+
+# TRUTHFULNESS
+
+Never fabricate:
+
+- real clients
+- campaign results
+- conversions
+- revenue
+- engagement metrics
+- testimonials
+- awards
+
+If a project is concept work, say so clearly.
+
+Use:
+
+Concept Project
+
+Self-Initiated
+
+Experimental
+
+---
+
+# HOMEPAGE FALLBACK RULE
+
+Homepage should contain a maximum of four flagship projects.
+
+Preferred future order:
+
+1. Fashion
+2. Aurelia Skin
+3. Personal Branding
+4. Experimental Flagship
+
+If Fashion or Experimental are not ready:
+
+Use the strongest currently available projects temporarily.
+
+Do not publish weak work just to fill four slots.
+
+---
+
+# QUALITY PRINCIPLE
+
+Three excellent projects are more valuable than ten average projects.
+
+Archive anything that lowers BM Visuals' perceived quality.

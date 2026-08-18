@@ -1,13 +1,3 @@
-
-Note nhỏ: code fence TypeScript nằm bên trong Markdown nên khi paste file, bạn chỉ cần giữ nguyên cấu trúc.
-
----
-
-# 6. `docs/BUILD_PLAN.md`
-
-Đây là file cực quan trọng cho **ngày Claude unlimited**.
-
-```md
 # BM Visuals Website — Build Plan
 
 ## Objective

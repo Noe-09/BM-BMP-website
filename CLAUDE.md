@@ -21,6 +21,34 @@ The finished website should make visitors feel:
 
 "This team clearly understands design, technology and brand experience."
 
+## Current Build Scope
+
+This repository may eventually support the broader BM / BMP brand ecosystem.
+
+However, the CURRENT BUILD PHASE is strictly focused on:
+
+BM VISUALS.
+
+For this phase:
+
+- Build BM Visuals only.
+- Do not create BMP Technical pages.
+- Do not add BMP Technical services to BM Visuals navigation.
+- Do not introduce AI automation, operational software or technical consulting into BM Visuals homepage messaging.
+- BMP Technical exists only as brand context unless explicitly requested later.
+
+Current public website scope:
+
+- /
+- /work
+- /work/[slug]
+- /studio
+- /contact
+- /lab only if core pages are already strong
+
+The priority is to make BM Visuals a premium creative digital studio website.
+
+Do not expand scope without explicit approval.
 ---
 
 ## 2. BM Visuals Positioning
@@ -459,3 +487,23 @@ The target is:
 - production-ready
 
 Whenever choosing between more effects and better craft, choose better craft.
+## Decision Hierarchy
+
+When project documents appear to conflict, follow this priority:
+
+1. CLAUDE.md
+2. docs/DESIGN_DIRECTION.md
+3. docs/SITE_ARCHITECTURE.md
+4. docs/CONTENT.md
+5. docs/PROJECTS.md
+6. docs/DESIGN_SYSTEM.md
+7. docs/MOTION_SYSTEM.md
+8. docs/BUILD_PLAN.md
+
+If a contradiction can materially change the design, architecture or brand direction:
+
+STOP.
+
+Report the contradiction before implementing.
+
+Do not silently choose one interpretation.
