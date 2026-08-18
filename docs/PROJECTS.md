@@ -150,7 +150,7 @@ Required media:
 - product page
 - desktop homepage
 - mobile
-- interaction video
+- walkthrough video
 - detail screens
 
 ---
