@@ -11,6 +11,7 @@ const projects = [
     image: "/projects/aurelia/hero.png",
     tone: "aurelia",
     note: "Soft product storytelling shaped into a clean, tactile digital world.",
+    href: "https://aurelia-skin.vercel.app/",
   },
   {
     number: "02",
@@ -19,6 +20,7 @@ const projects = [
     image: "/projects/personal-branding/hero.png",
     tone: "personal",
     note: "Editorial rhythm, identity and typography built to feel unmistakably personal.",
+    href: "https://personal-brandingg-beta.vercel.app/",
   },
   {
     number: "03",
@@ -27,6 +29,7 @@ const projects = [
     image: "/projects/dental/hero.webp",
     tone: "dental",
     note: "Clarity and trust translated into a sharper service experience.",
+    href: "https://dental-mocha-omega.vercel.app/",
   },
   {
     number: "04",
@@ -35,6 +38,7 @@ const projects = [
     image: "/projects/spa/hero.webp",
     tone: "spa",
     note: "A calmer digital pace designed around atmosphere and sense of place.",
+    href: "https://spa-demo-mauve.vercel.app/",
   },
 ];
 
@@ -123,7 +127,13 @@ export default function Home() {
                 <span>BM / 2026</span>
               </div>
 
-              <div className={`project-world__stage project-world__stage--${index + 1}`}>
+              <a
+                href={project.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`project-world__stage project-world__stage--${index + 1}`}
+                aria-label={`Open ${project.title} live website`}
+              >
                 <div className="project-world__media">
                   <Image
                     src={project.image}
@@ -137,11 +147,18 @@ export default function Home() {
                 <div className="project-world__title" aria-hidden>
                   {project.title.split(" ").map((word) => <span key={word}>{word}</span>)}
                 </div>
-              </div>
+              </a>
 
               <div className="project-world__footer bm-grid">
                 <p>{project.note}</p>
-                <span className="project-world__arrow" aria-hidden>↗</span>
+                <a
+                  href={project.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="project-world__visit"
+                >
+                  Visit live site <span aria-hidden>↗</span>
+                </a>
               </div>
             </Container>
           </article>
