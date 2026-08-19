@@ -9,24 +9,32 @@ const projects = [
     title: "Aurelia Skin",
     meta: "Beauty / Ecommerce",
     image: "/projects/aurelia/hero.png",
+    tone: "aurelia",
+    note: "Soft product storytelling shaped into a clean, tactile digital world.",
   },
   {
     number: "02",
     title: "Personal Branding",
     meta: "Editorial / Identity",
     image: "/projects/personal-branding/hero.png",
+    tone: "personal",
+    note: "Editorial rhythm, identity and typography built to feel unmistakably personal.",
   },
   {
     number: "03",
     title: "Dental",
     meta: "Healthcare / Conversion",
     image: "/projects/dental/hero.webp",
+    tone: "dental",
+    note: "Clarity and trust translated into a sharper service experience.",
   },
   {
     number: "04",
     title: "Spa",
     meta: "Wellness / Digital Experience",
     image: "/projects/spa/hero.webp",
+    tone: "spa",
+    note: "A calmer digital pace designed around atmosphere and sense of place.",
   },
 ];
 
@@ -48,11 +56,19 @@ export default function Home() {
 
       <section className="hero-section">
         <Container>
-          <div className="hero-kicker">Independent Digital Studio — Vietnam / Worldwide</div>
-          <h1 className="hero-title">
-            We create digital identities
-            <span> people remember.</span>
-          </h1>
+          <div className="hero-topline">
+            <span>Independent Digital Studio</span>
+            <span>Vietnam / Worldwide</span>
+          </div>
+
+          <div className="hero-composition" aria-label="We create digital identities people remember">
+            <span className="hero-word hero-word--we">WE CREATE</span>
+            <span className="hero-word hero-word--digital">DIGITAL</span>
+            <span className="hero-word hero-word--identities">IDENTITIES</span>
+            <span className="hero-word hero-word--people">PEOPLE</span>
+            <span className="hero-word hero-word--remember">REMEMBER.</span>
+          </div>
+
           <div className="hero-bottom bm-grid">
             <p className="hero-copy">
               Websites, digital experiences and creative systems built around ambitious brands.
@@ -63,9 +79,10 @@ export default function Home() {
             </div>
           </div>
         </Container>
+        <div className="hero-accent" aria-hidden>BM / 26</div>
       </section>
 
-      <section className="statement-section bm-rule">
+      <section className="statement-section">
         <Container>
           <div className="bm-grid statement-grid">
             <p className="section-label">What we believe</p>
@@ -80,41 +97,58 @@ export default function Home() {
         </Container>
       </section>
 
-      <section id="work" className="work-section bm-rule">
+      <div className="signal-strip" aria-hidden>
+        <div className="signal-strip__track">
+          <span>ART DIRECTION</span><i>+</i><span>INTERACTION</span><i>+</i><span>DIGITAL CRAFT</span><i>+</i><span>DEVELOPMENT</span><i>+</i><span>IDENTITY</span>
+        </div>
+      </div>
+
+      <section id="work" className="work-intro">
         <Container>
           <div className="work-heading-row">
             <p className="section-label">Selected Work</p>
             <p className="section-index">2026 — 04 Projects</p>
           </div>
+          <h2 className="work-intro__title">Different brands.<br /><span>Different digital worlds.</span></h2>
+        </Container>
+      </section>
 
-          <div className="project-stack">
-            {projects.map((project, index) => (
-              <article className={`project project--${index + 1}`} key={project.title}>
-                <div className="project-meta">
-                  <span>{project.number}</span>
-                  <span>{project.meta}</span>
-                </div>
-                <div className="project-media">
+      <section className="project-worlds">
+        {projects.map((project, index) => (
+          <article className={`project-world project-world--${project.tone}`} key={project.title}>
+            <Container className="project-world__inner">
+              <div className="project-world__meta">
+                <span>{project.number}</span>
+                <span>{project.meta}</span>
+                <span>BM / 2026</span>
+              </div>
+
+              <div className={`project-world__stage project-world__stage--${index + 1}`}>
+                <div className="project-world__media">
                   <Image
                     src={project.image}
                     alt={`${project.title} project preview`}
                     fill
-                    sizes="(max-width: 768px) 100vw, 94vw"
-                    className="project-image"
+                    sizes="(max-width: 768px) 100vw, 86vw"
+                    className="project-world__image"
                     priority={index === 0}
                   />
                 </div>
-                <div className="project-title-row">
-                  <h3>{project.title}</h3>
-                  <span aria-hidden>↗</span>
+                <div className="project-world__title" aria-hidden>
+                  {project.title.split(" ").map((word) => <span key={word}>{word}</span>)}
                 </div>
-              </article>
-            ))}
-          </div>
-        </Container>
+              </div>
+
+              <div className="project-world__footer bm-grid">
+                <p>{project.note}</p>
+                <span className="project-world__arrow" aria-hidden>↗</span>
+              </div>
+            </Container>
+          </article>
+        ))}
       </section>
 
-      <section className="philosophy-section bm-rule">
+      <section className="philosophy-section">
         <Container>
           <div className="bm-grid philosophy-grid">
             <p className="section-label">Our Approach</p>
@@ -129,7 +163,7 @@ export default function Home() {
         </Container>
       </section>
 
-      <section className="capabilities-section bm-rule">
+      <section className="capabilities-section">
         <Container>
           <div className="capabilities-intro">
             <p className="section-label">Capabilities</p>
@@ -144,8 +178,9 @@ export default function Home() {
         </Container>
       </section>
 
-      <section id="studio" className="studio-section bm-rule">
+      <section id="studio" className="studio-section">
         <Container>
+          <div className="studio-mark" aria-hidden>SMALL / SERIOUS</div>
           <div className="bm-grid studio-grid">
             <p className="section-label">Studio</p>
             <div>
@@ -159,11 +194,11 @@ export default function Home() {
         </Container>
       </section>
 
-      <section className="closing-section bm-rule">
+      <section className="closing-section">
         <Container>
           <p className="section-label">Start a Project</p>
           <div className="closing-row">
-            <h2>Have something worth making?</h2>
+            <h2>Have something<br />worth making?</h2>
             <TextLink href="/contact" arrow underline={false} className="closing-link">
               Let&apos;s build it differently
             </TextLink>
@@ -171,7 +206,7 @@ export default function Home() {
         </Container>
       </section>
 
-      <footer className="footer bm-rule">
+      <footer className="footer">
         <Container className="footer-inner">
           <div>
             <strong>BM Visuals</strong>
