@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+import { HeroSequence } from "@/components/home/HeroSequence";
 import { Container } from "@/components/ui/Container";
 import { TextLink } from "@/components/ui/TextLink";
-
-const MARQUEE_TEXT = "ART DIRECTION + INTERACTION + DIGITAL CRAFT + DEVELOPMENT + IDENTITY +";
+import "./home.css";
 
 const projects = [
   {
@@ -11,55 +11,31 @@ const projects = [
     title: "Aurelia Skin",
     meta: "Beauty / Ecommerce",
     image: "/projects/aurelia/hero.png",
-<<<<<<< Updated upstream
-=======
-    supports: ["/projects/aurelia/detail-01.webp", "/projects/aurelia/mobile-01.webp"] as const,
-    tone: "aurelia",
-    note: "Soft product storytelling shaped into a clean, tactile digital world.",
->>>>>>> Stashed changes
   },
   {
     number: "02",
     title: "Personal Branding",
     meta: "Editorial / Identity",
     image: "/projects/personal-branding/hero.png",
-<<<<<<< Updated upstream
-=======
-    supports: ["/projects/personal-branding/detail-01.png", "/projects/personal-branding/mobile-01.webp"] as const,
-    tone: "personal",
-    note: "Editorial rhythm, identity and typography built to feel unmistakably personal.",
->>>>>>> Stashed changes
   },
   {
     number: "03",
     title: "Dental",
     meta: "Healthcare / Conversion",
     image: "/projects/dental/hero.webp",
-<<<<<<< Updated upstream
-=======
-    supports: ["/projects/dental/detail-01.webp"] as const,
-    tone: "dental",
-    note: "Clarity and trust translated into a sharper service experience.",
->>>>>>> Stashed changes
   },
   {
     number: "04",
     title: "Spa",
     meta: "Wellness / Digital Experience",
     image: "/projects/spa/hero.webp",
-<<<<<<< Updated upstream
-=======
-    supports: ["/projects/spa/detail-01.webp", "/projects/spa/desktop-01.webp"] as const,
-    tone: "spa",
-    note: "A calmer digital pace designed around atmosphere and sense of place.",
->>>>>>> Stashed changes
   },
 ];
 
 export default function Home() {
   return (
-    <main>
-      <header className="site-nav">
+    <main className="home-page">
+      <header className="site-nav site-nav--flagship">
         <Container className="site-nav__inner">
           <Link href="/" className="site-mark" aria-label="BM Visuals home">
             BM VISUALS
@@ -72,63 +48,15 @@ export default function Home() {
         </Container>
       </header>
 
-      <section className="hero-section">
-        <Container>
-          <div className="hero-kicker">Independent Digital Studio — Vietnam / Worldwide</div>
-          <h1 className="hero-title">
-            We create digital identities
-            <span> people remember.</span>
-          </h1>
-          <div className="hero-bottom bm-grid">
-            <p className="hero-copy">
-              Websites, digital experiences and creative systems built around ambitious brands.
-            </p>
-            <div className="hero-actions">
-              <a href="#work" className="editorial-link">View Selected Work ↓</a>
-              <Link href="/contact" className="editorial-link">Start a Project ↗</Link>
-            </div>
-          </div>
-        </Container>
-      </section>
+      <HeroSequence />
 
-      <section className="statement-section bm-rule">
-        <Container>
-          <div className="bm-grid statement-grid">
-            <p className="section-label">What we believe</p>
-            <div className="statement-copy">
-              <h2>Brands shouldn&apos;t just exist online.</h2>
-              <h2 className="muted-line">They should feel alive.</h2>
-              <p>
-                BM Visuals combines strategy, art direction, UI/UX, motion and development to create digital experiences shaped around the identity of each brand.
-              </p>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-<<<<<<< Updated upstream
       <section id="work" className="work-section bm-rule">
-=======
-      <div className="signal-strip" aria-hidden>
-        <div className="signal-strip__marquee">
-          <div className="signal-strip__group">
-            <span>{MARQUEE_TEXT}</span><span>{MARQUEE_TEXT}</span><span>{MARQUEE_TEXT}</span><span>{MARQUEE_TEXT}</span>
-          </div>
-          <div className="signal-strip__group" aria-hidden="true">
-            <span>{MARQUEE_TEXT}</span><span>{MARQUEE_TEXT}</span><span>{MARQUEE_TEXT}</span><span>{MARQUEE_TEXT}</span>
-          </div>
-        </div>
-      </div>
-
-      <section id="work" className="work-intro">
->>>>>>> Stashed changes
         <Container>
           <div className="work-heading-row">
             <p className="section-label">Selected Work</p>
             <p className="section-index">2026 — 04 Projects</p>
           </div>
 
-<<<<<<< Updated upstream
           <div className="project-stack">
             {projects.map((project, index) => (
               <article className={`project project--${index + 1}`} key={project.title}>
@@ -154,101 +82,6 @@ export default function Home() {
             ))}
           </div>
         </Container>
-=======
-      <section className="project-worlds">
-        {projects.map((project, index) => (
-          <article className={`project-world project-world--${project.tone}`} key={project.title}>
-            <Container className="project-world__inner">
-              <div className="project-world__meta">
-                <span>{project.number}</span>
-                <span>{project.meta}</span>
-                <span>BM / 2026</span>
-              </div>
-
-              {project.tone === "aurelia" ? (
-                <div className="project-world__stage project-world__stage--aurelia">
-                  <div className="pw-aurelia__title" aria-hidden>
-                    <span>AURELIA</span><span>SKIN</span>
-                  </div>
-                  <div className="pw-aurelia__layout">
-                    <div className="pw-aurelia__main">
-                      <Image src={project.image} alt={`${project.title} preview`} fill sizes="(max-width: 768px) 100vw, 56vw" className="project-world__image" priority />
-                    </div>
-                    <div className="pw-aurelia__side" aria-hidden>
-                      {/* eslint-disable @next/next/no-img-element */}
-                      <img src={project.supports[0]} alt="" />
-                      <img src={project.supports[1]} alt="" />
-                    </div>
-                  </div>
-                  <p className="pw-aurelia__caption" aria-hidden>— beauty / ritual / glow</p>
-                </div>
-              ) : project.tone === "personal" ? (
-                <div className="project-world__stage project-world__stage--personal">
-                  <div className="pw-personal__head">
-                    <p className="pw-personal__eyebrow">Editorial System — 02</p>
-                    <h3 className="pw-personal__heading" aria-hidden>PERSONAL<br />BRANDING</h3>
-                  </div>
-                  <div className="pw-personal__layout">
-                    <div className="pw-personal__main">
-                      <Image src={project.image} alt={`${project.title} preview`} fill sizes="(max-width: 768px) 100vw, 56vw" className="project-world__image" />
-                    </div>
-                    <div className="pw-personal__rail" aria-hidden>
-                      <span className="pw-personal__railRule" />
-                      <span className="pw-personal__railText">IDENTITY — VOICE — PRESENCE — EDITORIAL</span>
-                      <span className="pw-personal__railRule" />
-                      {/* eslint-disable @next/next/no-img-element */}
-                      <img className="pw-personal__crop" src={project.supports[0]} alt="" />
-                      <img className="pw-personal__crop pw-personal__crop--mobile" src={project.supports[1]} alt="" />
-                    </div>
-                  </div>
-                </div>
-              ) : project.tone === "dental" ? (
-                <div className="project-world__stage project-world__stage--dental">
-                  <div className="pw-dental__gridline" aria-hidden />
-                  <div className="pw-dental__layout">
-                    <div className="pw-dental__type" aria-hidden>
-                      <span className="pw-dental__kicker">03 — Healthcare / Conversion</span>
-                      <h3>DENTAL</h3>
-                      <span className="pw-dental__sub">Precision · Clarity · Trust</span>
-                    </div>
-                    <div className="pw-dental__media">
-                      <Image src={project.image} alt={`${project.title} preview`} fill sizes="(max-width: 768px) 100vw, 64vw" className="project-world__image" />
-                    </div>
-                    <div className="pw-dental__detail" aria-hidden>
-                      {/* eslint-disable @next/next/no-img-element */}
-                      <img src={project.supports[0]} alt="" />
-                      <span>Detail — service clarity</span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="project-world__stage project-world__stage--spa">
-                  <div className="pw-spa__layout">
-                    <div className="pw-spa__type" aria-hidden>
-                      <span className="pw-spa__eyebrow">04 — Wellness</span>
-                      <h3>SPA</h3>
-                      <span className="pw-spa__tagline">Soft · Airy · Elevated</span>
-                    </div>
-                    <div className="pw-spa__main">
-                      <Image src={project.image} alt={`${project.title} preview`} fill sizes="(max-width: 768px) 100vw, 52vw" className="project-world__image" />
-                    </div>
-                    <div className="pw-spa__stack" aria-hidden>
-                      {/* eslint-disable @next/next/no-img-element */}
-                      <img className="pw-spa__crop pw-spa__crop--a" src={project.supports[0]} alt="" />
-                      <img className="pw-spa__crop pw-spa__crop--b" src={project.supports[1]} alt="" />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="project-world__footer bm-grid">
-                <p>{project.note}</p>
-                <span className="project-world__arrow" aria-hidden>↗</span>
-              </div>
-            </Container>
-          </article>
-        ))}
->>>>>>> Stashed changes
       </section>
 
       <section className="philosophy-section bm-rule">
