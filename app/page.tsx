@@ -90,9 +90,12 @@ export default function Home() {
             <p className="section-label">Our Approach</p>
             <div>
               <h2 className="large-statement">Not another website.</h2>
-              <h2 className="large-statement muted-line">A digital experience built around your brand.</h2>
+              <h2 className="large-statement muted-line">
+                A digital experience built around your brand.
+              </h2>
               <p className="philosophy-copy">
-                We do not begin with templates. We begin with the brand, the audience and the experience they should remember.
+                We do not begin with templates. We begin with the brand, the audience and the
+                experience they should remember.
               </p>
             </div>
           </div>
@@ -106,10 +109,32 @@ export default function Home() {
             <p>Strategy, design, motion and development working as one system.</p>
           </div>
           <div className="capability-list">
-            <div className="capability-row"><span>01</span><h3>Strategy</h3><p>Digital Direction · Experience Strategy · Brand Research · Creative Direction</p></div>
-            <div className="capability-row"><span>02</span><h3>Design</h3><p>Art Direction · UI/UX · Visual Systems · Interactive Design</p></div>
-            <div className="capability-row"><span>03</span><h3>Motion</h3><p>Motion Direction · Micro-interactions · Digital Storytelling · 3D when appropriate</p></div>
-            <div className="capability-row"><span>04</span><h3>Build</h3><p>Creative Development · Frontend Development · Ecommerce · CMS Integration</p></div>
+            <div className="capability-row">
+              <span>01</span>
+              <h3>Strategy</h3>
+              <p>
+                Digital Direction · Experience Strategy · Brand Research · Creative Direction
+              </p>
+            </div>
+            <div className="capability-row">
+              <span>02</span>
+              <h3>Design</h3>
+              <p>Art Direction · UI/UX · Visual Systems · Interactive Design</p>
+            </div>
+            <div className="capability-row">
+              <span>03</span>
+              <h3>Motion</h3>
+              <p>
+                Motion Direction · Micro-interactions · Digital Storytelling · 3D when appropriate
+              </p>
+            </div>
+            <div className="capability-row">
+              <span>04</span>
+              <h3>Build</h3>
+              <p>
+                Creative Development · Frontend Development · Ecommerce · CMS Integration
+              </p>
+            </div>
           </div>
         </Container>
       </section>
@@ -122,7 +147,9 @@ export default function Home() {
               <h2 className="large-statement">Small team.</h2>
               <h2 className="large-statement muted-line">Serious craft.</h2>
               <p>
-                BM Visuals is an independent multidisciplinary studio working across design, motion and technology. We collaborate closely with brands that care about how they are experienced online.
+                BM Visuals is an independent multidisciplinary studio working across design,
+                motion and technology. We collaborate closely with brands that care about how they
+                are experienced online.
               </p>
             </div>
           </div>
