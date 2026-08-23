@@ -1,36 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { HeroSequence } from "@/components/home/HeroSequence";
+import { SelectedWork } from "@/components/work/SelectedWork";
 import { Container } from "@/components/ui/Container";
 import { TextLink } from "@/components/ui/TextLink";
 import "./home.css";
-
-const projects = [
-  {
-    number: "01",
-    title: "Aurelia Skin",
-    meta: "Beauty / Ecommerce",
-    image: "/projects/aurelia/hero.png",
-  },
-  {
-    number: "02",
-    title: "Personal Branding",
-    meta: "Editorial / Identity",
-    image: "/projects/personal-branding/hero.png",
-  },
-  {
-    number: "03",
-    title: "Dental",
-    meta: "Healthcare / Conversion",
-    image: "/projects/dental/hero.webp",
-  },
-  {
-    number: "04",
-    title: "Spa",
-    meta: "Wellness / Digital Experience",
-    image: "/projects/spa/hero.webp",
-  },
-];
 
 export default function Home() {
   return (
@@ -50,39 +23,7 @@ export default function Home() {
 
       <HeroSequence />
 
-      <section id="work" className="work-section bm-rule">
-        <Container>
-          <div className="work-heading-row">
-            <p className="section-label">Selected Work</p>
-            <p className="section-index">2026 — 04 Projects</p>
-          </div>
-
-          <div className="project-stack">
-            {projects.map((project, index) => (
-              <article className={`project project--${index + 1}`} key={project.title}>
-                <div className="project-meta">
-                  <span>{project.number}</span>
-                  <span>{project.meta}</span>
-                </div>
-                <div className="project-media">
-                  <Image
-                    src={project.image}
-                    alt={`${project.title} project preview`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 94vw"
-                    className="project-image"
-                    priority={index === 0}
-                  />
-                </div>
-                <div className="project-title-row">
-                  <h3>{project.title}</h3>
-                  <span aria-hidden>↗</span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </Container>
-      </section>
+      <SelectedWork />
 
       <section className="philosophy-section bm-rule">
         <Container>

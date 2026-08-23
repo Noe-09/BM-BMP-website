@@ -29,9 +29,17 @@
   --focus-ring: #11110f;
 }
 
-:root[data-bm-theme="graphite"] .site-nav--flagship {
+:root[data-bm-theme="graphite"] .site-nav--flagship,
+:root[data-bm-theme="fabric"] .site-nav--flagship,
+:root[data-bm-theme="aether"] .site-nav--flagship {
   color: #f2f0eb;
   --focus-ring: #f2f0eb;
+}
+
+:root[data-bm-theme="aurelia"] .site-nav--flagship,
+:root[data-bm-theme="haven"] .site-nav--flagship {
+  color: #11110f;
+  --focus-ring: #11110f;
 }
 
 .flagship-hero {
@@ -369,7 +377,7 @@
   --manifesto-opacity: 1;
   position: relative;
   display: flex;
-  min-height: 105svh;
+  min-height: 112svh;
   overflow: hidden;
   color: #f2f0eb;
   background:
@@ -398,7 +406,7 @@
   justify-content: center;
   width: 100%;
   padding-top: clamp(7rem, 12vw, 12rem);
-  padding-bottom: clamp(6rem, 10vw, 10rem);
+  padding-bottom: clamp(12rem, 18vw, 19rem);
 }
 
 .flagship-manifesto__meta {
