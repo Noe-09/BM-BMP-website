@@ -7,16 +7,26 @@ import { useInteractionProfile } from "@/lib/motion/useInteractionProfile";
 
 type CursorMode = "default" | "view" | "explore";
 
+type CursorState = {
+  mode: CursorMode;
+  label: string;
+};
+
 const CURSOR_LABEL: Record<CursorMode, string> = {
   default: "",
   view: "View ↗",
   explore: "Explore →",
 };
 
-function readCursorMode(target: EventTarget | null): CursorMode {
-  if (!(target instanceof Element)) return "default";
-  const value = target.closest<HTMLElement>("[data-cursor]")?.dataset.cursor;
-  return value === "view" || value === "explore" ? value : "default";
+function readCursorState(target: EventTarget | null): CursorState {
+  if (!(target instanceof Element)) return { mode: "default", label: "" };
+  const cursorTarget = target.closest<HTMLElement>("[data-cursor]");
+  const value = cursorTarget?.dataset.cursor;
+  const mode = value === "view" || value === "explore" ? value : "default";
+  return {
+    mode,
+    label: cursorTarget?.dataset.cursorLabel || CURSOR_LABEL[mode],
+  };
 }
 
 export function ContextCursor() {
@@ -26,7 +36,10 @@ export function ContextCursor() {
   const lastTimeRef = useRef(0);
   const targetRef = useRef({ x: 0, y: 0 });
   const currentRef = useRef({ x: 0, y: 0 });
-  const [mode, setMode] = useState<CursorMode>("default");
+  const [cursorState, setCursorState] = useState<CursorState>({
+    mode: "default",
+    label: "",
+  });
 
   useEffect(() => {
     if (!profile.ready || profile.pointer !== "fine" || profile.reducedMotion) return;
@@ -59,7 +72,7 @@ export function ContextCursor() {
       cursorRef.current?.setAttribute("data-active", "true");
     };
 
-    const over = (event: PointerEvent) => setMode(readCursorMode(event.target));
+    const over = (event: PointerEvent) => setCursorState(readCursorState(event.target));
     const leave = () => cursorRef.current?.setAttribute("data-active", "false");
 
     window.addEventListener("pointermove", move, { passive: true });
@@ -82,11 +95,11 @@ export function ContextCursor() {
     <div
       ref={cursorRef}
       className="context-cursor"
-      data-mode={mode}
+      data-mode={cursorState.mode}
       data-active="false"
       aria-hidden="true"
     >
-      <span>{CURSOR_LABEL[mode]}</span>
+      <span>{cursorState.label}</span>
     </div>
   );
 }

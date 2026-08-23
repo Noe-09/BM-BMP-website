@@ -24,6 +24,34 @@
   --focus-ring: #f2f0eb;
 }
 
+:root[data-bm-theme="fabric"] {
+  --scene-background: #090909;
+  --scene-foreground: #f3f2ee;
+  --scene-muted: rgba(243, 242, 238, 0.56);
+  --focus-ring: #f3f2ee;
+}
+
+:root[data-bm-theme="aurelia"] {
+  --scene-background: #eee8dd;
+  --scene-foreground: #241f1a;
+  --scene-muted: rgba(36, 31, 26, 0.57);
+  --focus-ring: #241f1a;
+}
+
+:root[data-bm-theme="haven"] {
+  --scene-background: #b8a07e;
+  --scene-foreground: #18140f;
+  --scene-muted: rgba(24, 20, 15, 0.62);
+  --focus-ring: #18140f;
+}
+
+:root[data-bm-theme="aether"] {
+  --scene-background: #050505;
+  --scene-foreground: #f1f0ea;
+  --scene-muted: rgba(241, 240, 234, 0.52);
+  --focus-ring: #f1f0ea;
+}
+
 body {
   transition:
     background-color var(--motion-scene) var(--ease-scene),
@@ -64,9 +92,9 @@ body {
 
 .context-cursor[data-mode="view"],
 .context-cursor[data-mode="explore"] {
-  width: 92px;
-  height: 92px;
-  margin: -46px 0 0 -46px;
+  width: 104px;
+  height: 104px;
+  margin: -52px 0 0 -52px;
   color: #11110f;
   background: #f35a36;
   border-color: transparent;
