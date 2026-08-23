@@ -16,6 +16,9 @@ export function LookbookProject({ project }: LookbookProjectProps) {
   const progressRef = useRef(0);
   const dragRef = useRef({ active: false, startX: 0, startProgress: 0 });
   const [activeIndex, setActiveIndex] = useState(0);
+  const lookbookLabel = profile.reducedMotion
+    ? `${project.title} lookbook campaign view.`
+    : `${project.title} lookbook. Drag, move the pointer, or use left and right arrow keys to explore ${project.previewAssets.length} project views.`;
 
   const setProgress = (progress: number) => {
     progressRef.current = Math.min(1, Math.max(0, progress));
@@ -93,11 +96,7 @@ export function LookbookProject({ project }: LookbookProjectProps) {
         onKeyDown={handleKeyDown}
         role="group"
         tabIndex={profile.reducedMotion ? -1 : 0}
-        aria-label={
-          profile.reducedMotion
-            ? "Fabriclism digital lookbook campaign view."
-            : "Fabriclism digital lookbook. Drag, move the pointer, or use left and right arrow keys to explore five views."
-        }
+        aria-label={lookbookLabel}
       >
         <div className="lookbook__campaign" aria-hidden="true">
           <Image

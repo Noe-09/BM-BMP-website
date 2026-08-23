@@ -29,3 +29,14 @@ test("public studio descriptors consistently identify BM Visuals as a division o
     assert.doesNotMatch(source, /Independent digital studio/i);
   }
 });
+
+test("Fabriclism lookbook guidance is derived from project data", async () => {
+  const source = await readFile(
+    new URL("../components/work/variants/LookbookProject.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /\$\{project\.title\} lookbook/);
+  assert.match(source, /\$\{project\.previewAssets\.length\} project views/);
+  assert.doesNotMatch(source, /Fabriclism digital lookbook/i);
+});

@@ -47,118 +47,120 @@ const projectCases: Record<ProjectCaseSlug, ProjectCaseNarrative> = {
     caseVariant: "fabriclism",
     theme: "fabric",
     positioning:
-      "A streetwear commerce experience built around collection, attitude and movement.",
+      "A fashion-commerce experience built around Personal Uniform—where state, campaign, lookbook and shopping move as one editorial world.",
     thesis: [
-      "Most fashion stores sell products.",
-      "We wanted the store to sell the world around the products.",
+      "Most fashion stores begin with products.",
+      "Fabriclism begins with how you want to be seen.",
     ],
     seoDescription:
-      "A BM Visuals concept case study for Fabriclism, a streetwear commerce experience built around campaign, collection and movement.",
+      "A BM Visuals concept case study for Fabriclism, a Personal Uniform fashion-commerce experience combining state-driven storytelling, editorial interaction and functional shopping.",
     heroAsset: {
       src: "/projects/fabriclism/campaign.webp",
-      alt: "Fabriclism campaign opening with a streetwear rail and graphic campaign identity",
+      alt: "Fabriclism F/W 026 Personal Uniform campaign with oversized typography and editorial fashion imagery",
     },
     sections: [
       {
         id: "idea",
         eyebrow: "02 / The idea",
-        heading: ["Sell the world", "around the product."],
+        heading: ["Start with a state,", "not a product."],
         body:
-          "Campaign attitude leads. Commerce follows inside the same visual system, so browsing never feels separate from the brand.",
+          "QUIET, PRESENT and UNRESOLVED turn the first interaction into a styling ritual. The choice shifts campaign imagery, featured looks and the Uniform Builder without restricting the catalogue.",
         assets: [
           {
-            src: "/projects/fabriclism/campaign.webp",
-            alt: "Fabriclism campaign image establishing the brand world",
+            src: "/projects/fabriclism/state.webp",
+            alt: "Fabriclism Choose Your State composition with QUIET, PRESENT and UNRESOLVED styling states",
           },
           {
-            src: "/projects/fabriclism/home.webp",
-            alt: "Fabriclism homepage carrying campaign language into product browsing",
+            src: "/projects/fabriclism/campaign.webp",
+            alt: "Fabriclism F/W 026 campaign after the Personal Uniform state selection",
           },
         ],
       },
       {
         id: "experience",
-        eyebrow: "03 / Experience breakdown",
-        heading: ["A store paced", "like a lookbook."],
+        eyebrow: "03 / Experience",
+        heading: ["A fashion world", "that still shops."],
         items: [
           {
             index: "01",
-            title: "Campaign first",
-            copy: "The opening establishes atmosphere before catalogue density.",
+            title: "Choose a state",
+            copy: "The visitor chooses a temporary styling posture before entering the collection.",
             asset: {
-              src: "/projects/fabriclism/home.webp",
-              alt: "Fabriclism homepage and campaign-led product presentation",
+              src: "/projects/fabriclism/state.webp",
+              alt: "Fabriclism state selector showing the QUIET, PRESENT and UNRESOLVED choices",
             },
           },
           {
             index: "02",
-            title: "Collection",
-            copy: "Graphic navigation keeps a dense catalogue directional and legible.",
+            title: "Uniform Index",
+            copy: "Eight curated looks turn product discovery into an editorial index.",
             asset: {
-              src: "/projects/fabriclism/collection.webp",
-              alt: "Fabriclism collection grid and category navigation",
+              src: "/projects/fabriclism/uniform-index.webp",
+              alt: "Fabriclism Uniform Index showing curated looks and an editorial preview",
             },
           },
           {
             index: "03",
-            title: "Product",
-            copy: "Product detail preserves the campaign tone while clarifying choice.",
+            title: "Build a Uniform",
+            copy: "Curated outfit presets make styling interactive while the visual direction stays controlled.",
             asset: {
-              src: "/projects/fabriclism/product.webp",
-              alt: "Fabriclism signature tee product page",
+              src: "/projects/fabriclism/builder.webp",
+              alt: "Fabriclism dark Build A Uniform scene with curated outfit preset controls",
             },
           },
           {
             index: "04",
-            title: "Mobile",
-            copy: "The same hierarchy is recomposed for a narrower, faster shopping rhythm.",
+            title: "Commerce",
+            copy: "Shop and product pages stay clear, functional and easy to use when the experience shifts from discovery to decision.",
             asset: {
-              src: "/projects/fabriclism/mobile-home.webp",
-              alt: "Fabriclism live homepage captured at a mobile viewport",
+              src: "/projects/fabriclism/product.webp",
+              alt: "Fabriclism 058 Corefit Tee product page with gallery, colour, size and add-to-bag controls",
             },
           },
         ],
       },
       {
         id: "motion",
-        eyebrow: "04 / Motion system",
-        heading: ["Motion is part", "of the brand."],
+        eyebrow: "04 / Motion language",
+        heading: ["Cut. Drag.", "Layer."],
         body:
-          "Navigation, image changes and product states respond with the same direct graphic cadence as the identity.",
+          "Full-viewport title frames, cropped typography and image-led scene handoffs give the experience a fashion-film cadence while commerce interactions stay restrained.",
         assets: [
           {
-            src: "/projects/fabriclism/collection.webp",
-            alt: "Fabriclism collection state used to explain the browsing motion system",
+            src: "/projects/fabriclism/campaign.webp",
+            alt: "Fabriclism F/W 026 campaign with cropped typography and editorial fashion imagery",
           },
           {
-            src: "/projects/fabriclism/product.webp",
-            alt: "Fabriclism product state used to explain interactive product behavior",
+            src: "/projects/fabriclism/interlude.webp",
+            alt: "Fabriclism NO FINAL FORM full-bleed campaign interruption",
           },
         ],
       },
       {
         id: "responsive",
         eyebrow: "05 / Responsive",
-        heading: ["Designed to move", "with you."],
+        heading: ["Same identity.", "Different rhythm."],
+        body:
+          "Desktop choreography is recomposed into direct tap, scroll and accordion behaviour without turning mobile into a reduced copy of the desktop site.",
         assets: [
           {
-            src: "/projects/fabriclism/mobile-home.webp",
-            alt: "Fabriclism mobile home captured from the live experience",
+            src: "/projects/fabriclism/mobile-state.webp",
+            alt: "Fabriclism mobile state selector with QUIET, PRESENT and UNRESOLVED choices",
           },
           {
-            src: "/projects/fabriclism/mobile-collection.webp",
-            alt: "Fabriclism mobile collection captured from the live experience",
+            src: "/projects/fabriclism/mobile-index.webp",
+            alt: "Fabriclism mobile Uniform Index with a tap-open curated look",
           },
           {
             src: "/projects/fabriclism/mobile-product.webp",
-            alt: "Fabriclism mobile product page captured from the live experience",
+            alt: "Fabriclism mobile 058 Corefit Tee product page with real gallery thumbnails",
           },
         ],
       },
       {
         id: "live",
         eyebrow: "06 / Live experience",
-        heading: ["Don't just look at it.", "Use it."],
+        heading: ["Enter the world.", "Build your own."],
       },
     ],
     nextSlug: "aurelia-skin",
