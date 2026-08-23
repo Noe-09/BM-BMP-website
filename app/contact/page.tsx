@@ -74,7 +74,7 @@ export default function ContactPage() {
 
       <footer className="contact-footer bm-rule">
         <Container className="contact-footer__inner">
-          <p>Vietnam</p>
+          <p>Digital experience division of BM · Vietnam</p>
           <p>Working internationally.</p>
           <Link href="/">Back to BM Visuals ↑</Link>
         </Container>

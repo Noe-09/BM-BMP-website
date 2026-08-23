@@ -140,7 +140,7 @@ export function HeroSequence() {
           <div className="flagship-hero__field" aria-hidden="true">
             <span className="flagship-hero__axis flagship-hero__axis--x" />
             <span className="flagship-hero__axis flagship-hero__axis--y" />
-            <span className="flagship-hero__coordinate">BM — SPATIAL STUDY / 001</span>
+            <span className="flagship-hero__coordinate">BM Visuals / Digital experience</span>
           </div>
 
           <div
@@ -165,7 +165,7 @@ export function HeroSequence() {
 
           <Container className="flagship-hero__content">
             <div className="flagship-hero__topline">
-              <span>Independent Digital Studio</span>
+              <span>Digital experience division of BM</span>
               <span>Vietnam / Worldwide</span>
             </div>
 
