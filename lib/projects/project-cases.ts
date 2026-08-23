@@ -5,8 +5,8 @@ import {
   type ProjectTheme,
 } from "./selected-work.ts";
 
-export type ProjectCaseSlug = "fabriclism" | "aurelia-skin" | "aether";
-export type ProjectCaseVariant = "fabriclism" | "aurelia" | "aether";
+export type ProjectCaseSlug = "fabriclism" | "aurelia-skin" | "haven" | "aether";
+export type ProjectCaseVariant = "fabriclism" | "aurelia" | "haven" | "aether";
 export type ProjectCaseSectionId = "idea" | "experience" | "motion" | "responsive" | "live";
 
 export type ProjectCaseItem = {
@@ -237,6 +237,110 @@ const projectCases: Record<ProjectCaseSlug, ProjectCaseNarrative> = {
         heading: ["Enter the", "Aurelia ritual."],
       },
     ],
+    nextSlug: "haven",
+  },
+  haven: {
+    projectSlug: "haven",
+    caseVariant: "haven",
+    theme: "haven",
+    positioning:
+      "An editorial hospitality and commerce concept shaped around coffee ritual, atmosphere and slow digital interaction.",
+    thesis: ["A place is more", "than a menu.", "It is a rhythm."],
+    seoDescription:
+      "A BM Visuals hospitality concept case study exploring coffee ritual, editorial commerce, atmosphere and slow digital interaction.",
+    heroAsset: {
+      src: "/projects/haven/hero.webp",
+      alt: "HAVEN live opening with A Pause in the City over coffee ritual imagery",
+    },
+    sections: [
+      {
+        id: "idea",
+        eyebrow: "02 / The idea",
+        heading: ["A place is more", "than a menu."],
+        body:
+          "HAVEN treats hospitality as a feeling of pace: coffee, light, ceramic and time arranged before commerce asks for attention.",
+        assets: [
+          {
+            src: "/projects/haven/hero.webp",
+            alt: "HAVEN opening screen with the phrase A Pause in the City",
+          },
+          {
+            src: "/projects/haven/space.webp",
+            alt: "HAVEN The Space screen showing a quiet interior and A room for doing nothing",
+          },
+        ],
+      },
+      {
+        id: "experience",
+        eyebrow: "03 / Morning ritual",
+        heading: ["The morning", "has a rhythm."],
+        items: [
+          {
+            index: "01",
+            title: "Grind",
+            copy: "The opening state grounds the ritual in bean, time and measured preparation.",
+            asset: {
+              src: "/projects/haven/ritual.webp",
+              alt: "HAVEN GRIND ritual state with Cầu Đất Arabica and 18 gram metadata",
+            },
+          },
+          {
+            index: "02",
+            title: "Dose",
+            copy: "Preparation becomes a calm editorial sequence rather than a utility instruction.",
+          },
+          {
+            index: "03",
+            title: "Extract",
+            copy: "Time, temperature and pressure add texture without interrupting the atmosphere.",
+          },
+          {
+            index: "04",
+            title: "Serve",
+            copy: "The signature drink carries the ritual forward into a considered hospitality moment.",
+            asset: {
+              src: "/projects/haven/no01.webp",
+              alt: "HAVEN No.01 signature drink screen with espresso and cold cream",
+            },
+          },
+        ],
+      },
+      {
+        id: "motion",
+        eyebrow: "04 / Editorial commerce",
+        heading: ["From ritual", "to commerce."],
+        body:
+          "Menu discovery, the Haven No.01 signature and retail objects remain inside one warm hospitality world—functional, but never rushed.",
+        assets: [
+          {
+            src: "/projects/haven/menu.webp",
+            alt: "HAVEN editorial menu screen with coffee selection and responsive image field",
+          },
+          {
+            src: "/projects/haven/commerce.webp",
+            alt: "HAVEN Bring Haven Home retail screen with coffee products",
+          },
+        ],
+      },
+      {
+        id: "responsive",
+        eyebrow: "05 / Responsive experience",
+        heading: ["Slow,", "not static."],
+        body:
+          "The mobile composition keeps the same quiet hierarchy and ritual-led entry without requiring hover or a desktop viewport.",
+        assets: [
+          {
+            src: "/projects/haven/mobile.webp",
+            alt: "HAVEN mobile opening with Pause in the City typography and concept actions",
+          },
+        ],
+      },
+      {
+        id: "live",
+        eyebrow: "06 / Live experience",
+        heading: ["Stay", "a little", "longer."],
+      },
+    ],
     nextSlug: "aether",
   },
   aether: {
@@ -314,7 +418,7 @@ const projectCases: Record<ProjectCaseSlug, ProjectCaseNarrative> = {
 };
 
 export function getProjectCaseSlugs(): ProjectCaseSlug[] {
-  return ["fabriclism", "aurelia-skin", "aether"];
+  return ["fabriclism", "aurelia-skin", "haven", "aether"];
 }
 
 export function getProjectCase(slug: string): ProjectCase | undefined {

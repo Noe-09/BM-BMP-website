@@ -61,7 +61,10 @@ export function EditorialProject({ project }: EditorialProjectProps) {
   return (
     <SelectedProject project={project} className="editorial-project">
       <div ref={layoutRef} className="editorial-layout">
-        <figure className="editorial-layout__image editorial-layout__image--hero">
+        <figure
+          className="editorial-layout__image editorial-layout__image--hero"
+          data-project-transition-source={project.slug}
+        >
           <Image
             src={project.previewAssets[0].src}
             alt={project.previewAssets[0].alt}

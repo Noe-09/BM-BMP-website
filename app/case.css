@@ -16,6 +16,13 @@
   --case-line: rgba(36, 31, 26, 0.18);
 }
 
+.case-page--haven {
+  --case-background: #eee6d8;
+  --case-foreground: #241811;
+  --case-muted: rgba(36, 24, 17, 0.62);
+  --case-line: rgba(36, 24, 17, 0.18);
+}
+
 .case-page--aether {
   --case-background: #050505;
   --case-foreground: #f1f0ea;
@@ -228,6 +235,36 @@
 .case-page--aurelia .case-hero__meta ul,
 .case-page--aurelia .case-hero__positioning {
   color: rgba(36, 31, 26, 0.68);
+}
+
+.case-page--haven .case-hero {
+  color: #f4eadb;
+  background: #1d130e;
+}
+
+.case-page--haven .case-hero__image {
+  object-position: center;
+  filter: saturate(0.78) sepia(0.14) contrast(1.04);
+}
+
+.case-page--haven .case-hero__veil {
+  background:
+    linear-gradient(to bottom, rgba(23, 14, 10, 0.46), transparent 42%, rgba(23, 14, 10, 0.9)),
+    linear-gradient(90deg, rgba(23, 14, 10, 0.56), transparent 66%);
+}
+
+.case-page--haven .case-hero__title {
+  max-width: 8ch;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(6rem, 18vw, 18rem);
+  font-weight: 400;
+  letter-spacing: -0.09em;
+  text-transform: none;
+}
+
+.case-page--haven .case-hero__meta ul,
+.case-page--haven .case-hero__positioning {
+  color: rgba(244, 234, 219, 0.72);
 }
 
 .case-page--aether .case-hero {
@@ -490,6 +527,43 @@
   text-transform: none;
 }
 
+.case-page--haven .case-scene__title,
+.case-page--haven .case-thesis,
+.case-page--haven .case-breakdown__copy h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  text-transform: none;
+}
+
+.case-page--haven .case-scene--idea {
+  background:
+    radial-gradient(circle at 74% 24%, rgba(255, 250, 240, 0.86), transparent 28%),
+    #eee6d8;
+}
+
+.case-page--haven .case-media {
+  background: #2a1b13;
+  box-shadow: 0 28px 76px rgba(63, 38, 22, 0.16);
+}
+
+.case-page--haven .case-breakdown__item:first-child .case-media,
+.case-page--haven .case-breakdown__item:last-child .case-media {
+  aspect-ratio: 16 / 10;
+}
+
+.case-page--haven .case-feature--motion .case-feature__asset--1 {
+  width: 76%;
+}
+
+.case-page--haven .case-feature--motion .case-feature__asset--2 {
+  width: 46%;
+}
+
+.case-page--haven .case-feature--responsive .case-feature__asset {
+  width: min(31vw, 386px);
+  box-shadow: 0 24px 64px rgba(63, 38, 22, 0.18);
+}
+
 .case-page--aurelia .case-scene--idea {
   background:
     radial-gradient(circle at 74% 42%, rgba(255, 255, 255, 0.72), transparent 28%),
@@ -584,6 +658,17 @@
 .next-world--aurelia {
   color: #241f1a;
   background: #eee8dd;
+}
+
+.next-world--haven {
+  color: #f3e8d9;
+  background: #21150f;
+}
+
+.next-world--haven .next-world__link > span:first-child {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  text-transform: none;
 }
 
 .next-world--aether {

@@ -266,9 +266,9 @@
 }
 
 .work-project--haven {
-  --world-background: #b8a07e;
-  --world-foreground: #18140f;
-  --world-muted: rgba(24, 20, 15, 0.62);
+  --world-background: #e7ddcb;
+  --world-foreground: #211610;
+  --world-muted: rgba(33, 22, 16, 0.62);
   min-height: 134svh;
 }
 
