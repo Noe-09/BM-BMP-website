@@ -60,6 +60,7 @@ export function LiquidProject({ project }: LiquidProjectProps) {
       <div
         ref={mediaRef}
         className="liquid-media"
+        data-project-transition-source={project.slug}
         data-cursor="explore"
         data-cursor-label={project.cursorLabel}
         onPointerMove={(event) => {

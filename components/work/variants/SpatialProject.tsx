@@ -67,6 +67,7 @@ export function SpatialProject({ project }: SpatialProjectProps) {
       <div
         ref={stackRef}
         className="spatial-stack"
+        data-project-transition-source={project.slug}
         data-cursor="view"
         data-cursor-label={project.cursorLabel}
         onPointerMove={(event) => {

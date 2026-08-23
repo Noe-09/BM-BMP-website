@@ -41,11 +41,11 @@ export default function ContactPage() {
       <section className="contact-hero">
         <Container>
           <p className="section-label">Start a Project</p>
-          <h1>Have something worth making?</h1>
+          <h1>Have something worth building?</h1>
           <div className="bm-grid contact-intro">
             <p>
-              Tell us what you&apos;re building.<br />
-              Let&apos;s see what we can make together.
+              Tell us what needs to exist.<br />
+              Let&apos;s make it hard to forget.
             </p>
           </div>
         </Container>

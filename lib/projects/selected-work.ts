@@ -2,18 +2,20 @@ export type ProjectInteraction = "lookbook" | "liquid" | "editorial" | "spatial"
 
 export type ProjectTheme = "fabric" | "aurelia" | "haven" | "aether";
 
+export type ProjectStatus = "Concept Project" | "Experimental Concept";
+
 export type ProjectAsset = {
   src: string;
   alt: string;
   label?: string;
 };
 
-export type SelectedProject = {
+export type ProjectRecord = {
   slug: string;
   title: string;
   index: string;
   year: string;
-  status: "Concept Project" | "Experimental";
+  status: ProjectStatus;
   disciplines: string[];
   description: string;
   interactionVariant: ProjectInteraction;
@@ -24,7 +26,9 @@ export type SelectedProject = {
   cursorLabel?: string;
 };
 
-export const selectedProjects: SelectedProject[] = [
+export type SelectedProject = ProjectRecord;
+
+export const projectRegistry: ProjectRecord[] = [
   {
     slug: "fabriclism",
     title: "FABRICLISM",
@@ -37,7 +41,7 @@ export const selectedProjects: SelectedProject[] = [
     interactionVariant: "lookbook",
     theme: "fabric",
     liveUrl: "https://demo-fabriclism.vercel.app/",
-    actionLabel: "View experience",
+    actionLabel: "Visit live",
     cursorLabel: "Explore →",
     previewAssets: [
       {
@@ -78,6 +82,8 @@ export const selectedProjects: SelectedProject[] = [
       "A warm skincare world balancing clinical clarity with the softness of serum, light and ritual.",
     interactionVariant: "liquid",
     theme: "aurelia",
+    liveUrl: "https://aurelia-skin.vercel.app/",
+    actionLabel: "Visit live",
     cursorLabel: "Explore →",
     previewAssets: [
       {
@@ -125,7 +131,7 @@ export const selectedProjects: SelectedProject[] = [
     title: "ÆTHER",
     index: "04 / 04",
     year: "2026",
-    status: "Experimental",
+    status: "Experimental Concept",
     disciplines: ["Digital Exhibition", "Fashion Campaign", "Experimental Commerce"],
     description:
       "An experimental eyewear laboratory where specimen systems, optical objects and campaign language become one spatial interface.",
@@ -150,3 +156,9 @@ export const selectedProjects: SelectedProject[] = [
     ],
   },
 ];
+
+export function getProject(slug: string) {
+  return projectRegistry.find((project) => project.slug === slug);
+}
+
+export const selectedProjects = projectRegistry;

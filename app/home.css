@@ -31,13 +31,16 @@
 
 :root[data-bm-theme="graphite"] .site-nav--flagship,
 :root[data-bm-theme="fabric"] .site-nav--flagship,
-:root[data-bm-theme="aether"] .site-nav--flagship {
+:root[data-bm-theme="aether"] .site-nav--flagship,
+:root[data-bm-theme="closing"] .site-nav--flagship {
   color: #f2f0eb;
   --focus-ring: #f2f0eb;
 }
 
 :root[data-bm-theme="aurelia"] .site-nav--flagship,
-:root[data-bm-theme="haven"] .site-nav--flagship {
+:root[data-bm-theme="haven"] .site-nav--flagship,
+:root[data-bm-theme="paper"] .site-nav--flagship,
+:root[data-bm-theme="studio"] .site-nav--flagship {
   color: #11110f;
   --focus-ring: #11110f;
 }
