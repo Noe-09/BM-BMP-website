@@ -106,12 +106,22 @@ body {
 
 .context-cursor[data-mode="view"],
 .context-cursor[data-mode="explore"] {
-  width: 104px;
-  height: 104px;
-  margin: -52px 0 0 -52px;
+  width: 84px;
+  height: 84px;
+  margin: -42px 0 0 -42px;
   color: #11110f;
   background: #f35a36;
   border-color: transparent;
+}
+
+:root[data-bm-theme="paper"] .context-cursor[data-mode="view"],
+:root[data-bm-theme="paper"] .context-cursor[data-mode="explore"],
+:root[data-bm-theme="aurelia"] .context-cursor[data-mode="view"],
+:root[data-bm-theme="aurelia"] .context-cursor[data-mode="explore"],
+:root[data-bm-theme="haven"] .context-cursor[data-mode="view"],
+:root[data-bm-theme="haven"] .context-cursor[data-mode="explore"] {
+  background: color-mix(in srgb, #f35a36 72%, var(--scene-background));
+  border-color: color-mix(in srgb, #f35a36 40%, var(--scene-foreground));
 }
 
 .context-cursor span {
@@ -119,7 +129,7 @@ body {
   inset: 0;
   display: grid;
   place-items: center;
-  font-size: 0.63rem;
+  font-size: 0.56rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;

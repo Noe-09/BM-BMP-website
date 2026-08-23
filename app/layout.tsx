@@ -7,16 +7,16 @@ import "./site.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "BM Visuals — Independent Digital Studio",
+    default: "BM Visuals — Digital Experience Division of BM",
     template: "%s — BM Visuals",
   },
   description:
-    "Independent digital studio crafting brand websites, ecommerce and digital experiences built around ambitious brands.",
+    "BM Visuals is the digital experience division of BM, crafting brand websites, ecommerce and distinctive digital experiences.",
   metadataBase: new URL("https://bmvisuals.example.com"),
   openGraph: {
-    title: "BM Visuals — Independent Digital Studio",
+    title: "BM Visuals — Digital Experience Division of BM",
     description:
-      "Independent digital studio crafting brand websites, ecommerce and digital experiences built around ambitious brands.",
+      "BM Visuals is the digital experience division of BM, crafting brand websites, ecommerce and distinctive digital experiences.",
     type: "website",
   },
 };

@@ -38,7 +38,7 @@ export default function Home() {
         <Container className="footer-inner">
           <div>
             <strong>BM Visuals</strong>
-            <p>Independent digital studio</p>
+            <p>Digital experience division of BM</p>
           </div>
           <div className="footer-links">
             <a href="#work">Work</a>

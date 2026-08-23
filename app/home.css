@@ -124,7 +124,7 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   background: #e9e4da;
-  opacity: 0.52;
+  opacity: 0.48;
 }
 
 .flagship-hero__object {
@@ -258,6 +258,7 @@
 
 .flagship-hero__line--two {
   align-self: flex-end;
+  max-width: 100%;
   color: transparent;
   font-size: clamp(5rem, 10.1vw, 10.8rem);
   -webkit-text-stroke: max(1px, 0.012em) currentColor;
@@ -512,7 +513,8 @@
   }
 
   .flagship-hero__line--two {
-    font-size: clamp(5rem, 10.7vw, 7.6rem);
+    font-size: clamp(4.75rem, 9.1vw, 6.5rem);
+    letter-spacing: -0.088em;
   }
 
   .flagship-hero__line--three {

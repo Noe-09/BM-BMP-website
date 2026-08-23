@@ -436,6 +436,8 @@
 .liquid-media {
   --lens-x: 68%;
   --lens-y: 48%;
+  --lens-size: clamp(88px, 13vw, 190px);
+  --lens-halo-size: clamp(176px, 26vw, 380px);
   position: relative;
   width: min(78vw, 1160px);
   aspect-ratio: 16 / 9;
@@ -458,8 +460,17 @@
 .liquid-media__reveal {
   position: absolute;
   inset: 0;
-  clip-path: circle(clamp(88px, 13vw, 190px) at var(--lens-x) var(--lens-y));
-  transition: clip-path 180ms linear;
+  clip-path: none;
+  -webkit-mask-image: radial-gradient(
+    circle var(--lens-size) at var(--lens-x) var(--lens-y),
+    #000 0 68%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--lens-size) at var(--lens-x) var(--lens-y),
+    #000 0 68%,
+    transparent 100%
+  );
 }
 
 .liquid-media__alternate {
@@ -470,13 +481,17 @@
   position: absolute;
   top: var(--lens-y);
   left: var(--lens-x);
-  width: clamp(176px, 26vw, 380px);
+  width: var(--lens-halo-size);
   aspect-ratio: 1;
-  border: 1px solid rgba(255, 255, 255, 0.58);
   border-radius: 50%;
-  box-shadow:
-    inset 0 0 50px rgba(255, 255, 255, 0.24),
-    0 18px 70px rgba(120, 86, 47, 0.17);
+  background: radial-gradient(
+    circle,
+    transparent 0 57%,
+    rgba(255, 255, 255, 0.16) 70%,
+    rgba(255, 244, 228, 0.08) 78%,
+    transparent 100%
+  );
+  filter: blur(0.4px);
   transform: translate(-50%, -50%);
   pointer-events: none;
   transition:
@@ -854,11 +869,11 @@
   }
 
   .liquid-media__reveal {
-    clip-path: circle(clamp(74px, 27vw, 120px) at var(--lens-x) var(--lens-y));
+    --lens-size: clamp(74px, 27vw, 120px);
   }
 
   .liquid-media__ring {
-    width: clamp(148px, 54vw, 240px);
+    --lens-halo-size: clamp(148px, 54vw, 240px);
   }
 
   .editorial-project {
@@ -972,7 +987,8 @@
   }
 
   .liquid-media__reveal {
-    clip-path: inset(0 0 0 52%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0 48%, #000 52% 100%);
+    mask-image: linear-gradient(to right, transparent 0 48%, #000 52% 100%);
   }
 
   .liquid-media__ring {

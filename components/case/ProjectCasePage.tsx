@@ -33,7 +33,7 @@ export function ProjectCasePage({ caseStudy }: { caseStudy: ProjectCase }) {
       <footer className="case-footer">
         <Container className="case-footer__inner">
           <strong>BM Visuals</strong>
-          <span>Independent Digital Studio</span>
+          <span>Digital experience division of BM</span>
           <Link href="/#work">All selected work ↑</Link>
         </Container>
       </footer>
