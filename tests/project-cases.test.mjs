@@ -46,6 +46,41 @@ test("case studies resolve shared facts from the canonical project record", () =
   ]);
 });
 
+test("Fabriclism presents the final Personal Uniform experience", () => {
+  const fabriclism = getProjectCase("fabriclism");
+
+  assert.deepEqual(fabriclism?.project.disciplines, [
+    "Fashion",
+    "E-commerce",
+    "Art Direction",
+    "Creative Development",
+  ]);
+  assert.equal(
+    fabriclism?.project.description,
+    "A fashion-commerce concept built around Personal Uniform—state-driven campaign, curated looks, material studies and functional shopping inside one editorial world.",
+  );
+  assert.deepEqual(
+    fabriclism?.project.previewAssets.map((asset) => asset.label),
+    ["Campaign", "State", "Uniform Index", "Build a Uniform", "Commerce"],
+  );
+  assert.equal(
+    fabriclism?.positioning,
+    "A fashion-commerce experience built around Personal Uniform—where state, campaign, lookbook and shopping move as one editorial world.",
+  );
+  assert.deepEqual(fabriclism?.thesis, [
+    "Most fashion stores begin with products.",
+    "Fabriclism begins with how you want to be seen.",
+  ]);
+  assert.equal(
+    fabriclism?.seoDescription,
+    "A BM Visuals concept case study for Fabriclism, a Personal Uniform fashion-commerce experience combining state-driven storytelling, editorial interaction and functional shopping.",
+  );
+  assert.deepEqual(fabriclism?.sections.at(-1)?.heading, [
+    "Enter the world.",
+    "Build your own.",
+  ]);
+});
+
 test("next-world order includes HAVEN between Aurelia and ÆTHER", () => {
   assert.equal(getNextProjectCase("fabriclism")?.project.slug, "aurelia-skin");
   assert.equal(getNextProjectCase("aurelia-skin")?.project.slug, "haven");

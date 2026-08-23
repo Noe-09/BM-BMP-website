@@ -26,8 +26,8 @@ export const CAPABILITIES: Capability[] = [
     title: "E-commerce",
     detail: "Commerce that keeps campaign energy intact from first impression to product decision.",
     proof: {
-      src: "/projects/fabriclism/collection.webp",
-      alt: "Fabriclism collection interface combining category navigation and product imagery",
+      src: "/projects/fabriclism/uniform-index.webp",
+      alt: "Fabriclism Uniform Index combining curated looks with editorial product discovery",
       project: "FABRICLISM",
     },
   },
@@ -49,7 +49,7 @@ export const CAPABILITIES: Capability[] = [
     detail: "Clear systems with deliberate hierarchy, pacing and useful interaction at every scale.",
     proof: {
       src: "/projects/fabriclism/product.webp",
-      alt: "Fabriclism product interface with strong editorial hierarchy",
+      alt: "Fabriclism 058 Corefit Tee product interface with an editorial gallery and commerce controls",
       project: "FABRICLISM",
     },
   },
