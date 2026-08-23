@@ -109,7 +109,7 @@ export function LookbookProject({ project }: LookbookProjectProps) {
           />
         </div>
 
-        <div className="lookbook__viewport">
+        <div className="lookbook__viewport" data-project-transition-source={project.slug}>
           {project.previewAssets.map((asset, index) => (
             <figure
               className="lookbook__frame"

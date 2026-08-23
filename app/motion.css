@@ -52,6 +52,20 @@
   --focus-ring: #f1f0ea;
 }
 
+:root[data-bm-theme="studio"] {
+  --scene-background: #f35a36;
+  --scene-foreground: #11110f;
+  --scene-muted: rgba(17, 17, 15, 0.58);
+  --focus-ring: #11110f;
+}
+
+:root[data-bm-theme="closing"] {
+  --scene-background: #090909;
+  --scene-foreground: #f2f0eb;
+  --scene-muted: rgba(242, 240, 235, 0.56);
+  --focus-ring: #f2f0eb;
+}
+
 body {
   transition:
     background-color var(--motion-scene) var(--ease-scene),

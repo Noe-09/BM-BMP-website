@@ -27,3 +27,31 @@ export function getViewportSceneProgress({
 }) {
   return clampUnit((viewportHeight - top) / Math.max(1, height + viewportHeight));
 }
+
+export type ProjectNavigationIntent = {
+  button: number;
+  detail: number;
+  defaultPrevented: boolean;
+  metaKey: boolean;
+  ctrlKey: boolean;
+  shiftKey: boolean;
+  altKey: boolean;
+  target?: string;
+  download: boolean;
+  reducedMotion: boolean;
+};
+
+export function shouldEnhanceProjectNavigation(intent: ProjectNavigationIntent) {
+  const opensAnotherContext = Boolean(intent.target && intent.target !== "_self");
+  const hasModifier = intent.metaKey || intent.ctrlKey || intent.shiftKey || intent.altKey;
+
+  return (
+    !intent.defaultPrevented &&
+    intent.button === 0 &&
+    intent.detail > 0 &&
+    !hasModifier &&
+    !opensAnotherContext &&
+    !intent.download &&
+    !intent.reducedMotion
+  );
+}

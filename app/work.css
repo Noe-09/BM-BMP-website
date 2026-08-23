@@ -162,8 +162,14 @@
   line-height: 1.5;
 }
 
-.work-project__action {
+.work-project__actions {
   grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2vw, 2rem);
+}
+
+.work-project__action {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
@@ -178,6 +184,66 @@
   transition:
     transform var(--motion-micro) var(--ease-responsive),
     border-color var(--motion-micro) ease;
+}
+
+.work-project__live-action {
+  display: inline-flex;
+  gap: 0.4rem;
+  color: var(--world-muted);
+  font-size: 0.58rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition:
+    color var(--motion-micro) ease,
+    transform var(--motion-micro) var(--ease-responsive);
+}
+
+.work-project__live-action:hover {
+  color: var(--world-foreground);
+  transform: translate3d(0, -3px, 0);
+}
+
+.project-transition-overlay {
+  --transition-left: 0px;
+  --transition-top: 0px;
+  --transition-width: 100vw;
+  --transition-height: 100vh;
+  --transition-x: 0px;
+  --transition-y: 0px;
+  --transition-scale-x: 1;
+  --transition-scale-y: 1;
+  position: fixed;
+  top: var(--transition-top);
+  left: var(--transition-left);
+  z-index: 500;
+  width: var(--transition-width);
+  height: var(--transition-height);
+  overflow: hidden;
+  background: #090909;
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  transform-origin: left top;
+  pointer-events: none;
+  will-change: transform, opacity;
+  transition:
+    transform 900ms var(--ease-scene),
+    opacity 320ms ease;
+}
+
+.project-transition-overlay img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.project-transition-overlay[data-active="true"] {
+  transform: translate3d(var(--transition-x), var(--transition-y), 0)
+    scale(var(--transition-scale-x), var(--transition-scale-y));
+}
+
+.project-transition-overlay[data-complete="true"] {
+  opacity: 0;
 }
 
 .work-project__action:hover {
@@ -716,8 +782,12 @@
   }
 
   .work-project__description,
-  .work-project__action {
+  .work-project__actions {
     grid-column: 1 / -1;
+  }
+
+  .work-project__actions {
+    justify-content: space-between;
   }
 
   .lookbook-project .work-project__title {
@@ -890,7 +960,8 @@
   .liquid-media__ring,
   .editorial-layout__image,
   .spatial-stack__plane,
-  .work-project__action {
+  .work-project__action,
+  .project-transition-overlay {
     transition: none !important;
   }
 
