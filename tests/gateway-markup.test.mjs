@@ -33,3 +33,14 @@ test("technical prototype route loads the gateway fallback stylesheet directly",
 
   assert.match(technical, /gateway\.css/);
 });
+
+test("gateway canvas is decorative and scene stays dependency-light", async () => {
+  const canvas = await read("../components/gateway/TunnelCanvas.tsx");
+  const scene = await read("../lib/gateway/scene.ts");
+
+  assert.match(canvas, /aria-hidden="true"/);
+  assert.match(scene, /from "three"/);
+  assert.match(scene, /BoxGeometry|PlaneGeometry/);
+  assert.doesNotMatch(scene, /@react-three|drei|gsap|postprocessing|EffectComposer/);
+  assert.doesNotMatch(scene, /TextureLoader|GLTFLoader/);
+});
