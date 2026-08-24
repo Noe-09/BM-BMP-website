@@ -58,7 +58,6 @@
 
 .gateway-loader__mark,
 .gateway-loader__label,
-.gateway-loader__mode,
 .gateway-loader__skip,
 .gateway-travel-cue {
   font-family: var(--font-mono), ui-monospace, monospace;
@@ -90,13 +89,8 @@
   letter-spacing: -0.085em;
 }
 
-.gateway-loader__label,
-.gateway-loader__mode {
+.gateway-loader__label {
   margin: 0.8rem 0;
-}
-
-.gateway-loader__mode {
-  color: var(--gateway-muted);
 }
 
 .gateway-loader__skip {

@@ -3,7 +3,6 @@ import type { GatewayPhase } from "@/lib/gateway/state";
 
 type LoaderOverlayProps = {
   progress: number;
-  returning: boolean;
   phase: GatewayPhase;
   canSkip: boolean;
   onSkip(): void;
@@ -11,7 +10,6 @@ type LoaderOverlayProps = {
 
 export function LoaderOverlay({
   progress,
-  returning,
   phase,
   canSkip,
   onSkip,
@@ -38,9 +36,6 @@ export function LoaderOverlay({
           role="progressbar"
         >
           {counter}
-        </p>
-        <p className="gateway-loader__mode">
-          {returning ? "SESSION RECONNECTED" : "GATEWAY SEQUENCE"}
         </p>
       </div>
       {canSkip ? (

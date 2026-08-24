@@ -644,7 +644,6 @@ export function GatewayPrototype() {
               onSkip={handleSkip}
               phase={state.phase}
               progress={displayedProgress}
-              returning={state.returning}
             />
           ) : null}
           {presentation.showTravelCue ? (

@@ -94,6 +94,7 @@ test("loader uses BM counter language without percent", async () => {
   assert.match(source, /TWO WORLDS\. ONE SYSTEM\./);
   assert.match(source, /SKIP/);
   assert.doesNotMatch(source, /%/);
+  assert.doesNotMatch(source, /SESSION RECONNECTED|GATEWAY SEQUENCE/);
 });
 
 test("orchestrator owns session resolution, loader modes, fallback timing, and semantic fallback", async () => {
