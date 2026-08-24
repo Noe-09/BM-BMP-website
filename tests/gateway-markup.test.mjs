@@ -48,6 +48,21 @@ test("selection overlay contains approved short copy and both real CTAs", async 
   );
 });
 
+test("enhanced selection exposes one semantic BM parent intro without duplicating visible art", async () => {
+  const source = await read("../components/gateway/SelectionOverlay.tsx");
+  const css = await read("../app/gateway-prototype/gateway.css");
+
+  assert.equal(source.match(/<h1\b/g)?.length, 1);
+  assert.match(source, /<h1>\s*BM\s*<\/h1>/);
+  assert.match(source, /TWO WORLDS\. ONE SYSTEM\./);
+  assert.match(source, /className="gateway-selection__intro"/);
+  assert.match(source, /className="gateway-core-mark" aria-hidden="true"/);
+  assert.match(
+    css,
+    /\.gateway-selection__intro\s*\{[^}]*position:\s*absolute;[^}]*width:\s*1px;[^}]*height:\s*1px;[^}]*overflow:\s*hidden;/s,
+  );
+});
+
 test("context cursor adds isolated gateway mode while retaining existing modes", async () => {
   const source = await read("../components/motion/ContextCursor.tsx");
   const css = await read("../app/motion.css");

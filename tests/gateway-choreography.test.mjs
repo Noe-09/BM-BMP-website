@@ -140,6 +140,44 @@ test("reduced motion removes travel and preview camera bias", () => {
   assert.deepEqual([end.leftPercent, end.rightPercent], [62, 38]);
 });
 
+test("reduced-motion previews preserve DOM selection without moving architecture", () => {
+  const neutral = deriveGatewayPose({ ...base, reducedMotion: true });
+  const visuals = deriveGatewayPose({
+    ...base,
+    reducedMotion: true,
+    selectionBias: -1,
+  });
+  const technical = deriveGatewayPose({
+    ...base,
+    reducedMotion: true,
+    selectionBias: 1,
+  });
+
+  assert.deepEqual(
+    [neutral.monolithX, visuals.monolithX, technical.monolithX],
+    [0, 0, 0],
+  );
+  assert.deepEqual(
+    [visuals.leftOpen, visuals.rightOpen],
+    [neutral.leftOpen, neutral.rightOpen],
+  );
+  assert.deepEqual(
+    [technical.leftOpen, technical.rightOpen],
+    [neutral.leftOpen, neutral.rightOpen],
+  );
+  assert.deepEqual([visuals.leftPercent, visuals.rightPercent], [62, 38]);
+  assert.deepEqual([technical.leftPercent, technical.rightPercent], [38, 62]);
+  assert.ok(visuals.visualLight > neutral.visualLight);
+  assert.ok(technical.technicalLight > neutral.technicalLight);
+
+  const movingVisuals = deriveGatewayPose({ ...base, selectionBias: -1 });
+  const movingTechnical = deriveGatewayPose({ ...base, selectionBias: 1 });
+  assert.notEqual(movingVisuals.monolithX, neutral.monolithX);
+  assert.notEqual(movingTechnical.monolithX, neutral.monolithX);
+  assert.notEqual(movingVisuals.leftOpen, neutral.leftOpen);
+  assert.notEqual(movingTechnical.rightOpen, neutral.rightOpen);
+});
+
 test("reduced-motion committed exit stays static at the endpoint", () => {
   const input = { ...base, reducedMotion: true, selectionBias: 1, committed: "technical" };
   const atZero = deriveGatewayPose({ ...input, exitProgress: 0 });

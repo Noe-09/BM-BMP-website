@@ -100,6 +100,10 @@ export function SelectionOverlay({
       onKeyDown={handleKeyDown}
       onPointerLeave={onClearPreview}
     >
+      <header className="gateway-selection__intro">
+        <h1>BM</h1>
+        <p>TWO WORLDS. ONE SYSTEM.</p>
+      </header>
       <div className="gateway-core-mark" aria-hidden="true">
         BM
       </div>

@@ -148,6 +148,18 @@
   transition: grid-template-columns 560ms var(--ease-responsive);
 }
 
+.gateway-selection__intro {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .gateway-core-mark {
   position: absolute;
   z-index: 2;
