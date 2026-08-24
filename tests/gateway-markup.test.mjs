@@ -64,8 +64,8 @@ test("orchestrator owns session resolution, loader modes, fallback timing, and s
   assert.match(source, /fallbackMs/);
   assert.match(source, /GatewayFallback/);
   assert.match(source, /<GatewayFallback/);
-  assert.match(source, /enhancementHealthy.*sceneReady/);
-  assert.match(source, /enhanced=\{enhancementHealthy\}/);
+  assert.match(source, /getGatewayPresentation/);
+  assert.match(source, /enhanced=\{presentation\.enhancementHealthy\}/);
 });
 
 test("gateway route renders the shared client orchestrator from a server component", async () => {
@@ -85,4 +85,19 @@ test("orchestrator owns one frame loop and cleans up travel input ownership", as
   assert.match(source, /releasePointerCapture/);
   assert.match(source, /removeEventListener\("wheel"/);
   assert.match(source, /removeEventListener\("pointercancel"/);
+});
+
+test("gateway CSS gives the lifecycle owner the top sibling stacking layer", async () => {
+  const css = await read("../app/gateway-prototype/gateway.css");
+  const source = await read("../components/gateway/GatewayPrototype.tsx");
+
+  assert.match(source, /data-layer-owner=\{presentation\.layerOwner\}/);
+  assert.match(
+    css,
+    /\.gateway-enhancement\s*\{[^}]*z-index:\s*3;/s,
+  );
+  assert.match(
+    css,
+    /\[data-layer-owner="fallback"\][^{]*\.gateway-fallback\s*\{[^}]*z-index:\s*4;/s,
+  );
 });

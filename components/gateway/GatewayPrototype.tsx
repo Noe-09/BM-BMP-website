@@ -15,6 +15,7 @@ import { deriveGatewayPose } from "@/lib/gateway/choreography";
 import {
   applyTravelDelta,
   GATEWAY_TIMING,
+  getGatewayPresentation,
   getLoaderTarget,
   shouldShowSkip,
   stepTravelProgress,
@@ -82,8 +83,11 @@ export function GatewayPrototype() {
   const loaderMode: LoaderMode =
     state.returning || profile.reducedMotion ? "short" : "first";
   const enhancementStarted = state.sessionResolved && profile.ready;
-  const enhancementActive = enhancementStarted && state.phase !== "fallback";
-  const enhancementHealthy = enhancementActive && sceneReady;
+  const presentation = getGatewayPresentation({
+    phase: state.phase,
+    enhancementStarted,
+    sceneReady,
+  });
   const selectionBias = getSelectionBias(state);
   const committed = state.committed;
 
@@ -474,9 +478,10 @@ export function GatewayPrototype() {
       data-phase={state.phase}
       data-scene-ready={sceneReady ? "true" : "false"}
       data-fonts-ready={fontsReady ? "true" : "false"}
+      data-layer-owner={presentation.layerOwner}
       ref={rootRef}
     >
-      {enhancementActive ? (
+      {presentation.enhancementActive ? (
         <div className="gateway-enhancement">
           <TunnelCanvas
             coarsePointer={profile.pointer === "coarse"}
@@ -484,8 +489,7 @@ export function GatewayPrototype() {
             onReady={handleSceneReady}
             pose={pose}
           />
-          {enhancementHealthy &&
-          (state.phase === "loading" || state.phase === "ready") ? (
+          {presentation.showLoader ? (
             <LoaderOverlay
               canSkip={loaderMode === "first" && canSkip}
               onSkip={handleSkip}
@@ -494,12 +498,12 @@ export function GatewayPrototype() {
               returning={state.returning}
             />
           ) : null}
-          {state.phase === "user-travel" ? (
+          {presentation.showTravelCue ? (
             <p className="gateway-travel-cue">MOVE FORWARD</p>
           ) : null}
         </div>
       ) : null}
-      <GatewayFallback enhanced={enhancementHealthy} />
+      <GatewayFallback enhanced={presentation.enhancementHealthy} />
     </div>
   );
 }

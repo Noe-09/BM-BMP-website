@@ -19,7 +19,7 @@
 }
 
 .gateway-enhancement {
-  z-index: 1;
+  z-index: 3;
   pointer-events: none;
 }
 
@@ -100,6 +100,10 @@
   min-height: 100svh;
   color: #f2f0eb;
   background: #11110f;
+}
+
+.gateway-prototype[data-layer-owner="fallback"] .gateway-fallback {
+  z-index: 4;
 }
 
 .gateway-fallback--enhanced {
