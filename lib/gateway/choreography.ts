@@ -54,8 +54,8 @@ export function deriveGatewayPose(input: GatewayPoseInput): GatewayPose {
   const visualBase = neutralLight + identityLeak * 0.08;
   const technicalBase = neutralLight - identityLeak * 0.07;
   const softTravel = 1 - (1 - travelProgress) ** 2;
-  const visualPreview = selectionBias < 0 ? 0.28 * previewAmount * softTravel : 0;
-  const technicalPreview = selectionBias > 0 ? 0.32 * previewAmount * travelProgress : 0;
+  const visualPreview = selectionBias < 0 ? previewAmount * (0.12 + 0.16 * softTravel) : 0;
+  const technicalPreview = selectionBias > 0 ? previewAmount * (0.14 + 0.18 * travelProgress) : 0;
   let leftOpen = clamp01(identityLeak * 0.18 + visualPreview);
   let rightOpen = clamp01(identityLeak * 0.12 + technicalPreview);
   let visualLight = clamp01(visualBase + visualPreview);

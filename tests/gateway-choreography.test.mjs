@@ -61,17 +61,23 @@ test("identity leak is gated until the final fifteen percent of travel", () => {
 });
 
 test("Visuals identity contribution eases softly while Technical remains linear", () => {
-  const neutral = deriveGatewayPose({ ...base, travelProgress: 0.5 });
-  const visuals = deriveGatewayPose({ ...base, travelProgress: 0.5, selectionBias: -1 });
-  const technical = deriveGatewayPose({ ...base, travelProgress: 0.5, selectionBias: 1 });
-  const visualDelta = visuals.visualLight - neutral.visualLight;
-  const technicalDelta = technical.technicalLight - neutral.technicalLight;
-  const visualFullDelta = deriveGatewayPose({ ...base, travelProgress: 1, selectionBias: -1 }).visualLight - deriveGatewayPose({ ...base, travelProgress: 1 }).visualLight;
-  const technicalFullDelta = deriveGatewayPose({ ...base, travelProgress: 1, selectionBias: 1 }).technicalLight - deriveGatewayPose({ ...base, travelProgress: 1 }).technicalLight;
-  assert.ok(visualDelta > visualFullDelta * 0.5);
-  assert.ok(Math.abs(technicalDelta - technicalFullDelta * 0.5) < 1e-9);
-  assert.ok(visuals.leftOpen > neutral.leftOpen);
-  assert.ok(technical.rightOpen > neutral.rightOpen);
+  const neutralStart = deriveGatewayPose({ ...base, travelProgress: 0 });
+  const neutralHalf = deriveGatewayPose({ ...base, travelProgress: 0.5 });
+  const neutralFull = deriveGatewayPose({ ...base, travelProgress: 1 });
+  const visualsStart = deriveGatewayPose({ ...base, travelProgress: 0, selectionBias: -1 });
+  const visualsHalf = deriveGatewayPose({ ...base, travelProgress: 0.5, selectionBias: -1 });
+  const visualsFull = deriveGatewayPose({ ...base, travelProgress: 1, selectionBias: -1 });
+  const technicalStart = deriveGatewayPose({ ...base, travelProgress: 0, selectionBias: 1 });
+  const technicalHalf = deriveGatewayPose({ ...base, travelProgress: 0.5, selectionBias: 1 });
+  const technicalFull = deriveGatewayPose({ ...base, travelProgress: 1, selectionBias: 1 });
+  const visualIncrementHalf = (visualsHalf.leftOpen - neutralHalf.leftOpen) - (visualsStart.leftOpen - neutralStart.leftOpen);
+  const visualIncrementFull = (visualsFull.leftOpen - neutralFull.leftOpen) - (visualsStart.leftOpen - neutralStart.leftOpen);
+  const technicalIncrementHalf = (technicalHalf.rightOpen - neutralHalf.rightOpen) - (technicalStart.rightOpen - neutralStart.rightOpen);
+  const technicalIncrementFull = (technicalFull.rightOpen - neutralFull.rightOpen) - (technicalStart.rightOpen - neutralStart.rightOpen);
+  assert.ok(visualsStart.leftOpen > neutralStart.leftOpen);
+  assert.ok(technicalStart.rightOpen > neutralStart.rightOpen);
+  assert.ok(visualIncrementHalf > visualIncrementFull * 0.5);
+  assert.ok(Math.abs(technicalIncrementHalf - technicalIncrementFull * 0.5) < 1e-9);
 });
 
 test("travel inputs are clamped before interpolation", () => {
