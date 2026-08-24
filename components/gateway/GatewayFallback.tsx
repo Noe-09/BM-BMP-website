@@ -18,7 +18,7 @@ export function GatewayFallback({
 }: GatewayFallbackProps) {
   return (
     <main
-      className={`gateway-fallback${enhanced ? " gateway-fallback--enhanced" : ""}`}
+      className={`gateway-page gateway-fallback${enhanced ? " gateway-fallback--enhanced" : ""}`}
     >
       <div className="gateway-fallback__inner">
         <p className="gateway-fallback__mark">BM</p>

@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
-import type { MouseEvent } from "react";
+import type { CSSProperties, MouseEvent } from "react";
 
 import { useInteractionProfile } from "@/lib/motion/useInteractionProfile";
 import { damp } from "@/lib/motion/physics";
@@ -49,6 +49,10 @@ const SESSION_KEY = "bmGatewaySeen";
 type SkipTarget = {
   from: number;
   startedAt: number;
+};
+
+type GatewayPageStyle = CSSProperties & {
+  "--gateway-loader-progress": number;
 };
 
 const isAnimatedPhase = (phase: GatewayPhase) =>
@@ -110,7 +114,11 @@ export function GatewayPrototype() {
     selectionOverlayPresent: true,
   });
   const selectionBias = getSelectionBias(state);
+  const selection = state.committed ?? state.preview ?? "neutral";
   const committed = state.committed;
+  const pageStyle: GatewayPageStyle = {
+    "--gateway-loader-progress": displayedProgress,
+  };
 
   const pose = useMemo(
     () =>
@@ -610,12 +618,17 @@ export function GatewayPrototype() {
 
   return (
     <div
-      className="gateway-prototype"
-      data-phase={state.phase}
+      className="gateway-page gateway-prototype"
+      data-gateway-enhanced={
+        presentation.enhancementHealthy ? "true" : "false"
+      }
+      data-gateway-phase={state.phase}
+      data-gateway-selection={selection}
       data-scene-ready={sceneReady ? "true" : "false"}
       data-fonts-ready={fontsReady ? "true" : "false"}
       data-layer-owner={presentation.layerOwner}
       ref={rootRef}
+      style={pageStyle}
     >
       {presentation.enhancementActive ? (
         <div className="gateway-enhancement">

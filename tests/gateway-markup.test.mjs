@@ -160,3 +160,46 @@ test("gateway CSS gives the lifecycle owner the top sibling stacking layer", asy
     /\[data-layer-owner="fallback"\][^{]*\.gateway-fallback\s*\{[^}]*z-index:\s*4;/s,
   );
 });
+
+test("gateway CSS contains coarse-pointer and reduced-motion modes", async () => {
+  const css = await read("../app/gateway-prototype/gateway.css");
+
+  assert.match(css, /pointer: coarse|hover: none/);
+  assert.match(css, /prefers-reduced-motion: reduce/);
+  assert.match(css, /100svh/);
+});
+
+test("gateway route exposes scoped progressive-enhancement state hooks", async () => {
+  const source = await read("../components/gateway/GatewayPrototype.tsx");
+  const fallback = await read("../components/gateway/GatewayFallback.tsx");
+
+  assert.match(source, /className="gateway-page gateway-prototype"/);
+  assert.match(source, /data-gateway-enhanced=/);
+  assert.match(source, /data-gateway-phase=/);
+  assert.match(source, /data-gateway-selection=/);
+  assert.match(fallback, /gateway-page gateway-fallback/);
+});
+
+test("gateway art direction excludes decorative UI effects and visitor-facing errors", async () => {
+  const css = await read("../app/gateway-prototype/gateway.css");
+  const fallback = await read("../components/gateway/GatewayFallback.tsx");
+
+  assert.doesNotMatch(css, /gradient\s*\(|backdrop-filter|box-shadow|drop-shadow/i);
+  assert.doesNotMatch(
+    css,
+    /border-radius\s*:\s*(?!0(?:px|rem|em|%)?\s*[;}])[^;}]+/i,
+  );
+  assert.doesNotMatch(
+    fallback,
+    /WebGL unsupported|GPU error|stack trace|loading failed/i,
+  );
+});
+
+test("mobile division names wrap inside the narrow coarse preview region", async () => {
+  const css = await read("../app/gateway-prototype/gateway.css");
+
+  assert.match(
+    css,
+    /@media \(max-width: 640px\)[^]*\.gateway-selection__name\s*\{[^}]*overflow-wrap:\s*anywhere;/,
+  );
+});
