@@ -40,6 +40,24 @@ test("load readiness waits for the session result", () => {
   assert.equal(state.returning, true);
 });
 
+test("duplicate session resolution cannot replace the resolved return state", () => {
+  let state = resolveSession(createGatewayState(false), false);
+  state = gatewayReducer(state, { type: "SESSION_RESOLVED", returning: true });
+  assert.equal(state.returning, false);
+  assert.equal(state.sessionResolved, true);
+  assert.equal(state.phase, "loading");
+});
+
+test("late session resolution cannot change entry behavior after loading is ready", () => {
+  let state = resolveSession(createGatewayState(false), false);
+  state = gatewayReducer(state, { type: "LOAD_READY" });
+  state = gatewayReducer(state, { type: "SESSION_RESOLVED", returning: true });
+  assert.equal(state.phase, "ready");
+  assert.equal(state.returning, false);
+  state = gatewayReducer(state, { type: "BEGIN_ENTRY", reducedMotion: false });
+  assert.equal(state.phase, "auto-entry");
+});
+
 test("return and reduced-motion entry skip the long camera journey", () => {
   let returning = resolveSession(createGatewayState(true), true);
   returning = gatewayReducer(returning, { type: "LOAD_READY" });

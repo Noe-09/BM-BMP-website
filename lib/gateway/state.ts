@@ -45,9 +45,15 @@ export function gatewayReducer(
   state: GatewayState,
   event: GatewayEvent,
 ): GatewayState {
-  if (event.type === "SESSION_RESOLVED") {
+  if (
+    event.type === "SESSION_RESOLVED" &&
+    state.phase === "loading" &&
+    !state.sessionResolved
+  ) {
     return { ...state, returning: event.returning, sessionResolved: true };
   }
+
+  if (event.type === "SESSION_RESOLVED") return state;
 
   if (event.type === "FAIL") {
     return state.phase === "exit" ? state : { ...state, phase: "fallback" };
