@@ -1,0 +1,99 @@
+.gateway-fallback {
+  min-height: 100svh;
+  color: #f2f0eb;
+  background: #11110f;
+}
+
+.gateway-fallback__inner {
+  display: grid;
+  align-content: space-between;
+  min-height: 100svh;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 3vw, 3rem);
+}
+
+.gateway-fallback__mark,
+.gateway-fallback__division-name,
+.gateway-fallback__division-type,
+.gateway-fallback__action {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.gateway-fallback h1 {
+  max-width: 9ch;
+  margin: clamp(5rem, 15vh, 12rem) 0;
+  font-size: clamp(3.5rem, 10vw, 10rem);
+  font-weight: 620;
+  line-height: 0.8;
+  letter-spacing: -0.075em;
+}
+
+.gateway-fallback__divisions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid rgba(242, 240, 235, 0.38);
+}
+
+.gateway-fallback__division {
+  display: grid;
+  gap: 1rem;
+  min-height: 15rem;
+  padding: 1rem 0 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.gateway-fallback__division + .gateway-fallback__division {
+  padding-left: clamp(1.25rem, 3vw, 3rem);
+  border-left: 1px solid rgba(242, 240, 235, 0.38);
+}
+
+.gateway-fallback__division-type {
+  color: rgba(242, 240, 235, 0.56);
+}
+
+.gateway-fallback__division-copy {
+  align-self: end;
+  font-size: clamp(1.1rem, 1.7vw, 1.65rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.gateway-fallback__action {
+  width: max-content;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid rgba(242, 240, 235, 0.5);
+}
+
+.gateway-fallback__division:hover .gateway-fallback__action,
+.gateway-fallback__division:focus-visible .gateway-fallback__action,
+.gateway-fallback__action:hover,
+.gateway-fallback__action:focus-visible {
+  border-color: currentColor;
+}
+
+.gateway-technical .gateway-fallback__inner {
+  align-content: start;
+  gap: 1.25rem;
+}
+
+.gateway-technical h1 {
+  margin: clamp(4rem, 14vh, 10rem) 0;
+}
+
+@media (max-width: 640px) {
+  .gateway-fallback__divisions {
+    grid-template-columns: 1fr;
+  }
+
+  .gateway-fallback__division + .gateway-fallback__division {
+    padding: 1rem 0 0;
+    border-top: 1px solid rgba(242, 240, 235, 0.38);
+    border-left: 0;
+  }
+}
