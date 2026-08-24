@@ -1,15 +1,15 @@
 # BM Gateway Tunnel Prototype Implementation Plan
 
-This initial plan has been superseded after self-review.
+This initial plan is superseded.
 
-Use the canonical corrected plan:
+## Canonical execution set
 
-`docs/superpowers/plans/2026-08-24-bm-gateway-tunnel-v2.md`
+Read these in order:
 
-The V2 plan fixes three implementation ambiguities before coding begins:
+1. `docs/superpowers/specs/2026-08-24-bm-gateway-tunnel-design.md`
+2. `docs/superpowers/plans/2026-08-24-bm-gateway-tunnel-v2.md`
+3. `docs/superpowers/plans/2026-08-24-bm-gateway-tunnel-final-review.md`
 
-- Task 1 now renders `GatewayFallback` until `GatewayPrototype` actually exists.
-- Gateway navigation policy includes `event.detail`, preserving native keyboard activation.
-- Coarse/mobile choreography has an explicit world-space camera path approximately 30–40% shorter than desktop, rather than only shortening interaction time.
+The **Final Review Addendum is mandatory and wins on any conflict with V2**.
 
-Do not implement from this superseded file.
+Do not implement from this superseded entry file itself.
