@@ -54,18 +54,24 @@ test("identity leak is gated until the final fifteen percent of travel", () => {
   assert.equal(deriveGatewayPose({ ...base, travelProgress: 0.84 }).identityLeak, 0);
   const preHover = deriveGatewayPose({ ...base, travelProgress: 0.925 });
   assert.ok(Math.abs(preHover.identityLeak - 0.5) < 1e-9);
-  assert.notEqual(preHover.visualLight, preHover.technicalLight);
+  assert.ok(preHover.visualLight > preHover.technicalLight);
+  assert.ok(preHover.leftOpen > preHover.rightOpen);
   assert.ok(preHover.neutralLight > 0);
   assert.equal(deriveGatewayPose({ ...base, travelProgress: 1 }).identityLeak, 1);
 });
 
 test("Visuals identity contribution eases softly while Technical remains linear", () => {
-  const neutral = deriveGatewayPose({ ...base, travelProgress: 0.85 });
-  const halfway = deriveGatewayPose({ ...base, travelProgress: 0.925, selectionBias: -1 });
-  const full = deriveGatewayPose({ ...base, travelProgress: 1, selectionBias: -1 });
-  const visualHalf = halfway.visualLight - neutral.visualLight;
-  const visualFull = full.visualLight - neutral.visualLight;
-  assert.ok(visualHalf > visualFull * 0.5);
+  const neutral = deriveGatewayPose({ ...base, travelProgress: 0.5 });
+  const visuals = deriveGatewayPose({ ...base, travelProgress: 0.5, selectionBias: -1 });
+  const technical = deriveGatewayPose({ ...base, travelProgress: 0.5, selectionBias: 1 });
+  const visualDelta = visuals.visualLight - neutral.visualLight;
+  const technicalDelta = technical.technicalLight - neutral.technicalLight;
+  const visualFullDelta = deriveGatewayPose({ ...base, travelProgress: 1, selectionBias: -1 }).visualLight - deriveGatewayPose({ ...base, travelProgress: 1 }).visualLight;
+  const technicalFullDelta = deriveGatewayPose({ ...base, travelProgress: 1, selectionBias: 1 }).technicalLight - deriveGatewayPose({ ...base, travelProgress: 1 }).technicalLight;
+  assert.ok(visualDelta > visualFullDelta * 0.5);
+  assert.ok(Math.abs(technicalDelta - technicalFullDelta * 0.5) < 1e-9);
+  assert.ok(visuals.leftOpen > neutral.leftOpen);
+  assert.ok(technical.rightOpen > neutral.rightOpen);
 });
 
 test("travel inputs are clamped before interpolation", () => {
