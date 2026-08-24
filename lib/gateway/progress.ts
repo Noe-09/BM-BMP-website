@@ -6,7 +6,9 @@ export type LoaderMode = "first" | "short";
 export type GatewayPresentation = {
   enhancementActive: boolean;
   enhancementHealthy: boolean;
+  fallbackActive: boolean;
   showLoader: boolean;
+  showSelection: boolean;
   showTravelCue: boolean;
   layerOwner: "fallback" | "enhancement";
 };
@@ -21,22 +23,33 @@ export const GATEWAY_TIMING = {
   autoEntryCoarseMs: 1200,
   skipFastForwardMs: 800,
   exitMs: 850,
+  navigationFallbackMs: 1400,
 } as const;
 
 export function getGatewayPresentation({
   phase,
   enhancementStarted,
   sceneReady,
+  selectionOverlayPresent,
 }: {
   phase: GatewayPhase;
   enhancementStarted: boolean;
   sceneReady: boolean;
+  selectionOverlayPresent: boolean;
 }): GatewayPresentation {
   const enhancementActive = enhancementStarted && phase !== "fallback";
   const enhancementHealthy = enhancementActive && sceneReady;
   const showLoader =
     enhancementHealthy && (phase === "loading" || phase === "ready");
   const showTravelCue = enhancementHealthy && phase === "user-travel";
+  const showSelection =
+    enhancementHealthy &&
+    selectionOverlayPresent &&
+    (phase === "split" ||
+      phase === "preview" ||
+      phase === "commit" ||
+      phase === "exit");
+  const fallbackActive = !showSelection;
   const enhancementOwnsLayer =
     phase === "loading" ||
     phase === "ready" ||
@@ -48,10 +61,14 @@ export function getGatewayPresentation({
   return {
     enhancementActive,
     enhancementHealthy,
+    fallbackActive,
     showLoader,
+    showSelection,
     showTravelCue,
     layerOwner:
-      enhancementHealthy && enhancementOwnsLayer ? "enhancement" : "fallback",
+      enhancementHealthy && (enhancementOwnsLayer || showSelection)
+        ? "enhancement"
+        : "fallback",
   };
 }
 

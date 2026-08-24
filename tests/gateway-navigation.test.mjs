@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { shouldEnhanceGatewayNavigation } from "../lib/gateway/navigation.ts";
+import {
+  acquireGatewayCommitLock,
+  getGatewayExpectedPathname,
+  shouldEnhanceGatewayNavigation,
+  shouldMarkGatewaySession,
+  shouldUseGatewayLocationFallback,
+} from "../lib/gateway/navigation.ts";
 
 const primary = {
   button: 0,
@@ -31,4 +37,37 @@ test("gateway enhances only an ordinary primary-pointer activation", () => {
   assert.equal(shouldEnhanceGatewayNavigation({ ...primary, download: true }), false);
   assert.equal(shouldEnhanceGatewayNavigation({ ...primary, reducedMotion: true }), false);
   assert.equal(shouldEnhanceGatewayNavigation({ ...primary, enhancementReady: false }), false);
+});
+
+test("same-context keyboard activation marks the session without enhancing navigation", () => {
+  const keyboard = { ...primary, detail: 0 };
+
+  assert.equal(shouldEnhanceGatewayNavigation(keyboard), false);
+  assert.equal(shouldMarkGatewaySession(keyboard), true);
+  assert.equal(shouldMarkGatewaySession({ ...keyboard, button: 2 }), false);
+  assert.equal(shouldMarkGatewaySession({ ...keyboard, metaKey: true }), false);
+  assert.equal(shouldMarkGatewaySession({ ...keyboard, target: "_blank" }), false);
+  assert.equal(shouldMarkGatewaySession({ ...keyboard, download: true }), false);
+});
+
+test("commit lock is acquired synchronously only once", () => {
+  const lock = { current: false };
+
+  assert.equal(acquireGatewayCommitLock(lock), true);
+  assert.equal(lock.current, true);
+  assert.equal(acquireGatewayCommitLock(lock), false);
+});
+
+test("navigation fallback compares the parsed destination pathname", () => {
+  const expected = getGatewayExpectedPathname(
+    "/gateway-prototype/technical?from=split#entry",
+    "https://bm.test/gateway-prototype",
+  );
+
+  assert.equal(expected, "/gateway-prototype/technical");
+  assert.equal(shouldUseGatewayLocationFallback("/gateway-prototype", expected), true);
+  assert.equal(
+    shouldUseGatewayLocationFallback("/gateway-prototype/technical", expected),
+    false,
+  );
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname, useRouter } from "next/navigation";
 import {
   useCallback,
   useEffect,
@@ -8,10 +9,19 @@ import {
   useRef,
   useState,
 } from "react";
+import type { MouseEvent } from "react";
 
 import { useInteractionProfile } from "@/lib/motion/useInteractionProfile";
 import { damp } from "@/lib/motion/physics";
 import { deriveGatewayPose } from "@/lib/gateway/choreography";
+import {
+  acquireGatewayCommitLock,
+  getGatewayExpectedPathname,
+  shouldEnhanceGatewayNavigation,
+  shouldMarkGatewaySession,
+  shouldUseGatewayLocationFallback,
+  type GatewayNavigationIntent,
+} from "@/lib/gateway/navigation";
 import {
   applyTravelDelta,
   GATEWAY_TIMING,
@@ -25,10 +35,12 @@ import {
   createGatewayState,
   gatewayReducer,
   getSelectionBias,
+  type GatewayDivision,
   type GatewayPhase,
 } from "@/lib/gateway/state";
 import { GatewayFallback } from "./GatewayFallback";
 import { LoaderOverlay } from "./LoaderOverlay";
+import { SelectionOverlay } from "./SelectionOverlay";
 import { TunnelCanvas } from "./TunnelCanvas";
 
 const SESSION_KEY = "bmGatewaySeen";
@@ -43,9 +55,11 @@ const isAnimatedPhase = (phase: GatewayPhase) =>
   phase === "ready" ||
   phase === "auto-entry" ||
   phase === "user-travel" ||
-  phase === "exit";
+  phase === "commit";
 
 export function GatewayPrototype() {
+  const pathname = usePathname();
+  const router = useRouter();
   const profile = useInteractionProfile();
   const [state, dispatch] = useReducer(
     gatewayReducer,
@@ -72,6 +86,7 @@ export function GatewayPrototype() {
   const displayedProgressRef = useRef(0);
   const canSkipRef = useRef(false);
   const exitCompleteRef = useRef(false);
+  const exitStartedAtRef = useRef<number | null>(null);
   const targetProgressRef = useRef(0);
   const renderedProgressRef = useRef(0);
   const dragYRef = useRef<number | null>(null);
@@ -79,6 +94,10 @@ export function GatewayPrototype() {
   const skipTargetRef = useRef<SkipTarget | null>(null);
   const requestFrameRef = useRef<() => void>(() => undefined);
   const sessionWrittenRef = useRef(false);
+  const committedGuardRef = useRef(false);
+  const commitHrefRef = useRef<string | null>(null);
+  const expectedPathnameRef = useRef<string | null>(null);
+  const safetyTimeoutRef = useRef<number | null>(null);
 
   const loaderMode: LoaderMode =
     state.returning || profile.reducedMotion ? "short" : "first";
@@ -87,6 +106,7 @@ export function GatewayPrototype() {
     phase: state.phase,
     enhancementStarted,
     sceneReady,
+    selectionOverlayPresent: true,
   });
   const selectionBias = getSelectionBias(state);
   const committed = state.committed;
@@ -111,12 +131,60 @@ export function GatewayPrototype() {
     ],
   );
 
+  const clearSafetyTimeout = useCallback(() => {
+    if (safetyTimeoutRef.current === null) return;
+    window.clearTimeout(safetyTimeoutRef.current);
+    safetyTimeoutRef.current = null;
+  }, []);
+
+  const writeSessionSeen = useCallback(() => {
+    if (sessionWrittenRef.current) return;
+    sessionWrittenRef.current = true;
+    try {
+      sessionStorage.setItem(SESSION_KEY, "1");
+    } catch {
+      // Native and enhanced navigation remain valid without storage.
+    }
+  }, []);
+
+  const finishCommit = useCallback(() => {
+    const href = commitHrefRef.current;
+    const expectedPathname = expectedPathnameRef.current;
+    if (!href || !expectedPathname) return;
+
+    dispatch({ type: "EXIT" });
+    router.push(href);
+    clearSafetyTimeout();
+    safetyTimeoutRef.current = window.setTimeout(() => {
+      safetyTimeoutRef.current = null;
+      if (
+        shouldUseGatewayLocationFallback(
+          window.location.pathname,
+          expectedPathname,
+        )
+      ) {
+        window.location.assign(href);
+      }
+    }, GATEWAY_TIMING.navigationFallbackMs);
+  }, [clearSafetyTimeout, router]);
+
   useEffect(() => {
     mountedRef.current = true;
     return () => {
       mountedRef.current = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (
+      expectedPathnameRef.current &&
+      pathname === expectedPathnameRef.current
+    ) {
+      clearSafetyTimeout();
+    }
+
+    return clearSafetyTimeout;
+  }, [clearSafetyTimeout, pathname]);
 
   useEffect(() => {
     phaseRef.current = state.phase;
@@ -179,14 +247,13 @@ export function GatewayPrototype() {
     const loaderStartedAt = previousTime;
     let observedPhase = phaseRef.current;
     let phaseStartedAt = previousTime;
-    let exitStartedAt = previousTime;
 
     const schedule = () => {
       if (
         disposed ||
         frame ||
         !isAnimatedPhase(phaseRef.current) ||
-        (phaseRef.current === "exit" && exitCompleteRef.current)
+        (phaseRef.current === "commit" && exitCompleteRef.current)
       ) {
         return;
       }
@@ -207,7 +274,6 @@ export function GatewayPrototype() {
       if (phase !== observedPhase) {
         observedPhase = phase;
         phaseStartedAt = time;
-        if (phase === "exit") exitStartedAt = time;
       }
 
       if (phase === "loading") {
@@ -318,13 +384,17 @@ export function GatewayPrototype() {
         } else {
           setTravelProgress(renderedProgressRef.current);
         }
-      } else if (phase === "exit") {
+      } else if (phase === "commit") {
+        if (exitStartedAtRef.current === null) {
+          exitStartedAtRef.current = time;
+        }
         const next = Math.min(
           1,
-          (time - exitStartedAt) / GATEWAY_TIMING.exitMs,
+          (time - exitStartedAtRef.current) / GATEWAY_TIMING.exitMs,
         );
         exitCompleteRef.current = next >= 1;
         setExitProgress(next);
+        if (exitCompleteRef.current) finishCommit();
       }
 
       schedule();
@@ -339,7 +409,7 @@ export function GatewayPrototype() {
       frame = 0;
       requestFrameRef.current = () => undefined;
     };
-  }, [enhancementStarted, state.phase]);
+  }, [enhancementStarted, finishCommit, state.phase]);
 
   const handleSceneReady = useCallback(() => {
     if (!mountedRef.current || sceneReadyRef.current || failedRef.current) return;
@@ -349,10 +419,71 @@ export function GatewayPrototype() {
   }, []);
 
   const handleFailure = useCallback(() => {
-    if (!mountedRef.current || failedRef.current) return;
+    if (
+      !mountedRef.current ||
+      failedRef.current ||
+      committedGuardRef.current
+    ) {
+      return;
+    }
     failedRef.current = true;
     dispatch({ type: "FAIL" });
   }, []);
+
+  const handlePreview = useCallback((division: GatewayDivision) => {
+    if (committedGuardRef.current) return;
+    dispatch({ type: "PREVIEW", division });
+  }, []);
+
+  const handleClearPreview = useCallback(() => {
+    if (committedGuardRef.current) return;
+    dispatch({ type: "CLEAR_PREVIEW" });
+  }, []);
+
+  const handleCommit = useCallback(
+    (
+      division: GatewayDivision,
+      href: string,
+      event: MouseEvent<HTMLAnchorElement>,
+    ) => {
+      const anchor = event.currentTarget;
+      const intent: GatewayNavigationIntent = {
+        button: event.button,
+        detail: event.detail,
+        defaultPrevented: event.defaultPrevented,
+        metaKey: event.metaKey,
+        ctrlKey: event.ctrlKey,
+        shiftKey: event.shiftKey,
+        altKey: event.altKey,
+        target: anchor.target || undefined,
+        download: anchor.hasAttribute("download"),
+        reducedMotion: profile.reducedMotion,
+        enhancementReady: presentation.showSelection,
+      };
+
+      if (shouldMarkGatewaySession(intent)) {
+        writeSessionSeen();
+        return;
+      }
+
+      if (!shouldEnhanceGatewayNavigation(intent)) return;
+
+      event.preventDefault();
+      if (!acquireGatewayCommitLock(committedGuardRef)) return;
+
+      exitCompleteRef.current = false;
+      exitStartedAtRef.current = null;
+      commitHrefRef.current = href;
+      expectedPathnameRef.current = getGatewayExpectedPathname(
+        href,
+        window.location.href,
+      );
+      setExitProgress(0);
+      dispatch({ type: "COMMIT", division });
+      writeSessionSeen();
+    },
+    [presentation.showSelection, profile.reducedMotion, writeSessionSeen],
+  );
 
   const handleSkip = useCallback(() => {
     const mode: LoaderMode =
@@ -456,22 +587,6 @@ export function GatewayPrototype() {
     state.phase,
   ]);
 
-  useEffect(() => {
-    if (
-      state.phase !== "commit" ||
-      state.committed === null ||
-      sessionWrittenRef.current
-    ) {
-      return;
-    }
-    sessionWrittenRef.current = true;
-    try {
-      sessionStorage.setItem(SESSION_KEY, "1");
-    } catch {
-      // Navigation remains valid when storage is unavailable.
-    }
-  }, [state.committed, state.phase]);
-
   return (
     <div
       className="gateway-prototype"
@@ -501,9 +616,30 @@ export function GatewayPrototype() {
           {presentation.showTravelCue ? (
             <p className="gateway-travel-cue">MOVE FORWARD</p>
           ) : null}
+          {presentation.showSelection ? (
+            <SelectionOverlay
+              state={state}
+              leftPercent={pose.leftPercent}
+              rightPercent={pose.rightPercent}
+              enhancementReady={presentation.enhancementHealthy}
+              reducedMotion={profile.reducedMotion}
+              coarsePointer={profile.pointer === "coarse"}
+              onPreview={handlePreview}
+              onClearPreview={handleClearPreview}
+              onCommit={handleCommit}
+            />
+          ) : null}
         </div>
       ) : null}
-      <GatewayFallback enhanced={presentation.enhancementHealthy} />
+      <div
+        hidden={!presentation.fallbackActive}
+        aria-hidden={!presentation.fallbackActive}
+      >
+        <GatewayFallback
+          enhanced={presentation.enhancementHealthy}
+          onCommit={handleCommit}
+        />
+      </div>
     </div>
   );
 }

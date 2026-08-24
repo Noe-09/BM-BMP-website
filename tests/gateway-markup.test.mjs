@@ -20,6 +20,41 @@ test("gateway fallback exposes both BM divisions and approved short descriptions
   assert.match(source, /href="\/gateway-prototype\/technical"/);
 });
 
+test("selection overlay contains approved short copy and both real CTAs", async () => {
+  const source = await read("../components/gateway/SelectionOverlay.tsx");
+
+  assert.match(source, /Digital identities/);
+  assert.match(source, /with motion, story and distinction\./);
+  assert.match(source, /AI systems, product logic/);
+  assert.match(source, /and technical execution\./);
+  assert.match(source, /ENTER VISUALS/);
+  assert.match(source, /ENTER TECHNICAL/);
+  assert.match(source, /href="\/"/);
+  assert.match(source, /href="\/gateway-prototype\/technical"/);
+  assert.match(source, /gateway-core-mark/);
+  assert.match(source, />\s*BM\s*</);
+  assert.match(source, /<Link/);
+  assert.match(source, /<button/);
+  for (const button of source.matchAll(/<button\b[^]*?<\/button>/g)) {
+    assert.doesNotMatch(button[0], /<Link/);
+  }
+  for (const link of source.matchAll(/<Link\b[^]*?<\/Link>/g)) {
+    assert.doesNotMatch(link[0], /<button/);
+  }
+});
+
+test("context cursor adds isolated gateway mode while retaining existing modes", async () => {
+  const source = await read("../components/motion/ContextCursor.tsx");
+  const css = await read("../app/motion.css");
+
+  assert.match(source, /"gateway"/);
+  assert.match(source, /"default"/);
+  assert.match(source, /"view"/);
+  assert.match(source, /"explore"/);
+  assert.match(css, /\.context-cursor\[data-mode="gateway"\]/);
+  assert.match(css, /\.context-cursor\[data-mode="view"\],\s*\.context-cursor\[data-mode="explore"\]\s*\{[^}]*width:\s*84px;/s);
+});
+
 test("gateway route is isolated from the production homepage", async () => {
   const gateway = await read("../app/gateway-prototype/page.tsx");
   const home = await read("../app/page.tsx");
@@ -79,12 +114,29 @@ test("orchestrator owns one frame loop and cleans up travel input ownership", as
   const source = await read("../components/gateway/GatewayPrototype.tsx");
 
   assert.equal(source.match(/requestAnimationFrame\(/g)?.length, 1);
-  assert.equal(source.match(/setTimeout\(/g)?.length, 1);
+  assert.equal(source.match(/setTimeout\(/g)?.length, 2);
   assert.match(source, /dragPointerIdRef/);
   assert.match(source, /exitCompleteRef/);
   assert.match(source, /releasePointerCapture/);
   assert.match(source, /removeEventListener\("wheel"/);
   assert.match(source, /removeEventListener\("pointercancel"/);
+  assert.match(source, /safetyTimeoutRef/);
+  assert.match(source, /cancelAnimationFrame/);
+});
+
+test("orchestrator integrates semantic selection and preserves native activation paths", async () => {
+  const source = await read("../components/gateway/GatewayPrototype.tsx");
+
+  assert.match(source, /SelectionOverlay/);
+  assert.match(source, /event\.detail/);
+  assert.match(source, /committedGuardRef/);
+  assert.match(source, /shouldEnhanceGatewayNavigation/);
+  assert.match(source, /shouldMarkGatewaySession/);
+  assert.match(source, /router\.push\(href\)/);
+  assert.match(source, /window\.location\.assign\(href\)/);
+  assert.match(source, /navigationFallbackMs/);
+  assert.match(source, /hidden=\{!presentation\.fallbackActive\}/);
+  assert.match(source, /aria-hidden=\{!presentation\.fallbackActive\}/);
 });
 
 test("gateway CSS gives the lifecycle owner the top sibling stacking layer", async () => {

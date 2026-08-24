@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { damp, MOTION } from "@/lib/motion/physics";
 import { useInteractionProfile } from "@/lib/motion/useInteractionProfile";
 
-type CursorMode = "default" | "view" | "explore";
+type CursorMode = "default" | "view" | "explore" | "gateway";
 
 type CursorState = {
   mode: CursorMode;
@@ -16,13 +16,17 @@ const CURSOR_LABEL: Record<CursorMode, string> = {
   default: "",
   view: "View ↗",
   explore: "Explore →",
+  gateway: "",
 };
 
 function readCursorState(target: EventTarget | null): CursorState {
   if (!(target instanceof Element)) return { mode: "default", label: "" };
   const cursorTarget = target.closest<HTMLElement>("[data-cursor]");
   const value = cursorTarget?.dataset.cursor;
-  const mode = value === "view" || value === "explore" ? value : "default";
+  const mode =
+    value === "view" || value === "explore" || value === "gateway"
+      ? value
+      : "default";
   return {
     mode,
     label: cursorTarget?.dataset.cursorLabel || CURSOR_LABEL[mode],

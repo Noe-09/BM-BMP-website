@@ -12,6 +12,10 @@ export type GatewayNavigationIntent = {
   enhancementReady: boolean;
 };
 
+export type GatewayCommitLock = {
+  current: boolean;
+};
+
 export function shouldEnhanceGatewayNavigation(
   intent: GatewayNavigationIntent,
 ): boolean {
@@ -28,4 +32,40 @@ export function shouldEnhanceGatewayNavigation(
     !intent.reducedMotion &&
     intent.enhancementReady
   );
+}
+
+export function shouldMarkGatewaySession(
+  intent: GatewayNavigationIntent,
+): boolean {
+  return (
+    intent.button === 0 &&
+    intent.detail === 0 &&
+    !intent.defaultPrevented &&
+    !intent.metaKey &&
+    !intent.ctrlKey &&
+    !intent.shiftKey &&
+    !intent.altKey &&
+    (!intent.target || intent.target === "_self") &&
+    !intent.download
+  );
+}
+
+export function acquireGatewayCommitLock(lock: GatewayCommitLock): boolean {
+  if (lock.current) return false;
+  lock.current = true;
+  return true;
+}
+
+export function getGatewayExpectedPathname(
+  href: string,
+  baseHref: string,
+): string {
+  return new URL(href, baseHref).pathname;
+}
+
+export function shouldUseGatewayLocationFallback(
+  currentPathname: string,
+  expectedPathname: string,
+): boolean {
+  return currentPathname !== expectedPathname;
 }
