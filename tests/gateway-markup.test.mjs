@@ -130,6 +130,8 @@ test("orchestrator owns one frame loop and cleans up travel input ownership", as
   assert.match(source, /removeEventListener\("pointercancel"/);
   assert.match(source, /safetyTimeoutRef/);
   assert.match(source, /cancelAnimationFrame/);
+  assert.match(source, /window\.addEventListener\("keydown"/);
+  assert.match(source, /window\.removeEventListener\("keydown"/);
 });
 
 test("orchestrator integrates semantic selection and preserves native activation paths", async () => {
@@ -196,16 +198,16 @@ test("gateway art direction excludes decorative UI effects and visitor-facing er
   );
 });
 
-test("mobile division names wrap inside the narrow coarse preview region", async () => {
+test("mobile division names retain whole-word wrapping in the narrow preview region", async () => {
   const css = await read("../app/gateway-prototype/gateway.css");
 
   assert.match(
     css,
-    /@media \(max-width: 640px\)[^]*\.gateway-selection__name\s*\{[^}]*overflow-wrap:\s*anywhere;/,
+    /@media \(max-width: 640px\)[^]*\.gateway-selection__name\s*\{[^}]*max-width:\s*10ch;[^}]*overflow-wrap:\s*normal;/,
   );
 });
 
-test("portrait tablet division names wrap inside the coarse preview remainder", async () => {
+test("portrait tablet division names keep whole-word wrapping", async () => {
   const css = await read("../app/gateway-prototype/gateway.css");
   const tabletMode = css.match(
     /@media \(max-width: 1023px\)([^]*?)@media \(max-width: 640px\)/,
@@ -214,7 +216,7 @@ test("portrait tablet division names wrap inside the coarse preview remainder", 
   assert.ok(tabletMode, "expected a portrait-tablet gateway mode");
   assert.match(
     tabletMode,
-    /\.gateway-selection__name\s*\{[^}]*overflow-wrap:\s*anywhere;/,
+    /\.gateway-selection__name\s*\{[^}]*max-width:\s*10ch;[^}]*overflow-wrap:\s*normal;/,
   );
 });
 

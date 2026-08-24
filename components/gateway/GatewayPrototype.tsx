@@ -449,6 +449,17 @@ export function GatewayPrototype() {
     dispatch({ type: "CLEAR_PREVIEW" });
   }, []);
 
+  useEffect(() => {
+    if (state.phase !== "preview") return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") handleClearPreview();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleClearPreview, state.phase]);
+
   const handleCommit = useCallback(
     (
       division: GatewayDivision,

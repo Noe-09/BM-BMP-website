@@ -42,14 +42,17 @@ export function getGatewayPresentation({
   const showLoader =
     enhancementHealthy && (phase === "loading" || phase === "ready");
   const showTravelCue = enhancementHealthy && phase === "user-travel";
+  const selectionPhase =
+    phase === "split" ||
+    phase === "preview" ||
+    phase === "commit" ||
+    phase === "exit";
   const showSelection =
     enhancementHealthy &&
     selectionOverlayPresent &&
-    (phase === "split" ||
-      phase === "preview" ||
-      phase === "commit" ||
-      phase === "exit");
-  const fallbackActive = !showSelection;
+    selectionPhase;
+  const fallbackActive =
+    !enhancementHealthy || (selectionPhase && !showSelection);
   const enhancementOwnsLayer =
     phase === "loading" ||
     phase === "ready" ||
