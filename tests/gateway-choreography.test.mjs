@@ -52,8 +52,20 @@ test("coarse preview uses 68/32 and absolute camera endpoints 12 to -8", () => {
 
 test("identity leak is gated until the final fifteen percent of travel", () => {
   assert.equal(deriveGatewayPose({ ...base, travelProgress: 0.84 }).identityLeak, 0);
-  assert.ok(Math.abs(deriveGatewayPose({ ...base, travelProgress: 0.925 }).identityLeak - 0.5) < 1e-9);
+  const preHover = deriveGatewayPose({ ...base, travelProgress: 0.925 });
+  assert.ok(Math.abs(preHover.identityLeak - 0.5) < 1e-9);
+  assert.notEqual(preHover.visualLight, preHover.technicalLight);
+  assert.ok(preHover.neutralLight > 0);
   assert.equal(deriveGatewayPose({ ...base, travelProgress: 1 }).identityLeak, 1);
+});
+
+test("Visuals identity contribution eases softly while Technical remains linear", () => {
+  const neutral = deriveGatewayPose({ ...base, travelProgress: 0.85 });
+  const halfway = deriveGatewayPose({ ...base, travelProgress: 0.925, selectionBias: -1 });
+  const full = deriveGatewayPose({ ...base, travelProgress: 1, selectionBias: -1 });
+  const visualHalf = halfway.visualLight - neutral.visualLight;
+  const visualFull = full.visualLight - neutral.visualLight;
+  assert.ok(visualHalf > visualFull * 0.5);
 });
 
 test("travel inputs are clamped before interpolation", () => {
@@ -76,6 +88,24 @@ test("exit movement advances only a committed selected passage", () => {
   assert.ok(committed.leftOpen > committedAtZero.leftOpen);
 });
 
+test("technical exit advances its selected passage and clamps exit progress", () => {
+  const input = { ...base, travelProgress: 0.7, selectionBias: 1, committed: "technical" };
+  const atZero = deriveGatewayPose({ ...input, exitProgress: 0 });
+  const atHigh = deriveGatewayPose({ ...input, exitProgress: 4 });
+  assert.ok(atHigh.cameraZ < atZero.cameraZ);
+  assert.ok(atHigh.rightOpen > atZero.rightOpen);
+  assert.deepEqual(atHigh, deriveGatewayPose({ ...input, exitProgress: 1 }));
+});
+
+test("uncommitted exit progress leaves camera and openings unchanged", () => {
+  const input = { ...base, travelProgress: 0.7, selectionBias: 1, committed: null };
+  const atZero = deriveGatewayPose({ ...input, exitProgress: 0 });
+  const atHigh = deriveGatewayPose({ ...input, exitProgress: 99 });
+  assert.equal(atHigh.cameraZ, atZero.cameraZ);
+  assert.equal(atHigh.leftOpen, atZero.leftOpen);
+  assert.equal(atHigh.rightOpen, atZero.rightOpen);
+});
+
 test("reduced motion removes travel and preview camera bias", () => {
   const start = deriveGatewayPose({ ...base, travelProgress: 0, reducedMotion: true, selectionBias: -1 });
   const end = deriveGatewayPose({ ...base, travelProgress: 1, reducedMotion: true, selectionBias: -1 });
@@ -83,4 +113,13 @@ test("reduced motion removes travel and preview camera bias", () => {
   assert.equal(end.cameraX, 0);
   assert.equal(end.cameraYaw, 0);
   assert.deepEqual([end.leftPercent, end.rightPercent], [62, 38]);
+});
+
+test("reduced-motion committed exit stays static at the endpoint", () => {
+  const input = { ...base, reducedMotion: true, selectionBias: 1, committed: "technical" };
+  const atZero = deriveGatewayPose({ ...input, exitProgress: 0 });
+  const atExit = deriveGatewayPose({ ...input, exitProgress: 1 });
+  assert.deepEqual(atExit, atZero);
+  assert.equal(atExit.cameraX, 0);
+  assert.equal(atExit.cameraYaw, 0);
 });

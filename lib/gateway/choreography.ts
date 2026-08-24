@@ -42,7 +42,7 @@ export function deriveGatewayPose(input: GatewayPoseInput): GatewayPose {
     ? endZ
     : lerp(startZ, endZ, travelProgress);
   const committedBias = input.committed === "visuals" ? -1 : input.committed === "technical" ? 1 : 0;
-  if (committedBias !== 0) cameraZ -= exitProgress * 4;
+  if (!input.reducedMotion && committedBias !== 0) cameraZ -= exitProgress * 4;
 
   const previewAmount = Math.abs(selectionBias);
   const coarse = input.coarsePointer ? 1 : 0;
@@ -53,15 +53,16 @@ export function deriveGatewayPose(input: GatewayPoseInput): GatewayPose {
   const neutralLight = clamp01(0.52 + identityLeak * 0.18);
   const visualBase = neutralLight + identityLeak * 0.08;
   const technicalBase = neutralLight - identityLeak * 0.07;
-  const visualPreview = selectionBias < 0 ? 0.28 * previewAmount : 0;
-  const technicalPreview = selectionBias > 0 ? 0.32 * previewAmount : 0;
+  const softIdentity = 1 - (1 - identityLeak) ** 2;
+  const visualPreview = selectionBias < 0 ? 0.28 * previewAmount * softIdentity : 0;
+  const technicalPreview = selectionBias > 0 ? 0.32 * previewAmount * identityLeak : 0;
   let leftOpen = clamp01(identityLeak * 0.18 + visualPreview);
   let rightOpen = clamp01(identityLeak * 0.12 + technicalPreview);
   let visualLight = clamp01(visualBase + visualPreview);
   let technicalLight = clamp01(technicalBase + technicalPreview);
 
-  if (committedBias < 0) leftOpen = clamp01(leftOpen + exitProgress * 0.32);
-  if (committedBias > 0) rightOpen = clamp01(rightOpen + exitProgress * 0.32);
+  if (!input.reducedMotion && committedBias < 0) leftOpen = clamp01(leftOpen + exitProgress * 0.32);
+  if (!input.reducedMotion && committedBias > 0) rightOpen = clamp01(rightOpen + exitProgress * 0.32);
 
   return {
     cameraZ,
