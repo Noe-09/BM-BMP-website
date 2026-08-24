@@ -44,3 +44,45 @@ test("gateway canvas is decorative and scene stays dependency-light", async () =
   assert.doesNotMatch(scene, /@react-three|drei|gsap|postprocessing|EffectComposer/);
   assert.doesNotMatch(scene, /TextureLoader|GLTFLoader/);
 });
+
+test("loader uses BM counter language without percent", async () => {
+  const source = await read("../components/gateway/LoaderOverlay.tsx");
+
+  assert.match(source, /INITIALIZING/);
+  assert.match(source, /TWO WORLDS\. ONE SYSTEM\./);
+  assert.match(source, /SKIP/);
+  assert.doesNotMatch(source, /%/);
+});
+
+test("orchestrator owns session resolution, loader modes, fallback timing, and semantic fallback", async () => {
+  const source = await read("../components/gateway/GatewayPrototype.tsx");
+
+  assert.match(source, /bmGatewaySeen/);
+  assert.match(source, /SESSION_RESOLVED/);
+  assert.match(source, /LoaderMode/);
+  assert.match(source, /shortLoaderMs/);
+  assert.match(source, /fallbackMs/);
+  assert.match(source, /GatewayFallback/);
+  assert.match(source, /<GatewayFallback/);
+  assert.match(source, /enhancementHealthy.*sceneReady/);
+  assert.match(source, /enhanced=\{enhancementHealthy\}/);
+});
+
+test("gateway route renders the shared client orchestrator from a server component", async () => {
+  const source = await read("../app/gateway-prototype/page.tsx");
+
+  assert.match(source, /GatewayPrototype/);
+  assert.doesNotMatch(source, /[\"']use client[\"']/);
+});
+
+test("orchestrator owns one frame loop and cleans up travel input ownership", async () => {
+  const source = await read("../components/gateway/GatewayPrototype.tsx");
+
+  assert.equal(source.match(/requestAnimationFrame\(/g)?.length, 1);
+  assert.equal(source.match(/setTimeout\(/g)?.length, 1);
+  assert.match(source, /dragPointerIdRef/);
+  assert.match(source, /exitCompleteRef/);
+  assert.match(source, /releasePointerCapture/);
+  assert.match(source, /removeEventListener\("wheel"/);
+  assert.match(source, /removeEventListener\("pointercancel"/);
+});

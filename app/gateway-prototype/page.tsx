@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { GatewayFallback } from "@/components/gateway/GatewayFallback";
+import { GatewayPrototype } from "@/components/gateway/GatewayPrototype";
 import "./gateway.css";
 
 export const metadata: Metadata = {
@@ -9,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default function GatewayPrototypePage() {
-  return <GatewayFallback />;
+  return <GatewayPrototype />;
 }

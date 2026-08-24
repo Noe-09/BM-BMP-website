@@ -1,8 +1,14 @@
 import Link from "next/link";
 
-export function GatewayFallback() {
+type GatewayFallbackProps = {
+  enhanced?: boolean;
+};
+
+export function GatewayFallback({ enhanced = false }: GatewayFallbackProps) {
   return (
-    <main className="gateway-fallback">
+    <main
+      className={`gateway-fallback${enhanced ? " gateway-fallback--enhanced" : ""}`}
+    >
       <div className="gateway-fallback__inner">
         <p className="gateway-fallback__mark">BM</p>
         <h1>TWO WORLDS. ONE SYSTEM.</h1>
