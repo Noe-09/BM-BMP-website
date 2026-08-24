@@ -58,16 +58,26 @@ export function deriveGatewayPose(input: GatewayPoseInput): GatewayPose {
   const technicalPreview = selectionBias > 0 ? previewAmount * (0.14 + 0.18 * travelProgress) : 0;
   let leftOpen = clamp01(identityLeak * 0.18 + visualPreview);
   let rightOpen = clamp01(identityLeak * 0.12 + technicalPreview);
-  const visualLight = clamp01(visualBase + visualPreview);
-  const technicalLight = clamp01(technicalBase + technicalPreview);
+  let visualLight = clamp01(visualBase + visualPreview);
+  let technicalLight = clamp01(technicalBase + technicalPreview);
+  let cameraX = input.reducedMotion ? 0 : selectionBias * 0.32;
+  let cameraYaw = input.reducedMotion ? 0 : selectionBias * 0.018;
 
-  if (!input.reducedMotion && committedBias < 0) leftOpen = clamp01(leftOpen + exitProgress * 0.32);
-  if (!input.reducedMotion && committedBias > 0) rightOpen = clamp01(rightOpen + exitProgress * 0.32);
+  if (!input.reducedMotion && committedBias < 0) {
+    leftOpen = clamp01(leftOpen + exitProgress * 0.38);
+    visualLight += exitProgress * 0.22;
+  }
+  if (!input.reducedMotion && committedBias > 0) {
+    rightOpen = clamp01(rightOpen + exitProgress * 0.16);
+    technicalLight += exitProgress * 0.28;
+    cameraX += exitProgress * 0.48;
+    cameraYaw *= 1 - exitProgress;
+  }
 
   return {
     cameraZ,
-    cameraX: input.reducedMotion ? 0 : selectionBias * 0.32,
-    cameraYaw: input.reducedMotion ? 0 : selectionBias * 0.018,
+    cameraX,
+    cameraYaw,
     monolithX: selectionBias * 1.1,
     leftOpen,
     rightOpen,

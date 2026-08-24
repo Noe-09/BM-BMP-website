@@ -19,6 +19,7 @@ import {
   getGatewayExpectedPathname,
   shouldEnhanceGatewayNavigation,
   shouldMarkGatewaySession,
+  shouldRequireGatewayPreview,
   shouldUseGatewayLocationFallback,
   type GatewayNavigationIntent,
 } from "@/lib/gateway/navigation";
@@ -461,6 +462,18 @@ export function GatewayPrototype() {
         enhancementReady: presentation.showSelection,
       };
 
+      if (
+        shouldRequireGatewayPreview(intent, {
+          coarsePointer: profile.pointer === "coarse",
+          division,
+          selectedDivision: state.committed ?? state.preview,
+        })
+      ) {
+        event.preventDefault();
+        handlePreview(division);
+        return;
+      }
+
       if (shouldMarkGatewaySession(intent)) {
         writeSessionSeen();
         return;
@@ -482,7 +495,15 @@ export function GatewayPrototype() {
       dispatch({ type: "COMMIT", division });
       writeSessionSeen();
     },
-    [presentation.showSelection, profile.reducedMotion, writeSessionSeen],
+    [
+      handlePreview,
+      presentation.showSelection,
+      profile.pointer,
+      profile.reducedMotion,
+      state.committed,
+      state.preview,
+      writeSessionSeen,
+    ],
   );
 
   const handleSkip = useCallback(() => {

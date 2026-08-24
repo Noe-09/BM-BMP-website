@@ -323,6 +323,14 @@ export function createGatewayScene(
       technicalWingMaterial.color
         .copy(neutralWingColor)
         .lerp(technicalWingColor, current.identityLeak);
+      visualWingMaterial.roughness = Math.min(
+        1,
+        0.9 + Math.max(0, current.visualLight - 0.7) * 0.2,
+      );
+      technicalWingMaterial.roughness = Math.max(
+        0.56,
+        0.84 - Math.max(0, current.technicalLight - 0.65) * 0.28,
+      );
       visualSlitMaterial.color
         .copy(neutralSlitColor)
         .lerp(visualIdentityColor, current.identityLeak);
@@ -347,6 +355,10 @@ export function createGatewayScene(
       technicalPrecision.intensity = 0.32 + current.technicalLight * 2.35;
       technicalSlitMaterial.emissiveIntensity =
         0.06 + current.technicalLight * (0.36 + current.identityLeak * 0.72);
+      technicalSlitMaterial.roughness = Math.max(
+        0.42,
+        0.7 - current.technicalLight * 0.16,
+      );
     };
 
     applyState();

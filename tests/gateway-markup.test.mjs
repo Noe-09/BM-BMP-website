@@ -22,6 +22,7 @@ test("gateway fallback exposes both BM divisions and approved short descriptions
 
 test("selection overlay contains approved short copy and both real CTAs", async () => {
   const source = await read("../components/gateway/SelectionOverlay.tsx");
+  const css = await read("../app/gateway-prototype/gateway.css");
 
   assert.match(source, /Digital identities/);
   assert.match(source, /with motion, story and distinction\./);
@@ -41,6 +42,15 @@ test("selection overlay contains approved short copy and both real CTAs", async 
   for (const link of source.matchAll(/<Link\b[^]*?<\/Link>/g)) {
     assert.doesNotMatch(link[0], /<button/);
   }
+  assert.match(source, /data-coarse-pointer/);
+  assert.match(
+    css,
+    /\[data-coarse-pointer="true"\][^{]*\.gateway-selection__action\s*\{[^}]*pointer-events:\s*none;/s,
+  );
+  assert.match(
+    css,
+    /\[data-coarse-pointer="true"\]\[data-gateway-selection="visuals"\][^{]*\.gateway-selection__division--visuals[^{]*\.gateway-selection__action[^]*pointer-events:\s*auto;/s,
+  );
 });
 
 test("context cursor adds isolated gateway mode while retaining existing modes", async () => {
@@ -78,6 +88,8 @@ test("gateway canvas is decorative and scene stays dependency-light", async () =
   assert.match(scene, /BoxGeometry|PlaneGeometry/);
   assert.doesNotMatch(scene, /@react-three|drei|gsap|postprocessing|EffectComposer/);
   assert.doesNotMatch(scene, /TextureLoader|GLTFLoader/);
+  assert.match(scene, /visualWingMaterial\.roughness\s*=/);
+  assert.match(scene, /technicalWingMaterial\.roughness\s*=/);
 });
 
 test("loader uses BM counter language without percent", async () => {

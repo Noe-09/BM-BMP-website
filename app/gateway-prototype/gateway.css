@@ -223,6 +223,20 @@
     border-color 160ms ease;
 }
 
+.gateway-selection[data-coarse-pointer="true"]
+  .gateway-selection__action {
+  pointer-events: none;
+}
+
+.gateway-selection[data-coarse-pointer="true"][data-gateway-selection="visuals"]
+  .gateway-selection__division--visuals
+  .gateway-selection__action,
+.gateway-selection[data-coarse-pointer="true"][data-gateway-selection="technical"]
+  .gateway-selection__division--technical
+  .gateway-selection__action {
+  pointer-events: auto;
+}
+
 .gateway-selection__action:focus-visible,
 .gateway-selection__preview:focus-visible {
   outline: 2px solid currentColor;

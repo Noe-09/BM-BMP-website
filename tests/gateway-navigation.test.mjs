@@ -5,6 +5,7 @@ import {
   getGatewayExpectedPathname,
   shouldEnhanceGatewayNavigation,
   shouldMarkGatewaySession,
+  shouldRequireGatewayPreview,
   shouldUseGatewayLocationFallback,
 } from "../lib/gateway/navigation.ts";
 
@@ -48,6 +49,49 @@ test("same-context keyboard activation marks the session without enhancing navig
   assert.equal(shouldMarkGatewaySession({ ...keyboard, metaKey: true }), false);
   assert.equal(shouldMarkGatewaySession({ ...keyboard, target: "_blank" }), false);
   assert.equal(shouldMarkGatewaySession({ ...keyboard, download: true }), false);
+});
+
+test("coarse ordinary pointer activation requires its division preview first", () => {
+  assert.equal(
+    shouldRequireGatewayPreview(primary, {
+      coarsePointer: true,
+      division: "visuals",
+      selectedDivision: null,
+    }),
+    true,
+  );
+  assert.equal(
+    shouldRequireGatewayPreview(primary, {
+      coarsePointer: true,
+      division: "visuals",
+      selectedDivision: "technical",
+    }),
+    true,
+  );
+  assert.equal(
+    shouldRequireGatewayPreview(primary, {
+      coarsePointer: true,
+      division: "visuals",
+      selectedDivision: "visuals",
+    }),
+    false,
+  );
+});
+
+test("coarse preview gate leaves fine, keyboard, modified, and reduced-motion activation native", () => {
+  const context = {
+    coarsePointer: true,
+    division: "technical",
+    selectedDivision: null,
+  };
+
+  assert.equal(
+    shouldRequireGatewayPreview(primary, { ...context, coarsePointer: false }),
+    false,
+  );
+  assert.equal(shouldRequireGatewayPreview({ ...primary, detail: 0 }, context), false);
+  assert.equal(shouldRequireGatewayPreview({ ...primary, metaKey: true }, context), false);
+  assert.equal(shouldRequireGatewayPreview({ ...primary, reducedMotion: true }, context), false);
 });
 
 test("commit lock is acquired synchronously only once", () => {

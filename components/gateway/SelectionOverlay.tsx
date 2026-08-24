@@ -93,6 +93,7 @@ export function SelectionOverlay({
       className="gateway-selection"
       aria-label="Choose a BM division"
       data-gateway-selection={selection}
+      data-coarse-pointer={coarsePointer ? "true" : "false"}
       data-enhancement-ready={enhancementReady ? "true" : "false"}
       data-reduced-motion={reducedMotion ? "true" : "false"}
       style={style}

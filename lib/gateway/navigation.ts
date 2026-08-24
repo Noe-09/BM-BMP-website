@@ -1,3 +1,5 @@
+import type { GatewayDivision } from "./state";
+
 export type GatewayNavigationIntent = {
   button: number;
   detail: number;
@@ -14,6 +16,12 @@ export type GatewayNavigationIntent = {
 
 export type GatewayCommitLock = {
   current: boolean;
+};
+
+export type GatewayPreviewRequirement = {
+  coarsePointer: boolean;
+  division: GatewayDivision;
+  selectedDivision: GatewayDivision | null;
 };
 
 export function shouldEnhanceGatewayNavigation(
@@ -47,6 +55,17 @@ export function shouldMarkGatewaySession(
     !intent.altKey &&
     (!intent.target || intent.target === "_self") &&
     !intent.download
+  );
+}
+
+export function shouldRequireGatewayPreview(
+  intent: GatewayNavigationIntent,
+  context: GatewayPreviewRequirement,
+): boolean {
+  return (
+    context.coarsePointer &&
+    context.selectedDivision !== context.division &&
+    shouldEnhanceGatewayNavigation(intent)
   );
 }
 

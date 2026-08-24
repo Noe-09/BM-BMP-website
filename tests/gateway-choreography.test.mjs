@@ -88,7 +88,7 @@ test("travel inputs are clamped before interpolation", () => {
   assert.equal(high.identityLeak, 1);
 });
 
-test("exit movement advances only a committed selected passage", () => {
+test("Visuals exit brightens, softens, and opens only the Visuals passage", () => {
   const splitInput = { ...base, travelProgress: 0.7, selectionBias: -1, exitProgress: 0.8 };
   const committedInput = { ...splitInput, committed: "visuals" };
   const split = deriveGatewayPose(splitInput);
@@ -98,14 +98,27 @@ test("exit movement advances only a committed selected passage", () => {
   assert.equal(split.cameraZ, splitAtZero.cameraZ);
   assert.ok(committed.cameraZ < committedAtZero.cameraZ);
   assert.ok(committed.leftOpen > committedAtZero.leftOpen);
+  assert.ok(committed.visualLight > committedAtZero.visualLight);
+  assert.equal(committed.rightOpen, committedAtZero.rightOpen);
+  assert.equal(committed.technicalLight, committedAtZero.technicalLight);
 });
 
-test("technical exit advances its selected passage and clamps exit progress", () => {
+test("Technical exit sharpens light and camera alignment with a distinct aperture", () => {
   const input = { ...base, travelProgress: 0.7, selectionBias: 1, committed: "technical" };
   const atZero = deriveGatewayPose({ ...input, exitProgress: 0 });
   const atHigh = deriveGatewayPose({ ...input, exitProgress: 4 });
+  const visualInput = { ...base, travelProgress: 0.7, selectionBias: -1, committed: "visuals" };
+  const visualZero = deriveGatewayPose({ ...visualInput, exitProgress: 0 });
+  const visualExit = deriveGatewayPose({ ...visualInput, exitProgress: 1 });
   assert.ok(atHigh.cameraZ < atZero.cameraZ);
   assert.ok(atHigh.rightOpen > atZero.rightOpen);
+  assert.ok(atHigh.technicalLight > atZero.technicalLight);
+  assert.ok(atHigh.cameraX > atZero.cameraX);
+  assert.ok(Math.abs(atHigh.cameraYaw) < Math.abs(atZero.cameraYaw));
+  assert.notEqual(
+    atHigh.rightOpen - atZero.rightOpen,
+    visualExit.leftOpen - visualZero.leftOpen,
+  );
   assert.deepEqual(atHigh, deriveGatewayPose({ ...input, exitProgress: 1 }));
 });
 
