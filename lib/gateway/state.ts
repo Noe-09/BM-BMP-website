@@ -31,7 +31,9 @@ export type GatewayEvent =
   | { type: "EXIT" }
   | { type: "FAIL" };
 
-export function createGatewayState(_returning: boolean): GatewayState {
+export function createGatewayState(returning: boolean): GatewayState {
+  // Retained for the public API; session resolution owns the initial value.
+  void returning;
   return {
     phase: "loading",
     preview: null,
