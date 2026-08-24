@@ -27,3 +27,9 @@ test("gateway route is isolated from the production homepage", async () => {
   assert.match(gateway, /gateway\.css/);
   assert.doesNotMatch(home, /GatewayPrototype|gateway-prototype/i);
 });
+
+test("technical prototype route loads the gateway fallback stylesheet directly", async () => {
+  const technical = await read("../app/gateway-prototype/technical/page.tsx");
+
+  assert.match(technical, /gateway\.css/);
+});

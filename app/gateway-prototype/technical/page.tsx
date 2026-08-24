@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import "../gateway.css";
 
 export const metadata: Metadata = {
   title: "BMP Technical Prototype",
