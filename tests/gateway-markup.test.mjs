@@ -203,3 +203,37 @@ test("mobile division names wrap inside the narrow coarse preview region", async
     /@media \(max-width: 640px\)[^]*\.gateway-selection__name\s*\{[^}]*overflow-wrap:\s*anywhere;/,
   );
 });
+
+test("portrait tablet division names wrap inside the coarse preview remainder", async () => {
+  const css = await read("../app/gateway-prototype/gateway.css");
+  const tabletMode = css.match(
+    /@media \(max-width: 1023px\)([^]*?)@media \(max-width: 640px\)/,
+  )?.[1];
+
+  assert.ok(tabletMode, "expected a portrait-tablet gateway mode");
+  assert.match(
+    tabletMode,
+    /\.gateway-selection__name\s*\{[^}]*overflow-wrap:\s*anywhere;/,
+  );
+});
+
+test("unselected divisions retain independently legible text and action contrast", async () => {
+  const css = await read("../app/gateway-prototype/gateway.css");
+  const readToken = (name) => {
+    const value = css.match(new RegExp(`${name}:\\s*([0-9.]+)`))?.[1];
+    assert.ok(value, `expected ${name} token`);
+    return Number(value);
+  };
+
+  assert.ok(readToken("--gateway-unselected-title-opacity") >= 0.6);
+  assert.ok(readToken("--gateway-unselected-type-opacity") >= 0.95);
+  assert.ok(readToken("--gateway-unselected-action-opacity") >= 0.42);
+  assert.doesNotMatch(
+    css,
+    /:is\(\.gateway-selection__name, \.gateway-selection__type\)\s*\{[^}]*opacity:/,
+  );
+  assert.match(
+    css,
+    /@media \(hover: none\), \(pointer: coarse\)[^]*\.gateway-selection__action\s*\{[^}]*opacity:\s*0;/,
+  );
+});

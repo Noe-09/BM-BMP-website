@@ -3,6 +3,9 @@
   --gateway-ink: #f2f0eb;
   --gateway-muted: rgba(242, 240, 235, 0.56);
   --gateway-line: rgba(242, 240, 235, 0.18);
+  --gateway-unselected-title-opacity: 0.66;
+  --gateway-unselected-type-opacity: 1;
+  --gateway-unselected-action-opacity: 0.52;
   --gateway-pad: clamp(1.25rem, 3vw, 3rem);
   position: relative;
   box-sizing: border-box;
@@ -318,11 +321,20 @@
 
 .gateway-selection[data-gateway-selection="visuals"]
   .gateway-selection__division--technical
-  :is(.gateway-selection__name, .gateway-selection__type),
+  .gateway-selection__name,
 .gateway-selection[data-gateway-selection="technical"]
   .gateway-selection__division--visuals
-  :is(.gateway-selection__name, .gateway-selection__type) {
-  opacity: 0.46;
+  .gateway-selection__name {
+  opacity: var(--gateway-unselected-title-opacity);
+}
+
+.gateway-selection[data-gateway-selection="visuals"]
+  .gateway-selection__division--technical
+  .gateway-selection__type,
+.gateway-selection[data-gateway-selection="technical"]
+  .gateway-selection__division--visuals
+  .gateway-selection__type {
+  opacity: var(--gateway-unselected-type-opacity);
 }
 
 .gateway-selection[data-gateway-selection="visuals"]
@@ -331,7 +343,7 @@
 .gateway-selection[data-gateway-selection="technical"]
   .gateway-selection__division--visuals
   .gateway-selection__action {
-  opacity: 0.16;
+  opacity: var(--gateway-unselected-action-opacity);
   transform: translateY(0.3rem);
   transition-delay: 0ms;
 }
@@ -463,6 +475,7 @@
 
   .gateway-selection__name {
     font-size: clamp(2rem, 7vw, 4.5rem);
+    overflow-wrap: anywhere;
   }
 
   .gateway-selection__copy {
