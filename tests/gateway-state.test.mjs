@@ -10,6 +10,7 @@ import {
   formatLoaderNumber,
   getLoaderMode,
   getLoaderTarget,
+  getTravelControlTarget,
   shouldShowSkip,
   stepTravelProgress,
 } from "../lib/gateway/progress.ts";
@@ -108,4 +109,25 @@ test("travel progress damps toward its target", () => {
   assert.ok(next > 0);
   assert.ok(next < 1);
   assert.equal(stepTravelProgress(0.4, 0.4, 0.1), 0.4);
+});
+
+test("first-visit travel control reaches split through the existing progression", () => {
+  let state = resolveSession(createGatewayState(false));
+  state = gatewayReducer(state, { type: "LOAD_READY" });
+  state = gatewayReducer(state, { type: "BEGIN_ENTRY", reducedMotion: false });
+  state = gatewayReducer(state, { type: "AUTO_COMPLETE" });
+  assert.equal(state.phase, "user-travel");
+
+  const target = getTravelControlTarget(state.phase);
+  assert.equal(target, 1);
+
+  let rendered = 0.68;
+  for (let frame = 0; frame < 240 && rendered < 0.995; frame += 1) {
+    rendered = stepTravelProgress(rendered, target, 1 / 60);
+  }
+  assert.ok(rendered >= 0.995);
+
+  state = gatewayReducer(state, { type: "TRAVEL_COMPLETE" });
+  assert.equal(state.phase, "split");
+  assert.equal(getTravelControlTarget(state.phase), null);
 });

@@ -28,6 +28,7 @@ import {
   GATEWAY_TIMING,
   getGatewayPresentation,
   getLoaderTarget,
+  getTravelControlTarget,
   shouldShowSkip,
   stepTravelProgress,
   type LoaderMode,
@@ -552,6 +553,13 @@ export function GatewayPrototype() {
     requestFrameRef.current();
   }, []);
 
+  const handleTravelControl = useCallback(() => {
+    const target = getTravelControlTarget(phaseRef.current);
+    if (target === null) return;
+    targetProgressRef.current = target;
+    requestFrameRef.current();
+  }, []);
+
   const handlePointerDown = useCallback((event: PointerEvent) => {
     if (
       phaseRef.current !== "user-travel" ||
@@ -658,7 +666,13 @@ export function GatewayPrototype() {
             />
           ) : null}
           {presentation.showTravelCue ? (
-            <p className="gateway-travel-cue">MOVE FORWARD</p>
+            <button
+              className="gateway-travel-cue"
+              type="button"
+              onClick={handleTravelControl}
+            >
+              MOVE FORWARD
+            </button>
           ) : null}
           {presentation.showSelection ? (
             <SelectionOverlay

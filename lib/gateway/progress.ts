@@ -103,6 +103,10 @@ export function applyTravelDelta(progress: number, delta: number): number {
   return clamp01(progress + delta * 0.0012);
 }
 
+export function getTravelControlTarget(phase: GatewayPhase): number | null {
+  return phase === "user-travel" ? 1 : null;
+}
+
 export function stepTravelProgress(
   current: number,
   target: number,
