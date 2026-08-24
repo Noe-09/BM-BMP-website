@@ -583,7 +583,14 @@
     cursor: default;
   }
 
-  .gateway-selection__action {
+  .gateway-selection[data-gateway-selection="neutral"]
+    .gateway-selection__action,
+  .gateway-selection[data-gateway-selection="visuals"]
+    .gateway-selection__division--technical
+    .gateway-selection__action,
+  .gateway-selection[data-gateway-selection="technical"]
+    .gateway-selection__division--visuals
+    .gateway-selection__action {
     opacity: 0;
     transform: translateY(0.25rem);
     transition-delay: 0ms;

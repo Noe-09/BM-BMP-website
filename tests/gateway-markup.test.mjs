@@ -237,3 +237,21 @@ test("unselected divisions retain independently legible text and action contrast
     /@media \(hover: none\), \(pointer: coarse\)[^]*\.gateway-selection__action\s*\{[^}]*opacity:\s*0;/,
   );
 });
+
+test("coarse CTA state selectors outrank fine-pointer secondary action contrast", async () => {
+  const css = await read("../app/gateway-prototype/gateway.css");
+  const coarseMode = css.match(
+    /@media \(hover: none\), \(pointer: coarse\) \{([^]*?)\n\}\n\n@media \(max-height: 700px\)/,
+  )?.[1];
+
+  assert.ok(coarseMode, "expected a coarse gateway mode");
+  assert.match(
+    coarseMode,
+    /\.gateway-selection\[data-gateway-selection="neutral"\]\s+\.gateway-selection__action,\s*\.gateway-selection\[data-gateway-selection="visuals"\]\s+\.gateway-selection__division--technical\s+\.gateway-selection__action,\s*\.gateway-selection\[data-gateway-selection="technical"\]\s+\.gateway-selection__division--visuals\s+\.gateway-selection__action\s*\{[^}]*opacity:\s*0;/,
+  );
+  assert.match(
+    coarseMode,
+    /\.gateway-selection\[data-gateway-selection="visuals"\]\s+\.gateway-selection__division--visuals\s+\.gateway-selection__action,\s*\.gateway-selection\[data-gateway-selection="technical"\]\s+\.gateway-selection__division--technical\s+\.gateway-selection__action\s*\{[^}]*opacity:\s*1;/,
+  );
+  assert.doesNotMatch(coarseMode, /pointer-events\s*:/);
+});
