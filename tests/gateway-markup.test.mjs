@@ -42,14 +42,9 @@ test("selection overlay contains approved short copy and both real CTAs", async 
   for (const link of source.matchAll(/<Link\b[^]*?<\/Link>/g)) {
     assert.doesNotMatch(link[0], /<button/);
   }
-  assert.match(source, /data-coarse-pointer/);
-  assert.match(
+  assert.doesNotMatch(
     css,
-    /\[data-coarse-pointer="true"\][^{]*\.gateway-selection__action\s*\{[^}]*pointer-events:\s*none;/s,
-  );
-  assert.match(
-    css,
-    /\[data-coarse-pointer="true"\]\[data-gateway-selection="visuals"\][^{]*\.gateway-selection__division--visuals[^{]*\.gateway-selection__action[^]*pointer-events:\s*auto;/s,
+    /\[data-coarse-pointer="true"\][^}]*pointer-events:/s,
   );
 });
 

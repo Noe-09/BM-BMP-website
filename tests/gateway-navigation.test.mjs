@@ -91,7 +91,22 @@ test("coarse preview gate leaves fine, keyboard, modified, and reduced-motion ac
   );
   assert.equal(shouldRequireGatewayPreview({ ...primary, detail: 0 }, context), false);
   assert.equal(shouldRequireGatewayPreview({ ...primary, metaKey: true }, context), false);
+  assert.equal(shouldRequireGatewayPreview({ ...primary, button: 1 }, context), false);
+  assert.equal(shouldRequireGatewayPreview({ ...primary, button: 2 }, context), false);
+  assert.equal(
+    shouldRequireGatewayPreview({ ...primary, target: "_blank" }, context),
+    false,
+  );
+  assert.equal(shouldRequireGatewayPreview({ ...primary, download: true }, context), false);
   assert.equal(shouldRequireGatewayPreview({ ...primary, reducedMotion: true }, context), false);
+  assert.equal(
+    shouldRequireGatewayPreview({ ...primary, enhancementReady: false }, context),
+    false,
+  );
+  assert.equal(
+    shouldRequireGatewayPreview({ ...primary, defaultPrevented: true }, context),
+    false,
+  );
 });
 
 test("commit lock is acquired synchronously only once", () => {
