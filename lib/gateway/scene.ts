@@ -45,6 +45,7 @@ type SceneState = Pick<
   | "tension"
   | "aperture"
   | "eventDarkness"
+  | "selectionBias"
 >;
 
 const TRACKED_KEYS = [
@@ -62,6 +63,7 @@ const TRACKED_KEYS = [
   "tension",
   "aperture",
   "eventDarkness",
+  "selectionBias",
 ] as const satisfies readonly (keyof SceneState)[];
 
 const INITIAL_STATE: SceneState = {
@@ -79,6 +81,7 @@ const INITIAL_STATE: SceneState = {
   tension: 0,
   aperture: 0,
   eventDarkness: 0,
+  selectionBias: 0,
 };
 
 const EPSILON = 0.0005;
@@ -99,6 +102,7 @@ function copyState(pose: GatewayPose): SceneState {
     tension: pose.tension ?? 0,
     aperture: pose.aperture ?? 0,
     eventDarkness: pose.eventDarkness ?? 0,
+    selectionBias: pose.selectionBias ?? 0,
   };
 }
 
@@ -106,6 +110,7 @@ function smoothingFor(key: keyof SceneState) {
   if (key === "leftOpen" || key === "rightOpen") return 7;
   if (key.endsWith("Light") || key === "identityLeak") return 9;
   if (key === "travelProgress" || key === "aperture") return 6;
+  if (key === "selectionBias") return 8;
   return 5.5;
 }
 
@@ -284,6 +289,7 @@ export function createGatewayScene(
             eventDarkness: current.eventDarkness,
             reducedMotion: false,
             identityLeak: current.identityLeak,
+            selectionBias: current.selectionBias,
           },
           totalElapsedTime,
         );

@@ -27,6 +27,7 @@ export type GatewayPose = {
   tension: number;
   aperture: number;
   eventDarkness: number;
+  selectionBias: number;
 };
 
 const lerp = (start: number, end: number, amount: number) =>
@@ -129,5 +130,6 @@ export function deriveGatewayPose(input: GatewayPoseInput): GatewayPose {
     tension,
     aperture,
     eventDarkness,
+    selectionBias,
   };
 }
