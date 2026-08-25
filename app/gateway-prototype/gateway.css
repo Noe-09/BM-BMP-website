@@ -160,27 +160,28 @@
   border: 0;
 }
 
+/* Phase Transition Point: The BM Singularity Anchor */
 .gateway-core-mark {
   position: absolute;
   z-index: 2;
   top: 50%;
   left: var(--gateway-left);
-  width: 3.2rem;
-  padding: 0.85rem 0.45rem;
+  width: auto;
+  padding: 0.4rem 0.6rem;
   color: var(--gateway-muted);
-  border-top: 1px solid var(--gateway-line);
-  border-bottom: 1px solid var(--gateway-line);
-  background: var(--gateway-bg);
+  border: 0;
+  background: transparent;
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.22em;
   text-align: center;
   transform: translate(-50%, -50%);
   transition: left 560ms var(--ease-responsive);
   pointer-events: none;
 }
 
+/* Continuous Tension Field Divisions (No 50/50 Box/Divider lines) */
 .gateway-selection__division {
   position: relative;
   display: grid;
@@ -193,15 +194,16 @@
     var(--gateway-pad);
   overflow: hidden;
   color: var(--gateway-ink);
+  background: transparent;
 }
 
 .gateway-selection__division--visuals {
-  background: rgba(244, 242, 236, 0.18);
+  background: transparent;
 }
 
 .gateway-selection__division--technical {
-  border-left: 1px solid var(--gateway-line);
-  background: rgba(238, 235, 228, 0.22);
+  border-left: 0;
+  background: transparent;
 }
 
 .gateway-selection__heading,
@@ -236,8 +238,8 @@
 .gateway-selection__type {
   margin: 0;
   transition:
-    opacity 180ms ease,
-    transform 260ms var(--ease-responsive);
+    opacity 220ms ease,
+    transform 280ms var(--ease-responsive);
 }
 
 .gateway-selection__name {
@@ -269,8 +271,8 @@
   opacity: 0;
   transform: translateY(0.65rem);
   transition:
-    opacity 180ms ease 0ms,
-    transform 260ms var(--ease-responsive) 0ms;
+    opacity 220ms ease 0ms,
+    transform 280ms var(--ease-responsive) 0ms;
 }
 
 .gateway-selection__action {
@@ -284,9 +286,9 @@
   opacity: 0.42;
   transform: translateY(0.3rem);
   transition:
-    opacity 180ms ease 0ms,
-    transform 260ms var(--ease-responsive) 0ms,
-    border-color 180ms ease;
+    opacity 220ms ease 0ms,
+    transform 280ms var(--ease-responsive) 0ms,
+    border-color 200ms ease;
 }
 
 .gateway-selection__action:focus-visible,
@@ -295,6 +297,7 @@
   outline-offset: 0.5rem;
 }
 
+/* State-Activated Typography Sequencing */
 .gateway-selection[data-gateway-selection="visuals"]
   .gateway-selection__division--visuals
   .gateway-selection__line,
@@ -311,7 +314,7 @@
 .gateway-selection[data-gateway-selection="technical"]
   .gateway-selection__division--technical
   .gateway-selection__line--one {
-  transition-delay: 150ms;
+  transition-delay: 240ms;
 }
 
 .gateway-selection[data-gateway-selection="visuals"]
@@ -320,7 +323,7 @@
 .gateway-selection[data-gateway-selection="technical"]
   .gateway-selection__division--technical
   .gateway-selection__line--two {
-  transition-delay: 250ms;
+  transition-delay: 340ms;
 }
 
 .gateway-selection[data-gateway-selection="visuals"]
@@ -332,7 +335,7 @@
   border-color: currentColor;
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 330ms, 330ms, 0ms;
+  transition-delay: 380ms, 380ms, 0ms;
 }
 
 .gateway-selection[data-gateway-selection="visuals"]
@@ -520,8 +523,7 @@
 
   .gateway-core-mark {
     top: 46%;
-    width: 2.6rem;
-    padding: 0.65rem 0.3rem;
+    padding: 0.4rem 0.2rem;
     font-size: 0.55rem;
   }
 

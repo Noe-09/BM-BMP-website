@@ -6,6 +6,8 @@ uniform float uAperture;
 uniform vec2 uPointer;
 uniform float uIdentityLeak;
 uniform float uSelectionBias;
+uniform float uInstability;
+uniform float uSingularityX;
 uniform float uReducedMotion;
 
 varying vec3 vNormal;
@@ -16,6 +18,8 @@ varying float vDisplacement;
 varying float vShearField;
 varying float vMaterialPhase;
 varying float vInversionWeight;
+varying float vTensionSeam;
+varying float vSingularityDistance;
 varying float vDepthMetric;
 
 // High quality 3D Simplex noise
@@ -86,7 +90,6 @@ float snoise(vec3 v) {
 
 // Asymmetric Non-Euclidean fold field
 float asymmetricFoldField(vec3 p, float t) {
-  // Asymmetric skew: no circular symmetry
   vec3 q = p;
   q.x += sin(p.z * 0.35 + p.y * 0.4) * 1.2;
   q.y += cos(p.z * 0.28 - p.x * 0.35) * 0.9;
@@ -103,7 +106,7 @@ void main() {
   float motionScale = uReducedMotion > 0.5 ? 0.05 : 1.0;
   float t = uTime * 0.35 * motionScale;
 
-  // Viscous pointer interaction memory
+  // Pointer tension influence
   vec2 pointerDiff = pos.xy - uPointer * vec2(3.5, 2.5);
   float pointerDist = length(pointerDiff);
   float pointerTension = exp(-pointerDist * 0.7) * uTension * 1.6;
@@ -112,45 +115,64 @@ void main() {
   float fold = asymmetricFoldField(pos + vec3(0.0, 0.0, uProgress * 5.0), t);
   float microNoise = snoise(pos * 0.8 + vec3(fold * 0.4, 0.0, t * 0.2));
   
-  // 2. Authored Impossible Traversal Event: Spatial Inversion (Progress 0.46 - 0.58)
-  // An apparent opening seals abruptly, then topology turns inside-out from flanks around camera
+  // 2. Spatial Inversion Traversal Event (Progress 0.46 - 0.58)
   float inversionTrigger = smoothstep(0.44, 0.51, uProgress) * (1.0 - smoothstep(0.55, 0.64, uProgress));
   vInversionWeight = inversionTrigger;
   
-  // Asymmetric topological pinch & flip
   float pinch = exp(-pow((uProgress - 0.49) * 22.0, 2.0));
   vec2 shearOffset = vec2(sin(pos.z * 0.6 + t), cos(pos.z * 0.5 - t * 0.8)) * 1.5;
   pos.xy += shearOffset * pinch;
 
-  // Hyperbolic spatial turnover during inversion
   if (inversionTrigger > 0.001) {
     vec2 invertedXY = vec2(-pos.y * 1.2, pos.x * 0.8) + vec2(sin(pos.z), cos(pos.z)) * 0.6;
     pos.xy = mix(pos.xy, invertedXY, inversionTrigger * 0.65);
     pos.z += sin(length(pos.xy) * 2.0 + t) * inversionTrigger * 1.8;
   }
 
-  // 3. Two-World Split Morphology (Progress 0.85 -> 1.0)
-  // Left (Visuals): Relaxed, broad, continuous undulating sheets
-  // Right (Technical): Tensioned, sharp planar crystalline facets, precise grid-like axes
-  if (uIdentityLeak > 0.01) {
-    float isLeft = smoothstep(0.2, -0.6, pos.x);
-    float isRight = smoothstep(-0.2, 0.6, pos.x);
+  // 3. BM PHASE SINGULARITY & TENSION SEAM (The Tension Field)
+  // The central anchor point where physical laws transition
+  vec2 singularityPos = vec2(uSingularityX, 0.0);
+  float distToSingularity = length(pos.xy - singularityPos);
+  vSingularityDistance = distToSingularity;
 
-    // Visuals relaxation on left
-    float visualWave = sin(pos.y * 0.5 + t * 0.6) * cos(pos.z * 0.3) * 1.4;
-    pos.y += visualWave * isLeft * uIdentityLeak;
+  // Tension Seam along the dynamic transition meridian
+  float seamCoordinate = pos.x - uSingularityX - sin(pos.y * 0.35 + t * 0.5) * 0.4;
+  vTensionSeam = exp(-abs(seamCoordinate) * 1.2);
 
-    // Technical crystallization on right (quantized planar facets)
-    float techFacet = floor((pos.y + pos.z * 0.5 + fold * 0.8) * 2.2) / 2.2;
-    pos.x += (techFacet - pos.y) * 0.35 * isRight * uIdentityLeak;
+  // Side-Switch Neutral Instability Event (approx 350-500ms wave pulse)
+  if (uInstability > 0.001) {
+    float instabilityPulse = sin(distToSingularity * 3.2 - t * 7.0) * uInstability * 1.2;
+    pos.z += instabilityPulse * exp(-distToSingularity * 0.3);
+    pos.xy += vec2(cos(distToSingularity * 2.0), sin(distToSingularity * 2.0)) * (uInstability * 0.45);
   }
 
-  // 4. Multi-Phase Material Mapping
-  // Deriving continuous material phases across the geometry:
-  // 0.0 - 0.25: Pure Refraction Distort
-  // 0.25 - 0.55: Translucent Pearl / Subsurface
-  // 0.55 - 0.80: Soft Mineral Alabaster
-  // 0.80 - 1.00: Crystalline Anisotropic Edge
+  // 4. TWO-BEHAVIOR FIELD MUTATION (ONE SYSTEM. TWO BEHAVIORS.)
+  if (uProgress > 0.82) {
+    float fieldInfluence = smoothstep(0.82, 0.96, uProgress);
+    
+    // VISUALS ATTRACTOR (Left Bias, uSelectionBias < 0):
+    // Relaxation, expansion, continuous organic wave unfolding
+    if (uSelectionBias < -0.01) {
+      float biasAmount = -uSelectionBias;
+      float visualWave = sin(pos.y * 0.4 + t * 0.5) * cos(pos.x * 0.25 - t * 0.3) * 1.6;
+      float visualBreath = sin(t * 0.8 + pos.z * 0.2) * 0.6;
+      pos.xy += vec2(-0.8, visualWave * 0.6 + visualBreath) * biasAmount * fieldInfluence;
+      pos.z += visualWave * 0.8 * biasAmount * fieldInfluence;
+    }
+
+    // TECHNICAL ATTRACTOR (Right Bias, uSelectionBias > 0):
+    // Tension, alignment, precise planar crystallization
+    if (uSelectionBias > 0.01) {
+      float biasAmount = uSelectionBias;
+      // Quantized planar facet steps
+      float facetStep = floor((pos.y * 1.4 + pos.z * 0.6) * 1.8) / 1.8;
+      float techTension = (facetStep - pos.y) * 0.75;
+      pos.xy += vec2(0.8 + techTension * 0.3, techTension) * biasAmount * fieldInfluence;
+      pos.z += sin(pos.x * 1.2) * 0.5 * biasAmount * fieldInfluence;
+    }
+  }
+
+  // Multi-Phase Material Mapping
   float phaseVal = clamp(
     0.5 + 0.35 * fold + 0.2 * microNoise + (pos.x * 0.08) - (pos.z * 0.04),
     0.0,
@@ -160,7 +182,6 @@ void main() {
   vShearField = fold;
   vDisplacement = fold * 0.7 + microNoise * 0.3 + pointerTension * 0.5;
 
-  // Vertex normal displacement
   pos += normal * (vDisplacement * 0.45);
 
   vec4 worldPos = modelMatrix * vec4(pos, 1.0);
@@ -170,7 +191,6 @@ void main() {
   vec4 mvPos = viewMatrix * worldPos;
   vViewPosition = -mvPos.xyz;
 
-  // Analytical transformed normal with shear slope
   vec3 transformedNormal = normalMatrix * normal;
   transformedNormal = normalize(
     transformedNormal + vec3(fold * 0.2, microNoise * 0.15, pointerTension * 0.1)
@@ -190,6 +210,7 @@ uniform float uEventDarkness;
 uniform float uReducedMotion;
 uniform float uIdentityLeak;
 uniform float uSelectionBias;
+uniform float uInstability;
 uniform vec3 uColorBase;
 uniform vec3 uColorPearl;
 uniform vec3 uColorGraphite;
@@ -203,6 +224,8 @@ varying float vDisplacement;
 varying float vShearField;
 varying float vMaterialPhase;
 varying float vInversionWeight;
+varying float vTensionSeam;
+varying float vSingularityDistance;
 varying float vDepthMetric;
 
 // Thin-film anisotropic mineral sheen
@@ -227,28 +250,25 @@ void main() {
   float NdotV = max(dot(N, V), 0.0);
   float fresnel = pow(1.0 - NdotV, 3.8);
 
-  // Key directional and fill lighting
+  // Directional lighting
   vec3 lightDir1 = normalize(vec3(0.35, 0.85, 0.55));
   vec3 lightDir2 = normalize(vec3(-0.7, -0.25, 0.65));
   
   float NdotL1 = max(dot(N, lightDir1), 0.0);
   float NdotL2 = max(dot(N, lightDir2), 0.0);
 
-  // 1. Multi-Phase Shading Evaluation
-  // Phase 1: Translucent Pearl / Subsurface
+  // Subsurface Scattering & Anisotropic Sheen
   vec3 sssLight = normalize(lightDir1 + N * 0.35);
   float sssDot = max(0.0, dot(V, -sssLight));
   float sss = pow(sssDot, 3.2) * 0.6;
   vec3 sssColor = vec3(0.99, 0.96, 0.92) * sss;
 
-  // Phase 2: Anisotropic Crystalline Sheen
   vec3 H = normalize(lightDir1 + V);
   float NdotH = max(dot(N, H), 0.0);
   float anisoSpec = pow(NdotH, 32.0) * (0.85 + 0.35 * sin(vShearField * 5.0));
   vec3 sheen = mineralSheen(NdotV, vShearField, vMaterialPhase) * anisoSpec;
 
-  // Phase 3: Chromatic Refraction Anticipation (Non-Euclidean internal look-ahead)
-  // Refraction angle anticipates interior folds before direct arrival
+  // Refraction dispersion
   vec3 refractR = refract(-V, N, 0.91);
   vec3 refractG = refract(-V, N, 0.89);
   vec3 refractB = refract(-V, N, 0.87);
@@ -260,12 +280,10 @@ void main() {
     dot(refractB, vec3(0.2, 0.35, 0.45))
   ) * 0.15;
 
-  // Base palette assembly
   vec3 alabaster = uColorBase;
   vec3 pearl = uColorPearl;
   vec3 graphite = uColorGraphite;
 
-  // Blend between material phases (Optic -> Pearl -> Opaque Mineral -> Crystalline)
   vec3 matterColor = mix(alabaster, pearl, smoothstep(0.2, 0.7, vMaterialPhase));
   matterColor += sheen * 0.9;
   matterColor += sssColor * (1.0 - smoothstep(0.6, 0.9, vMaterialPhase));
@@ -273,33 +291,41 @@ void main() {
   matterColor += chromaticColor;
   matterColor += fresnel * vec3(0.98, 0.98, 0.95) * 0.55;
 
-  // 2. Controlled Graphite Cavity Shadowing & Event Darkness
+  // Tension Seam refractive perturbation (The seam between the two behaviors)
+  if (vTensionSeam > 0.01) {
+    matterColor += vec3(0.04, 0.05, 0.06) * vTensionSeam * fresnel;
+    matterColor += chromaticColor * vTensionSeam * 1.5;
+  }
+
+  // Instability event flash of non-Euclidean optical dispersion
+  if (uInstability > 0.01) {
+    matterColor = mix(matterColor, vec3(0.99, 0.98, 0.95) + chromaticColor * 2.0, uInstability * 0.35);
+  }
+
+  // Cavity Occlusion & Event Darkness
   float creviceOcc = smoothstep(-0.6, -0.05, vDisplacement) * (1.0 - smoothstep(0.0, 0.75, NdotV));
   matterColor = mix(matterColor, graphite, creviceOcc * 0.45);
 
-  // During Inversion & Deep Pass-Through event: graphite transition
   float totalDarkness = max(uEventDarkness, vInversionWeight * 0.45);
   matterColor = mix(matterColor, graphite * 1.7 + vec3(0.04), totalDarkness * 0.88);
 
-  // 3. Two-World Split Behavior Differentiation
-  if (uIdentityLeak > 0.01) {
-    float isLeft = smoothstep(0.0, -2.0, vWorldPosition.x);
-    float isRight = smoothstep(0.0, 2.0, vWorldPosition.x);
-    // Visuals (Left): softer, warmer, milky pearl glow
-    matterColor = mix(matterColor, vec3(0.97, 0.95, 0.92) + sssColor * 0.4, isLeft * uIdentityLeak * 0.45);
-    // Technical (Right): cooler, sharper, structured graphite-mineral contrast
-    matterColor = mix(matterColor, vec3(0.90, 0.92, 0.94) + sheen * 0.5, isRight * uIdentityLeak * 0.45);
+  // Attractor Color Temperature Nuances:
+  // Visuals: Warm ivory/pearl luminescence
+  // Technical: Crisp steel-mineral clarity
+  if (uProgress > 0.85) {
+    if (uSelectionBias < -0.01) {
+      vec3 warmBias = vec3(0.98, 0.95, 0.91) + sssColor * 0.5;
+      matterColor = mix(matterColor, warmBias, (-uSelectionBias) * 0.42);
+    } else if (uSelectionBias > 0.01) {
+      vec3 coolBias = vec3(0.91, 0.93, 0.95) + sheen * 0.6;
+      matterColor = mix(matterColor, coolBias, uSelectionBias * 0.42);
+    }
   }
 
-  // 4. Sophisticated Transparency & Macro-Depth Separation
-  // Dormant stage (uProgress < 0.15): nearly invisible with delicate shimmering refraction
+  // Transparency & Emergence
   float dormantAlpha = smoothstep(0.0, 0.16, uProgress);
   float dormantBase = mix(0.08 + 0.35 * fresnel, 1.0, dormantAlpha);
 
-  // Macro-foreground membrane transparency: when passing very close, keep edge crisp and body translucent
-  float depthFade = smoothstep(0.2, 2.0, vDepthMetric);
-
-  // Emergence clean-up (uProgress > 0.88): center clears, matter frames the perimeter
   float emergenceFade = 1.0;
   if (uProgress > 0.85) {
     float t = (uProgress - 0.85) / 0.15;
@@ -307,7 +333,6 @@ void main() {
     emergenceFade = mix(1.0, smoothstep(0.8, 3.8, centerDistance), t);
   }
 
-  // Multi-phase alpha
   float phaseAlpha = mix(0.35, 0.95, vMaterialPhase);
   float alpha = clamp(
     dormantBase * emergenceFade * phaseAlpha * (0.35 + 0.65 * fresnel + 0.4 * anisoSpec),
@@ -337,7 +362,6 @@ void main() {
   vUv = uv;
   vec3 pos = position;
 
-  // Asymmetric shear wave
   float wave = sin(pos.y * 0.6 + uTime * 0.4 + pos.x * 0.5) * cos(pos.z * 0.35 + uTime * 0.3) * 0.4;
   pos.z += wave;
   vWaveMetric = wave;
