@@ -87,9 +87,10 @@ export function TunnelCanvas({
         Math.max(0, (time - previousTime) / 1000),
       );
       previousTime = time;
-      const settling = controller.tick(deltaSeconds);
+      controller.tick(deltaSeconds);
       controller.render();
-      if (settling) frame = requestAnimationFrame(runFrame);
+      // Continuous animation loop for living matter subtle breathing & pulsation
+      frame = requestAnimationFrame(runFrame);
     };
 
     const restart = () => {
@@ -110,11 +111,21 @@ export function TunnelCanvas({
       if (!frame) frame = requestAnimationFrame(runFrame);
     };
 
+    const handlePointerMove = (event: PointerEvent) => {
+      if (disposed || coarsePointerRef.current) return;
+      const width = window.innerWidth || 1;
+      const height = window.innerHeight || 1;
+      const normX = (event.clientX / width) * 2 - 1;
+      const normY = -(event.clientY / height) * 2 + 1;
+      controller.setPointer?.(normX, normY);
+    };
+
     resizeRef.current = resize;
     restartRef.current = restart;
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(host);
     document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
 
     resize();
     restart();
@@ -126,6 +137,7 @@ export function TunnelCanvas({
       frame = 0;
       resizeObserver.disconnect();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pointermove", handlePointerMove);
       resizeRef.current = () => undefined;
       restartRef.current = () => undefined;
       controllerRef.current = null;
