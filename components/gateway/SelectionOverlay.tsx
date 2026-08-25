@@ -110,7 +110,7 @@ export function SelectionOverlay({
         BM
       </div>
 
-      {/* Attractor 1: BM VISUALS (Upper-Left Spatial Coordinate) */}
+      {/* Attractor 1: BM VISUALS (Lower-Left Spatial Coordinate) */}
       <section
         className="gateway-selection__division gateway-selection__division--visuals"
         aria-label="BM Visuals"
@@ -140,7 +140,7 @@ export function SelectionOverlay({
         </Link>
       </section>
 
-      {/* Attractor 2: BMP TECHNICAL (Lower-Right Spatial Coordinate) */}
+      {/* Attractor 2: BMP TECHNICAL (Upper-Right Spatial Coordinate) */}
       <section
         className="gateway-selection__division gateway-selection__division--technical"
         aria-label="BMP Technical"

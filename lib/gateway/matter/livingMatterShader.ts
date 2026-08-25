@@ -10,6 +10,8 @@ uniform float uInstability;
 uniform float uSingularityX;
 uniform float uReducedMotion;
 
+attribute float aEntityType;
+
 varying vec3 vNormal;
 varying vec3 vWorldPosition;
 varying vec3 vViewPosition;
@@ -21,6 +23,7 @@ varying float vInversionWeight;
 varying float vTensionSeam;
 varying float vSingularityDistance;
 varying float vDepthMetric;
+varying float vEntityType;
 
 // High quality 3D Simplex noise
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -101,6 +104,7 @@ float asymmetricFoldField(vec3 p, float t) {
 
 void main() {
   vUv = uv;
+  vEntityType = aEntityType;
   vec3 pos = position;
 
   float motionScale = uReducedMotion > 0.5 ? 0.05 : 1.0;
@@ -151,28 +155,47 @@ void main() {
     float fieldInfluence = smoothstep(0.82, 0.96, uProgress);
     
     // Central Hero Field Bridge: Sculptural continuous manifold connecting top-left and bottom-right
-    float bridgeWave = sin(pos.y * 0.35 + pos.x * 0.3 + t * 0.4) * cos(pos.x * 0.25 - pos.y * 0.2) * 1.4;
-    pos.z += bridgeWave * fieldInfluence * 0.75;
+    if (aEntityType == 0.0) {
+      float bridgeWave = sin(pos.y * 0.35 + pos.x * 0.3 + t * 0.4) * cos(pos.x * 0.25 - pos.y * 0.2) * 1.4;
+      pos.z += bridgeWave * fieldInfluence * 0.75;
+    }
 
     // VISUALS ATTRACTOR (Upper-Left Bias, uSelectionBias < 0):
     // Relaxation, expansion, continuous organic wave unfolding
     if (uSelectionBias < -0.01) {
       float biasAmount = -uSelectionBias;
-      float visualWave = sin(pos.y * 0.38 + t * 0.45) * cos(pos.x * 0.22 - t * 0.25) * 1.8;
-      float visualBreath = sin(t * 0.75 + pos.z * 0.25) * 0.8;
-      pos.xy += vec2(-0.9, visualWave * 0.7 + visualBreath * 0.5) * biasAmount * fieldInfluence;
-      pos.z += (visualWave + visualBreath) * 0.85 * biasAmount * fieldInfluence;
+      
+      if (aEntityType == 1.0) {
+        // Fracture / Open effect
+        float fractureNoise = snoise(pos * 1.5 + vec3(0.0, 0.0, t * 0.5));
+        float fractureMask = smoothstep(0.2, 0.8, fractureNoise + biasAmount * 0.5);
+        pos += normal * (fractureNoise * biasAmount * fieldInfluence * 2.5);
+      } else if (aEntityType == 0.0) {
+        float visualWave = sin(pos.y * 0.38 + t * 0.45) * cos(pos.x * 0.22 - t * 0.25) * 1.8;
+        float visualBreath = sin(t * 0.75 + pos.z * 0.25) * 0.8;
+        pos.xy += vec2(-0.9, visualWave * 0.7 + visualBreath * 0.5) * biasAmount * fieldInfluence;
+        pos.z += (visualWave + visualBreath) * 0.85 * biasAmount * fieldInfluence;
+      }
     }
 
     // TECHNICAL ATTRACTOR (Lower-Right Bias, uSelectionBias > 0):
     // Tension, alignment, precise planar crystallization
     if (uSelectionBias > 0.01) {
       float biasAmount = uSelectionBias;
-      // Quantized planar facet steps along structured diagonal axis
-      float facetStep = floor((pos.y * 1.6 + pos.x * 0.8 + pos.z * 0.5) * 1.8) / 1.8;
-      float techTension = (facetStep - (pos.y + pos.x * 0.5)) * 0.85;
-      pos.xy += vec2(0.9 + techTension * 0.35, techTension * 0.9) * biasAmount * fieldInfluence;
-      pos.z += sin(pos.x * 1.4 + pos.y * 0.8) * 0.65 * biasAmount * fieldInfluence;
+      
+      if (aEntityType == 2.0) {
+        // Resolve / Segment effect
+        float layerStep = floor(pos.y * 2.5) / 2.5;
+        float layerTension = (layerStep - pos.y) * 0.5;
+        pos.xz *= 1.0 - (layerTension * biasAmount * fieldInfluence);
+        pos.y += layerTension * biasAmount * fieldInfluence * 0.8;
+      } else if (aEntityType == 0.0) {
+        // Quantized planar facet steps along structured diagonal axis
+        float facetStep = floor((pos.y * 1.6 + pos.x * 0.8 + pos.z * 0.5) * 1.8) / 1.8;
+        float techTension = (facetStep - (pos.y + pos.x * 0.5)) * 0.85;
+        pos.xy += vec2(0.9 + techTension * 0.35, techTension * 0.9) * biasAmount * fieldInfluence;
+        pos.z += sin(pos.x * 1.4 + pos.y * 0.8) * 0.65 * biasAmount * fieldInfluence;
+      }
     }
   }
 
@@ -231,6 +254,7 @@ varying float vInversionWeight;
 varying float vTensionSeam;
 varying float vSingularityDistance;
 varying float vDepthMetric;
+varying float vEntityType;
 
 // Thin-film anisotropic mineral sheen
 vec3 mineralSheen(float cosTheta, float shear, float phase) {
@@ -336,6 +360,28 @@ void main() {
     0.0,
     1.0
   );
+
+  // Attractor Specific Behaviors
+  if (uProgress > 0.85) {
+    if (vEntityType == 1.0 && uSelectionBias < -0.01) {
+      float biasAmount = -uSelectionBias;
+      // Dissolve the outer shell using fragment position to create fractures
+      float fracture = sin(vWorldPosition.x * 4.0 + uTime * 0.5) * cos(vWorldPosition.y * 4.0 - uTime * 0.3) * sin(vWorldPosition.z * 4.0);
+      if (fracture < (biasAmount * 1.2 - 0.6) && gl_FrontFacing) {
+        alpha = 0.0;
+      } else if (!gl_FrontFacing) {
+        // Glowing dreamy interior glimpses
+        matterColor = mix(matterColor, vec3(0.95, 0.85, 0.75) + chromaticColor * 4.0 + sssColor * 2.0, biasAmount);
+        alpha = mix(alpha, 1.0, biasAmount);
+      }
+    } else if (vEntityType == 2.0 && uSelectionBias > 0.01) {
+      float biasAmount = uSelectionBias;
+      // Precise metallic striations
+      float striation = smoothstep(0.85, 0.95, sin(vWorldPosition.y * 15.0));
+      matterColor = mix(matterColor, vec3(0.98, 0.99, 1.0), striation * biasAmount * 0.6);
+      alpha = mix(alpha, 1.0, striation * biasAmount);
+    }
+  }
 
   if (alpha < 0.015) {
     discard;

@@ -206,20 +206,22 @@
     opacity 400ms ease;
 }
 
-/* Attractor 1: BM VISUALS (Upper-Left Spatial Coordinate) */
+/* Attractor 1: BM VISUALS (Lower-Left Spatial Coordinate) */
 .gateway-selection__division--visuals {
-  top: clamp(4.5rem, 9vh, 7.5rem);
-  left: var(--gateway-pad);
+  bottom: clamp(3rem, 7vh, 5rem);
+  left: clamp(2rem, 6vw, 6rem);
+  top: auto;
   width: min(100% - var(--gateway-pad) * 2, 38rem);
   max-width: 44rem;
   text-align: left;
   transform: translate3d(0, 0, 0);
 }
 
-/* Attractor 2: BMP TECHNICAL (Lower-Right Spatial Coordinate) */
+/* Attractor 2: BMP TECHNICAL (Upper-Right Spatial Coordinate) */
 .gateway-selection__division--technical {
-  bottom: var(--gateway-pad);
-  right: var(--gateway-pad);
+  top: clamp(4rem, 9vh, 7rem);
+  right: clamp(2rem, 6vw, 6rem);
+  bottom: auto;
   width: min(100% - var(--gateway-pad) * 2, 36rem);
   max-width: 40rem;
   align-items: flex-end;

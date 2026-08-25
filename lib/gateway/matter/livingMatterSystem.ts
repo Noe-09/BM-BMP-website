@@ -11,6 +11,8 @@ import {
   ShaderMaterial,
   Vector2,
   Vector3,
+  BoxGeometry,
+  SphereGeometry,
   type Material,
 } from "three";
 
@@ -71,7 +73,11 @@ export class LivingMatterSystem {
     return material;
   }
 
-  private ownGeometry<T extends BufferGeometry>(geometry: T): T {
+  private ownGeometry<T extends BufferGeometry>(geometry: T, entityType: number = 0): T {
+    if (geometry.attributes.position) {
+      const count = geometry.attributes.position.count;
+      geometry.setAttribute('aEntityType', new Float32BufferAttribute(new Float32Array(count).fill(entityType), 1));
+    }
     this.geometries.push(geometry);
     return geometry;
   }
@@ -200,18 +206,18 @@ export class LivingMatterSystem {
     }
 
     // 6. TWO-BEHAVIOR FIELD EMBODIMENT
-    // Visuals Structure (Upper-Left Attractor): Broad, undulating, relaxed mineral wave
-    const visualsGeo = this.ownGeometry(new PlaneGeometry(12, 16, 48, 48));
+    // Visuals Structure (Upper-Left Attractor): Orb-like creative sphere
+    const visualsGeo = this.ownGeometry(new SphereGeometry(5.5, 64, 64), 1);
     const visualsMesh = new Mesh(visualsGeo, this.mainMaterial);
-    visualsMesh.position.set(-3.8, 1.8, -17.8);
+    visualsMesh.position.set(-4.5, 2.0, -16.0);
     visualsMesh.rotation.set(0.14, 0.35, -0.22);
     this.visualsStructureGroup.add(visualsMesh);
     this.group.add(this.visualsStructureGroup);
 
-    // Technical Structure (Lower-Right Attractor): Precise, aligned, faceted crystalline lattice
-    const techGeo = this.ownGeometry(new PlaneGeometry(12, 16, 48, 48));
+    // Technical Structure (Lower-Right Attractor): Structural monolith pillar
+    const techGeo = this.ownGeometry(new BoxGeometry(3.5, 14, 3.5, 32, 64, 32), 2);
     const techMesh = new Mesh(techGeo, this.mainMaterial);
-    techMesh.position.set(3.8, -1.8, -17.8);
+    techMesh.position.set(4.5, -2.0, -16.0);
     techMesh.rotation.set(-0.14, -0.35, 0.22);
     this.technicalStructureGroup.add(techMesh);
     this.group.add(this.technicalStructureGroup);
