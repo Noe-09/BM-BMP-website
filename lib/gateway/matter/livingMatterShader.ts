@@ -154,8 +154,7 @@ void main() {
   if (uProgress > 0.82) {
     float fieldInfluence = smoothstep(0.82, 0.96, uProgress);
     
-    // Central Hero Field Bridge: Sculptural continuous manifold connecting top-left and bottom-right
-    if (aEntityType == 0.0) {
+    if (abs(aEntityType) < 0.1) {
       float bridgeWave = sin(pos.y * 0.35 + pos.x * 0.3 + t * 0.4) * cos(pos.x * 0.25 - pos.y * 0.2) * 1.4;
       pos.z += bridgeWave * fieldInfluence * 0.75;
     }
@@ -165,12 +164,12 @@ void main() {
     if (uSelectionBias < -0.01) {
       float biasAmount = -uSelectionBias;
       
-      if (aEntityType == 1.0) {
+      if (abs(aEntityType - 1.0) < 0.1) {
         // Fracture / Open effect
         float fractureNoise = snoise(pos * 1.5 + vec3(0.0, 0.0, t * 0.5));
         float fractureMask = smoothstep(0.2, 0.8, fractureNoise + biasAmount * 0.5);
         pos += normal * (fractureNoise * biasAmount * fieldInfluence * 2.5);
-      } else if (aEntityType == 0.0) {
+      } else if (abs(aEntityType) < 0.1) {
         float visualWave = sin(pos.y * 0.38 + t * 0.45) * cos(pos.x * 0.22 - t * 0.25) * 1.8;
         float visualBreath = sin(t * 0.75 + pos.z * 0.25) * 0.8;
         pos.xy += vec2(-0.9, visualWave * 0.7 + visualBreath * 0.5) * biasAmount * fieldInfluence;
@@ -183,13 +182,13 @@ void main() {
     if (uSelectionBias > 0.01) {
       float biasAmount = uSelectionBias;
       
-      if (aEntityType == 2.0) {
+      if (abs(aEntityType - 2.0) < 0.1) {
         // Resolve / Segment effect
         float layerStep = floor(pos.y * 2.5) / 2.5;
         float layerTension = (layerStep - pos.y) * 0.5;
         pos.xz *= 1.0 - (layerTension * biasAmount * fieldInfluence);
         pos.y += layerTension * biasAmount * fieldInfluence * 0.8;
-      } else if (aEntityType == 0.0) {
+      } else if (abs(aEntityType) < 0.1) {
         // Quantized planar facet steps along structured diagonal axis
         float facetStep = floor((pos.y * 1.6 + pos.x * 0.8 + pos.z * 0.5) * 1.8) / 1.8;
         float techTension = (facetStep - (pos.y + pos.x * 0.5)) * 0.85;
@@ -361,20 +360,17 @@ void main() {
     1.0
   );
 
-  // Attractor Specific Behaviors
   if (uProgress > 0.85) {
-    if (vEntityType == 1.0 && uSelectionBias < -0.01) {
+    if (abs(vEntityType - 1.0) < 0.1 && uSelectionBias < -0.01) {
       float biasAmount = -uSelectionBias;
-      // Dissolve the outer shell using fragment position to create fractures
       float fracture = sin(vWorldPosition.x * 4.0 + uTime * 0.5) * cos(vWorldPosition.y * 4.0 - uTime * 0.3) * sin(vWorldPosition.z * 4.0);
-      if (fracture < (biasAmount * 1.2 - 0.6) && gl_FrontFacing) {
+      if (fracture < (biasAmount * 1.2 - 0.6)) {
         alpha = 0.0;
-      } else if (!gl_FrontFacing) {
-        // Glowing dreamy interior glimpses
+      } else {
         matterColor = mix(matterColor, vec3(0.95, 0.85, 0.75) + chromaticColor * 4.0 + sssColor * 2.0, biasAmount);
         alpha = mix(alpha, 1.0, biasAmount);
       }
-    } else if (vEntityType == 2.0 && uSelectionBias > 0.01) {
+    } else if (abs(vEntityType - 2.0) < 0.1 && uSelectionBias > 0.01) {
       float biasAmount = uSelectionBias;
       // Precise metallic striations
       float striation = smoothstep(0.85, 0.95, sin(vWorldPosition.y * 15.0));

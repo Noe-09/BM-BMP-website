@@ -55,7 +55,8 @@ export function TunnelCanvas({
     let controller: GatewaySceneController;
     try {
       controller = createGatewayScene(canvas);
-    } catch {
+    } catch (err) {
+      console.error("GATEWAY SCENE CRASH:", err);
       failureRef.current();
       return;
     }
