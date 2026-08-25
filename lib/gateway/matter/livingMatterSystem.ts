@@ -172,14 +172,21 @@ export class LivingMatterSystem {
       this.group.add(mesh);
     }
 
-    // 3. TENSION SEAM MESH (The dynamic physical meridian connecting the two attractor behaviors)
-    const seamGeo = this.ownGeometry(new PlaneGeometry(3.5, 22, 32, 64));
+    // 3. CENTRAL HERO MANIFOLD (Fills the viewport center with sculptural living matter topology)
+    const heroManifoldGeo = this.ownGeometry(new PlaneGeometry(14, 20, 56, 56));
+    const heroManifold = new Mesh(heroManifoldGeo, this.mainMaterial);
+    heroManifold.position.set(0.2, 0.1, -17.2);
+    heroManifold.rotation.set(0.08, 0.22, -0.32);
+    this.group.add(heroManifold);
+
+    // 4. TENSION SEAM MESH (The dynamic physical meridian connecting the two attractor behaviors)
+    const seamGeo = this.ownGeometry(new PlaneGeometry(4.5, 24, 36, 64));
     this.tensionSeamMesh = new Mesh(seamGeo, this.mainMaterial);
     this.tensionSeamMesh.position.set(0, 0, -17.5);
-    this.tensionSeamMesh.rotation.set(0.05, 0.15, -0.05);
+    this.tensionSeamMesh.rotation.set(0.05, 0.18, -0.15);
     this.group.add(this.tensionSeamMesh);
 
-    // 4. REFRACTION TRANSMISSION PLIES
+    // 5. REFRACTION TRANSMISSION PLIES
     for (let j = 0; j < 3; j++) {
       const filmGeo = this.ownGeometry(new PlaneGeometry(11, 15, 32, 32));
       const filmMesh = new Mesh(filmGeo, this.filmMaterial);
@@ -192,20 +199,20 @@ export class LivingMatterSystem {
       this.group.add(filmMesh);
     }
 
-    // 5. TWO-BEHAVIOR FIELD EMBODIMENT
-    // Visuals Structure (Left): Broad, undulating, relaxed mineral wave
-    const visualsGeo = this.ownGeometry(new PlaneGeometry(12, 18, 48, 48));
+    // 6. TWO-BEHAVIOR FIELD EMBODIMENT
+    // Visuals Structure (Upper-Left Attractor): Broad, undulating, relaxed mineral wave
+    const visualsGeo = this.ownGeometry(new PlaneGeometry(12, 16, 48, 48));
     const visualsMesh = new Mesh(visualsGeo, this.mainMaterial);
-    visualsMesh.position.set(-4.5, 0.2, -18.0);
-    visualsMesh.rotation.set(0.12, 0.38, -0.2);
+    visualsMesh.position.set(-3.8, 1.8, -17.8);
+    visualsMesh.rotation.set(0.14, 0.35, -0.22);
     this.visualsStructureGroup.add(visualsMesh);
     this.group.add(this.visualsStructureGroup);
 
-    // Technical Structure (Right): Precise, aligned, faceted crystalline lattice
-    const techGeo = this.ownGeometry(new PlaneGeometry(11, 18, 48, 48));
+    // Technical Structure (Lower-Right Attractor): Precise, aligned, faceted crystalline lattice
+    const techGeo = this.ownGeometry(new PlaneGeometry(12, 16, 48, 48));
     const techMesh = new Mesh(techGeo, this.mainMaterial);
-    techMesh.position.set(4.5, -0.2, -18.0);
-    techMesh.rotation.set(-0.12, -0.38, 0.2);
+    techMesh.position.set(3.8, -1.8, -17.8);
+    techMesh.rotation.set(-0.14, -0.35, 0.22);
     this.technicalStructureGroup.add(techMesh);
     this.group.add(this.technicalStructureGroup);
   }
@@ -317,17 +324,17 @@ export class LivingMatterSystem {
 
       // Two-world attractor response:
       if (params.progress > 0.8) {
-        // Visuals (Left): Unfolds and expands negative space on active
+        // Visuals (Upper-Left): Unfolds and expands negative space on active
         const visualActive = Math.max(0, -this.biasCurrent);
-        this.visualsStructureGroup.position.x = -4.5 - visualActive * 1.4;
+        this.visualsStructureGroup.position.x = -3.8 - visualActive * 1.4;
         this.visualsStructureGroup.scale.setScalar(1.0 + visualActive * 0.18);
-        this.visualsStructureGroup.rotation.y = 0.38 + Math.sin(totalTime * 0.25) * 0.05 - visualActive * 0.15;
+        this.visualsStructureGroup.rotation.y = 0.35 + Math.sin(totalTime * 0.25) * 0.05 - visualActive * 0.15;
 
-        // Technical (Right): Aligns and tensions crystalline structure on active
+        // Technical (Lower-Right): Aligns and tensions crystalline structure on active
         const techActive = Math.max(0, this.biasCurrent);
-        this.technicalStructureGroup.position.x = 4.5 + techActive * 1.4;
+        this.technicalStructureGroup.position.x = 3.8 + techActive * 1.4;
         this.technicalStructureGroup.scale.setScalar(1.0 - techActive * 0.08);
-        this.technicalStructureGroup.rotation.y = -0.38 + techActive * 0.2;
+        this.technicalStructureGroup.rotation.y = -0.35 + techActive * 0.2;
       }
     }
 

@@ -146,29 +146,33 @@ void main() {
     pos.xy += vec2(cos(distToSingularity * 2.0), sin(distToSingularity * 2.0)) * (uInstability * 0.45);
   }
 
-  // 4. TWO-BEHAVIOR FIELD MUTATION (ONE SYSTEM. TWO BEHAVIORS.)
+  // 4. TWO-BEHAVIOR FIELD MUTATION (COLLAPSED HERO FIELD)
   if (uProgress > 0.82) {
     float fieldInfluence = smoothstep(0.82, 0.96, uProgress);
     
-    // VISUALS ATTRACTOR (Left Bias, uSelectionBias < 0):
+    // Central Hero Field Bridge: Sculptural continuous manifold connecting top-left and bottom-right
+    float bridgeWave = sin(pos.y * 0.35 + pos.x * 0.3 + t * 0.4) * cos(pos.x * 0.25 - pos.y * 0.2) * 1.4;
+    pos.z += bridgeWave * fieldInfluence * 0.75;
+
+    // VISUALS ATTRACTOR (Upper-Left Bias, uSelectionBias < 0):
     // Relaxation, expansion, continuous organic wave unfolding
     if (uSelectionBias < -0.01) {
       float biasAmount = -uSelectionBias;
-      float visualWave = sin(pos.y * 0.4 + t * 0.5) * cos(pos.x * 0.25 - t * 0.3) * 1.6;
-      float visualBreath = sin(t * 0.8 + pos.z * 0.2) * 0.6;
-      pos.xy += vec2(-0.8, visualWave * 0.6 + visualBreath) * biasAmount * fieldInfluence;
-      pos.z += visualWave * 0.8 * biasAmount * fieldInfluence;
+      float visualWave = sin(pos.y * 0.38 + t * 0.45) * cos(pos.x * 0.22 - t * 0.25) * 1.8;
+      float visualBreath = sin(t * 0.75 + pos.z * 0.25) * 0.8;
+      pos.xy += vec2(-0.9, visualWave * 0.7 + visualBreath * 0.5) * biasAmount * fieldInfluence;
+      pos.z += (visualWave + visualBreath) * 0.85 * biasAmount * fieldInfluence;
     }
 
-    // TECHNICAL ATTRACTOR (Right Bias, uSelectionBias > 0):
+    // TECHNICAL ATTRACTOR (Lower-Right Bias, uSelectionBias > 0):
     // Tension, alignment, precise planar crystallization
     if (uSelectionBias > 0.01) {
       float biasAmount = uSelectionBias;
-      // Quantized planar facet steps
-      float facetStep = floor((pos.y * 1.4 + pos.z * 0.6) * 1.8) / 1.8;
-      float techTension = (facetStep - pos.y) * 0.75;
-      pos.xy += vec2(0.8 + techTension * 0.3, techTension) * biasAmount * fieldInfluence;
-      pos.z += sin(pos.x * 1.2) * 0.5 * biasAmount * fieldInfluence;
+      // Quantized planar facet steps along structured diagonal axis
+      float facetStep = floor((pos.y * 1.6 + pos.x * 0.8 + pos.z * 0.5) * 1.8) / 1.8;
+      float techTension = (facetStep - (pos.y + pos.x * 0.5)) * 0.85;
+      pos.xy += vec2(0.9 + techTension * 0.35, techTension * 0.9) * biasAmount * fieldInfluence;
+      pos.z += sin(pos.x * 1.4 + pos.y * 0.8) * 0.65 * biasAmount * fieldInfluence;
     }
   }
 
@@ -322,20 +326,13 @@ void main() {
     }
   }
 
-  // Transparency & Emergence
+  // Transparency & Hero Field Presence (Continuous living matter across center)
   float dormantAlpha = smoothstep(0.0, 0.16, uProgress);
   float dormantBase = mix(0.08 + 0.35 * fresnel, 1.0, dormantAlpha);
 
-  float emergenceFade = 1.0;
-  if (uProgress > 0.85) {
-    float t = (uProgress - 0.85) / 0.15;
-    float centerDistance = length(vWorldPosition.xy);
-    emergenceFade = mix(1.0, smoothstep(0.8, 3.8, centerDistance), t);
-  }
-
-  float phaseAlpha = mix(0.35, 0.95, vMaterialPhase);
+  float phaseAlpha = mix(0.4, 0.95, vMaterialPhase);
   float alpha = clamp(
-    dormantBase * emergenceFade * phaseAlpha * (0.35 + 0.65 * fresnel + 0.4 * anisoSpec),
+    dormantBase * phaseAlpha * (0.4 + 0.6 * fresnel + 0.4 * anisoSpec),
     0.0,
     1.0
   );

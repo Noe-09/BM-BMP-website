@@ -104,12 +104,17 @@ export function SelectionOverlay({
         <h1>BM</h1>
         <p>TWO WORLDS. ONE SYSTEM.</p>
       </header>
+      
+      {/* BM System Anchor / Origin of Reorganization */}
       <div className="gateway-core-mark" aria-hidden="true">
         BM
       </div>
+
+      {/* Attractor 1: BM VISUALS (Upper-Left Spatial Coordinate) */}
       <section
         className="gateway-selection__division gateway-selection__division--visuals"
         aria-label="BM Visuals"
+        data-depth={selection === "visuals" ? "foreground" : selection === "technical" ? "deep" : "mid"}
         onPointerEnter={() => {
           if (!coarsePointer) onPreview("visuals");
         }}
@@ -134,9 +139,12 @@ export function SelectionOverlay({
           ENTER VISUALS ↗
         </Link>
       </section>
+
+      {/* Attractor 2: BMP TECHNICAL (Lower-Right Spatial Coordinate) */}
       <section
         className="gateway-selection__division gateway-selection__division--technical"
         aria-label="BMP Technical"
+        data-depth={selection === "technical" ? "foreground" : selection === "visuals" ? "deep" : "mid"}
         onPointerEnter={() => {
           if (!coarsePointer) onPreview("technical");
         }}
