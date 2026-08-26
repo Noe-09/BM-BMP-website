@@ -7,13 +7,10 @@ import {
   LineBasicMaterial,
   LineSegments,
   Mesh,
-  MeshBasicMaterial,
   PlaneGeometry,
   ShaderMaterial,
   Vector2,
   Vector3,
-  BoxGeometry,
-  SphereGeometry,
   type Material,
 } from "three";
 
@@ -33,8 +30,6 @@ export type LivingMatterParams = {
   reducedMotion: boolean;
   identityLeak: number;
   selectionBias: number;
-  instability: number;
-  singularityX: number;
 };
 
 export class LivingMatterSystem {
@@ -47,20 +42,15 @@ export class LivingMatterSystem {
   private filamentMaterial!: LineBasicMaterial;
   private filamentGeometry!: BufferGeometry;
 
+  // Discrete foreground and midground assemblies for dynamic depth choreography
   private foregroundBlade1!: Mesh;
   private foregroundBlade2!: Mesh;
-  private visualsStructureGroup = new Group();
-  private technicalStructureGroup = new Group();
-  private tensionSeamMesh!: Mesh;
 
   private pointerTarget = new Vector2(0, 0);
   private pointerCurrent = new Vector2(0, 0);
   private tensionCurrent = 0;
   private apertureCurrent = 0;
   private darknessCurrent = 0;
-  private biasCurrent = 0;
-  private instabilityCurrent = 0;
-  private singularityXCurrent = 0;
 
   constructor() {
     this.group = new Group();
@@ -74,11 +64,7 @@ export class LivingMatterSystem {
     return material;
   }
 
-  private ownGeometry<T extends BufferGeometry>(geometry: T, entityType: number = 0): T {
-    if (geometry.attributes.position) {
-      const count = geometry.attributes.position.count;
-      geometry.setAttribute('aEntityType', new Float32BufferAttribute(new Float32Array(count).fill(entityType), 1));
-    }
+  private ownGeometry<T extends BufferGeometry>(geometry: T): T {
     this.geometries.push(geometry);
     return geometry;
   }
@@ -102,8 +88,6 @@ export class LivingMatterSystem {
           uReducedMotion: { value: 0 },
           uIdentityLeak: { value: 0 },
           uSelectionBias: { value: 0 },
-          uInstability: { value: 0 },
-          uSingularityX: { value: 0 },
           uPointer: { value: new Vector2(0, 0) },
           uColorBase: { value: new Vector3(baseColor.r, baseColor.g, baseColor.b) },
           uColorPearl: { value: new Vector3(pearlColor.r, pearlColor.g, pearlColor.b) },
@@ -146,18 +130,22 @@ export class LivingMatterSystem {
 
   private initMeshes() {
     // 1. FOREGROUND MACRO BLADES (Occupies 20–35% of frame when close to camera)
-    const blade1Geo = this.ownGeometry(new PlaneGeometry(6.5, 14, 48, 64));    this.foregroundBlade1 = new Mesh(blade1Geo, this.mainMaterial);
+    // Blade 1: High left diagonal shear (passes camera during early travel Z: 12 -> 6)
+    const blade1Geo = this.ownGeometry(new PlaneGeometry(6.5, 14, 48, 64));
+    this.foregroundBlade1 = new Mesh(blade1Geo, this.mainMaterial);
     this.foregroundBlade1.position.set(-1.8, 1.2, 5.0);
-    this.foregroundBlade1.rotation.set(0.1, -0.4, -0.45);
+    this.foregroundBlade1.rotation.set(0.2, 0.45, -0.48);
     this.group.add(this.foregroundBlade1);
 
+    // Blade 2: Lower right diagonal blade (passes camera during mid travel Z: 5 -> -2)
     const blade2Geo = this.ownGeometry(new PlaneGeometry(7.2, 16, 48, 64));
     this.foregroundBlade2 = new Mesh(blade2Geo, this.mainMaterial);
     this.foregroundBlade2.position.set(1.9, -1.4, -0.5);
-    this.foregroundBlade2.rotation.set(-0.15, 0.25, 0.55);
+    this.foregroundBlade2.rotation.set(-0.25, -0.38, 0.52);
     this.group.add(this.foregroundBlade2);
 
-    // 2. ASYMMETRIC TOPOLOGICAL MANIFOLD SHEETS
+    // 2. ASYMMETRIC TOPOLOGICAL MANIFOLD SHEETS (No circular tubes or vortexes)
+    // Curvilinear ribbons intersecting along non-Euclidean saddle points
     const sheetCount = 6;
     for (let i = 0; i < sheetCount; i++) {
       const w = 9.0 + (i % 3) * 2.5;
@@ -165,6 +153,7 @@ export class LivingMatterSystem {
       const geo = this.ownGeometry(new PlaneGeometry(w, h, 40, 48));
       const mesh = new Mesh(geo, this.mainMaterial);
 
+      // Asymmetric staggered distribution along the traversal depth
       const zPos = 8 - i * 5.2;
       const xOffset = Math.sin(i * 1.6) * 1.5 + (i % 2 === 0 ? -0.8 : 0.9);
       const yOffset = Math.cos(i * 1.3) * 1.1 + (i % 2 === 0 ? 0.6 : -0.7);
@@ -178,27 +167,7 @@ export class LivingMatterSystem {
       this.group.add(mesh);
     }
 
-    // 2. MIDGROUND TENSION SEAM
-    const seamGeo = this.ownGeometry(new PlaneGeometry(1, 14, 16, 64));
-    this.tensionSeamMesh = new Mesh(seamGeo, this.mainMaterial);
-    this.tensionSeamMesh.position.set(-0.8, 1.7, 8.0);
-    this.tensionSeamMesh.rotation.set(0.2, -0.15, 0.0);
-    this.group.add(this.tensionSeamMesh);
-
-    // 3. CENTRAL HERO MANIFOLD
-    const heroManifoldGeo = this.ownGeometry(new PlaneGeometry(14, 20, 56, 56));
-    const heroManifold = new Mesh(heroManifoldGeo, this.mainMaterial);
-    heroManifold.position.set(0.2, 0.1, -17.2);
-    heroManifold.rotation.set(0.08, 0.22, -0.32);
-    this.group.add(heroManifold);
-
-    const secondaryManifoldGeo = this.ownGeometry(new PlaneGeometry(12, 18, 48, 48));
-    const secondaryManifold = new Mesh(secondaryManifoldGeo, this.mainMaterial);
-    secondaryManifold.position.set(0.0, 0.0, -17.5);
-    secondaryManifold.rotation.set(-0.1, -0.1, 0.1);
-    this.group.add(secondaryManifold);
-
-    // 4. REFRACTION / LIGHT-BENDING FILMS
+    // 3. REFRACTION TRANSMISSION PLIES (Catch grazing light and dispersion fringes)
     for (let j = 0; j < 3; j++) {
       const filmGeo = this.ownGeometry(new PlaneGeometry(11, 15, 32, 32));
       const filmMesh = new Mesh(filmGeo, this.filmMaterial);
@@ -210,26 +179,10 @@ export class LivingMatterSystem {
       filmMesh.rotation.set(0.15, j * 0.5, j * 0.7 - 0.5);
       this.group.add(filmMesh);
     }
-
-    // 6. TWO-BEHAVIOR FIELD EMBODIMENT
-    // Visuals Structure (Upper-Left Attractor): Orb-like creative sphere
-    const visualsGeo = this.ownGeometry(new SphereGeometry(5.5, 64, 64), 1);
-    const visualsMesh = new Mesh(visualsGeo, this.mainMaterial);
-    visualsMesh.position.set(-4.5, 2.0, -16.0);
-    visualsMesh.rotation.set(0.14, 0.35, -0.22);
-    this.visualsStructureGroup.add(visualsMesh);
-    this.group.add(this.visualsStructureGroup);
-
-    // Technical Structure (Lower-Right Attractor): Structural monolith pillar
-    const techGeo = this.ownGeometry(new BoxGeometry(3.5, 14, 3.5, 32, 64, 32), 2);
-    const techMesh = new Mesh(techGeo, this.mainMaterial);
-    techMesh.position.set(4.5, -2.0, -16.0);
-    techMesh.rotation.set(-0.14, -0.35, 0.22);
-    this.technicalStructureGroup.add(techMesh);
-    this.group.add(this.technicalStructureGroup);
   }
 
   private initFilaments() {
+    // Asymmetric tension stress filaments spanning the non-Euclidean folds
     const count = 54;
     const positions = new Float32Array(count * 6);
     for (let i = 0; i < count; i++) {
@@ -271,6 +224,7 @@ export class LivingMatterSystem {
   }
 
   tick(deltaSeconds: number, params: LivingMatterParams, totalTime: number) {
+    // High-inertia memory damping for pointer tension (viscous response)
     const pointerDampSpeed = params.reducedMotion ? 12 : 2.5;
     this.pointerCurrent.x +=
       (this.pointerTarget.x - this.pointerCurrent.x) *
@@ -279,6 +233,7 @@ export class LivingMatterSystem {
       (this.pointerTarget.y - this.pointerCurrent.y) *
       Math.min(1, deltaSeconds * pointerDampSpeed);
 
+    // Smooth internal tension and aperture metrics
     this.tensionCurrent +=
       (params.tension - this.tensionCurrent) *
       Math.min(1, deltaSeconds * 4.2);
@@ -291,18 +246,6 @@ export class LivingMatterSystem {
       (params.eventDarkness - this.darknessCurrent) *
       Math.min(1, deltaSeconds * 5.5);
 
-    this.biasCurrent +=
-      (params.selectionBias - this.biasCurrent) *
-      Math.min(1, deltaSeconds * 6.0);
-
-    this.instabilityCurrent +=
-      (params.instability - this.instabilityCurrent) *
-      Math.min(1, deltaSeconds * 8.0);
-
-    this.singularityXCurrent +=
-      (params.singularityX - this.singularityXCurrent) *
-      Math.min(1, deltaSeconds * 6.5);
-
     // Update main shader uniforms
     const u = this.mainMaterial.uniforms;
     u.uTime.value = totalTime;
@@ -312,9 +255,7 @@ export class LivingMatterSystem {
     u.uEventDarkness.value = this.darknessCurrent;
     u.uReducedMotion.value = params.reducedMotion ? 1 : 0;
     u.uIdentityLeak.value = params.identityLeak;
-    u.uSelectionBias.value = this.biasCurrent;
-    u.uInstability.value = this.instabilityCurrent;
-    u.uSingularityX.value = this.singularityXCurrent;
+    u.uSelectionBias.value = params.selectionBias;
     u.uPointer.value.copy(this.pointerCurrent);
 
     // Update film shader uniforms
@@ -324,32 +265,19 @@ export class LivingMatterSystem {
     fu.uAperture.value = this.apertureCurrent;
     fu.uEventDarkness.value = this.darknessCurrent;
 
-    // Tension Seam dynamically tracks the BM Singularity position
-    this.tensionSeamMesh.position.x = this.singularityXCurrent;
-    this.tensionSeamMesh.rotation.y = this.biasCurrent * 0.25;
-
-    // Macro-blade spatial dynamics
+    // Macro-blade spatial dynamics:
+    // As camera travels, foreground blades frame compositions and part laterally at emergence
     if (!params.reducedMotion) {
       const p = params.progress;
+      const emergencePart = Math.max(0, (p - 0.75) / 0.25);
+      this.foregroundBlade1.position.x = -1.8 - emergencePart * 3.5;
       this.foregroundBlade1.rotation.z = -0.48 + Math.sin(totalTime * 0.2) * 0.04 - p * 0.3;
+
+      this.foregroundBlade2.position.x = 1.9 + emergencePart * 3.5;
       this.foregroundBlade2.rotation.z = 0.52 - Math.cos(totalTime * 0.25) * 0.04 + p * 0.25;
-
-      // Two-world attractor response:
-      if (params.progress > 0.8) {
-        // Visuals (Upper-Left): Unfolds and expands negative space on active
-        const visualActive = Math.max(0, -this.biasCurrent);
-        this.visualsStructureGroup.position.x = -3.8 - visualActive * 1.4;
-        this.visualsStructureGroup.scale.setScalar(1.0 + visualActive * 0.18);
-        this.visualsStructureGroup.rotation.y = 0.35 + Math.sin(totalTime * 0.25) * 0.05 - visualActive * 0.15;
-
-        // Technical (Lower-Right): Aligns and tensions crystalline structure on active
-        const techActive = Math.max(0, this.biasCurrent);
-        this.technicalStructureGroup.position.x = 3.8 + techActive * 1.4;
-        this.technicalStructureGroup.scale.setScalar(1.0 - techActive * 0.08);
-        this.technicalStructureGroup.rotation.y = -0.35 + techActive * 0.2;
-      }
     }
 
+    // Dynamic filament opacity based on tension and progress
     const filamentAlpha =
       Math.sin(params.progress * Math.PI) *
       0.38 *

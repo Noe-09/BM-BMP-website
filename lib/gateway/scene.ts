@@ -12,13 +12,13 @@ import {
   SRGBColorSpace,
   Vector2,
   WebGLRenderer,
-  BoxGeometry,
   type BufferGeometry,
   type Material,
 } from "three";
 
 import type { GatewayPose } from "./choreography";
 import { LivingMatterSystem } from "./matter/livingMatterSystem";
+import { DualEntitySystem } from "./entities/dualEntitySystem";
 import { damp } from "../motion/physics.ts";
 
 export type GatewaySceneController = {
@@ -152,11 +152,6 @@ export function createGatewayScene(
     const camera = new PerspectiveCamera(46, 1, 0.1, 80);
     camera.position.set(0, 0, INITIAL_STATE.cameraZ);
 
-    if (typeof window !== "undefined") {
-      // (window as any).__GATEWAY_SCENE__ = scene;
-      // (window as any).__GATEWAY_CAMERA__ = camera;
-    }
-
     const ownMaterial = <T extends Material>(material: T) => {
       materials.push(material);
       return material;
@@ -166,6 +161,7 @@ export function createGatewayScene(
       return geometry;
     };
 
+    // Decorative mineral wing boundary materials (preserved for subtle lateral spatial presence & contracts)
     const visualWingMaterial = ownMaterial(
       new MeshStandardMaterial({
         color: 0xe2ded5,
@@ -185,11 +181,15 @@ export function createGatewayScene(
       }),
     );
 
+    // Initialize the Living Matter system
     const livingMatter = new LivingMatterSystem();
     scene.add(livingMatter.group);
 
-    // DIAGNOSTIC TEST: GIANT GREEN BOX REMOVED
+    // Initialize the Dual Entity system (BM Visuals & BMP Technical)
+    const dualEntities = new DualEntitySystem();
+    scene.add(dualEntities.group);
 
+    // Subtle background mineral plane
     const backdropGeo = ownGeometry(new PlaneGeometry(40, 40));
     const backdropMat = ownMaterial(
       new MeshStandardMaterial({
@@ -202,6 +202,7 @@ export function createGatewayScene(
     backdrop.position.set(0, 0, -32);
     scene.add(backdrop);
 
+    // Ambient mineral lighting
     const hemisphere = new HemisphereLight(0xfcfbf7, 0xdedad1, 0.65);
     scene.add(hemisphere);
 
@@ -218,9 +219,6 @@ export function createGatewayScene(
     let totalElapsedTime = 0;
     let disposed = false;
 
-    let previousBiasTarget = 0;
-    let instability = 0;
-
     const pointerVec = new Vector2(0, 0);
 
     const applyState = () => {
@@ -228,6 +226,7 @@ export function createGatewayScene(
       camera.position.z = current.cameraZ;
       camera.rotation.y = current.cameraYaw;
 
+      // Event darkness affects scene background, fog, and light intensities
       const darkness = current.eventDarkness;
       if (darkness > 0.001) {
         activeBgColor.copy(warmMineralWhite).lerp(deepGraphite, darkness * 0.9);
@@ -244,6 +243,7 @@ export function createGatewayScene(
       fillLight.intensity =
         (1.4 - darkness * 0.9) * (0.8 + current.technicalLight * 0.4);
 
+      // Material roughness and properties updates
       visualWingMaterial.roughness = Math.min(
         1,
         0.9 + Math.max(0, current.visualLight - 0.7) * 0.2,
@@ -258,20 +258,12 @@ export function createGatewayScene(
 
     return {
       setTarget(frame) {
-        const nextTarget = copyState(frame);
-        // Detect side-switch or phase transition across the BM singularity
-        if (
-          Math.sign(nextTarget.selectionBias) !== Math.sign(previousBiasTarget) &&
-          (nextTarget.selectionBias !== 0 || previousBiasTarget !== 0)
-        ) {
-          instability = 1.0;
-        }
-        previousBiasTarget = nextTarget.selectionBias;
-        target = nextTarget;
+        target = copyState(frame);
       },
       setPointer(x: number, y: number) {
         pointerVec.set(x, y);
         livingMatter.setPointer(x, y);
+        dualEntities.setPointer(x, y);
       },
       resize(width, height, dpr) {
         if (disposed || width <= 0 || height <= 0) return;
@@ -293,15 +285,6 @@ export function createGatewayScene(
           );
         }
 
-        // Instability decays over ~450ms
-        if (instability > 0.001) {
-          instability = damp(instability, 0, 5.5, deltaSeconds);
-        } else {
-          instability = 0;
-        }
-
-        const singularityX = current.selectionBias * 0.75;
-
         livingMatter.tick(
           deltaSeconds,
           {
@@ -313,18 +296,25 @@ export function createGatewayScene(
             reducedMotion: false,
             identityLeak: current.identityLeak,
             selectionBias: current.selectionBias,
-            instability,
-            singularityX,
           },
           totalElapsedTime,
         );
 
-        const settling =
-          TRACKED_KEYS.some(
-            (key) => Math.abs(target[key] - current[key]) > EPSILON,
-          ) || instability > 0.01;
+        dualEntities.tick(
+          deltaSeconds,
+          {
+            progress: current.travelProgress,
+            selectionBias: current.selectionBias,
+            reducedMotion: false,
+            eventDarkness: current.eventDarkness,
+          },
+          totalElapsedTime,
+        );
 
-        if (!settling && instability <= 0.01) Object.assign(current, target);
+        const settling = TRACKED_KEYS.some(
+          (key) => Math.abs(target[key] - current[key]) > EPSILON,
+        );
+        if (!settling) Object.assign(current, target);
         applyState();
         return settling;
       },
@@ -335,6 +325,7 @@ export function createGatewayScene(
         if (disposed) return;
         disposed = true;
         livingMatter.dispose();
+        dualEntities.dispose();
         scene.clear();
         disposeOwnedResources();
       },
