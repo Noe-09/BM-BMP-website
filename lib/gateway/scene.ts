@@ -3,10 +3,8 @@ import {
   DirectionalLight,
   FogExp2,
   HemisphereLight,
-  Mesh,
   MeshStandardMaterial,
   PerspectiveCamera,
-  PlaneGeometry,
   PointLight,
   Scene,
   SRGBColorSpace,
@@ -156,10 +154,6 @@ export function createGatewayScene(
     const ownMaterial = <T extends Material>(material: T) => {
       materials.push(material);
       return material;
-    };
-    const ownGeometry = <T extends BufferGeometry>(geometry: T) => {
-      geometries.push(geometry);
-      return geometry;
     };
 
     // Decorative mineral wing boundary materials (preserved for subtle lateral spatial presence & contracts)
