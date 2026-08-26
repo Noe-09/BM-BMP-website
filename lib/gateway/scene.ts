@@ -19,6 +19,7 @@ import {
 import type { GatewayPose } from "./choreography";
 import { LivingMatterSystem } from "./matter/livingMatterSystem";
 import { DualEntitySystem } from "./entities/dualEntitySystem";
+import { ChamberEnvironment } from "./environment/chamberEnvironment";
 import { damp } from "../motion/physics.ts";
 
 export type GatewaySceneController = {
@@ -189,18 +190,9 @@ export function createGatewayScene(
     const dualEntities = new DualEntitySystem();
     scene.add(dualEntities.group);
 
-    // Subtle background mineral plane
-    const backdropGeo = ownGeometry(new PlaneGeometry(40, 40));
-    const backdropMat = ownMaterial(
-      new MeshStandardMaterial({
-        color: 0xf4f2ec,
-        roughness: 0.98,
-        metalness: 0,
-      }),
-    );
-    const backdrop = new Mesh(backdropGeo, backdropMat);
-    backdrop.position.set(0, 0, -32);
-    scene.add(backdrop);
+    // Initialize the Impossible Chamber Environment
+    const chamber = new ChamberEnvironment();
+    scene.add(chamber.group);
 
     // Ambient mineral lighting
     const hemisphere = new HemisphereLight(0xfcfbf7, 0xdedad1, 0.65);
@@ -311,6 +303,18 @@ export function createGatewayScene(
           totalElapsedTime,
         );
 
+        chamber.tick(
+          deltaSeconds,
+          {
+            progress: current.travelProgress,
+            selectionBias: current.selectionBias,
+            pointer: pointerVec,
+            reducedMotion: false,
+            eventDarkness: current.eventDarkness,
+          },
+          totalElapsedTime,
+        );
+
         const settling = TRACKED_KEYS.some(
           (key) => Math.abs(target[key] - current[key]) > EPSILON,
         );
@@ -326,6 +330,7 @@ export function createGatewayScene(
         disposed = true;
         livingMatter.dispose();
         dualEntities.dispose();
+        chamber.dispose();
         scene.clear();
         disposeOwnedResources();
       },
