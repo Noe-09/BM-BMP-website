@@ -118,6 +118,7 @@ export function SelectionOverlay({
         onPointerEnter={() => {
           if (!coarsePointer) onPreview("visuals");
         }}
+        onFocus={() => onPreview("visuals")}
       >
         {renderHeading("visuals")}
         <p className="gateway-selection__copy">
@@ -134,6 +135,7 @@ export function SelectionOverlay({
           data-cursor="gateway"
           data-cursor-label="ENTER VISUALS ↗"
           onFocus={() => onPreview("visuals")}
+          onBlur={onClearPreview}
           onClick={(event) => onCommit("visuals", "/", event)}
         >
           ENTER VISUALS ↗
@@ -148,6 +150,7 @@ export function SelectionOverlay({
         onPointerEnter={() => {
           if (!coarsePointer) onPreview("technical");
         }}
+        onFocus={() => onPreview("technical")}
       >
         {renderHeading("technical")}
         <p className="gateway-selection__copy">
@@ -164,6 +167,7 @@ export function SelectionOverlay({
           data-cursor="gateway"
           data-cursor-label="ENTER TECHNICAL ↗"
           onFocus={() => onPreview("technical")}
+          onBlur={onClearPreview}
           onClick={(event) =>
             onCommit(
               "technical",

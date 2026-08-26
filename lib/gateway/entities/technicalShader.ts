@@ -47,6 +47,11 @@ void main() {
   vec3 N = normalize(vNormal);
   vec3 V = normalize(vViewPosition);
 
+  bool isFront = gl_FrontFacing;
+  if (!isFront) {
+    N = -N;
+  }
+
   float NdotV = max(dot(N, V), 0.0);
   float fresnel = pow(1.0 - NdotV, 3.2);
 
@@ -63,27 +68,23 @@ void main() {
   vec3 diffuse = mix(darkGraphite, brushedSteel, facetShade);
 
   // 2. DISCIPLINED COLD PRISMATIC SHEEN
-  // Angle-dependent steel-cyan interference along planar facets
   float viewMetric = (1.0 - NdotV) * 1.2 + abs(vObjectPosition.y * 0.08);
   vec3 prismaticSteel = steelPalette(viewMetric);
 
   // 3. ENGINEERED INTERNAL ARCHITECTURE / LEVEL DATUM
-  // Horizontal floor plates / structural logic
   float levelCoord = vObjectPosition.y * 1.8 + 0.5;
   float levelGrid = abs(fract(levelCoord) - 0.5);
   float structuralLine = smoothstep(0.04, 0.012, levelGrid);
 
-  // Vertical engineering datum seams along the monolith corners
-  float cornerSeamX = smoothstep(0.035, 0.01, abs(abs(vObjectPosition.x) - 0.74));
+  float cornerSeamX = smoothstep(0.035, 0.01, abs(abs(vObjectPosition.x) - 0.36));
   float cornerSeamZ = smoothstep(0.035, 0.01, abs(abs(vObjectPosition.z) - 0.74));
   float structuralDatum = max(structuralLine * 0.55, max(cornerSeamX, cornerSeamZ) * 0.65);
 
-  // Luminous cool cyan & silver structural illumination
   vec3 cyanIntelligence = vec3(0.62, 0.86, 0.96);
   vec3 silverWhite = vec3(0.94, 0.97, 1.0);
   vec3 datumColor = mix(cyanIntelligence, silverWhite, 0.45) * structuralDatum * (0.32 + uHover * 0.58);
 
-  // 4. PRECISION ANISOTROPIC SPECULAR (Micro-machined mineral glint)
+  // 4. PRECISION ANISOTROPIC SPECULAR
   float anisoSpec = pow(NdotH, 56.0) * 0.95;
   vec3 specColor = vec3(0.96, 0.98, 1.0) * anisoSpec;
 
@@ -91,15 +92,72 @@ void main() {
   vec3 rimTone = mix(vec3(0.68, 0.84, 0.95), vec3(0.82, 0.78, 0.92), (sin(vObjectPosition.y * 1.2 + uTime * 0.3) * 0.5 + 0.5));
   vec3 edgeHighlights = rimTone * fresnel * (0.55 + uHover * 0.4);
 
-  // 6. COMPOSITION
   vec3 finalColor = diffuse;
-  // Blend in cold prismatic steel
   finalColor = mix(finalColor, prismaticSteel, 0.5 + uHover * 0.25);
-  // Add structural lines & edge glints
   finalColor += datumColor;
   finalColor += specColor;
   finalColor += edgeHighlights;
 
   gl_FragColor = vec4(finalColor, 1.0);
+}
+`;
+
+export const technicalLogicPlaneVertexShader = /* glsl */ `
+uniform float uTime;
+uniform float uHover;
+
+varying vec2 vUv;
+varying vec3 vViewPosition;
+varying vec3 vNormal;
+
+void main() {
+  vUv = uv;
+  vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+  vViewPosition = -mvPos.xyz;
+  vNormal = normalize(normalMatrix * normal);
+  gl_Position = projectionMatrix * mvPos;
+}
+`;
+
+export const technicalLogicPlaneFragmentShader = /* glsl */ `
+uniform float uTime;
+uniform float uHover;
+uniform float uLayerIndex;
+
+varying vec2 vUv;
+varying vec3 vViewPosition;
+varying vec3 vNormal;
+
+void main() {
+  vec3 N = normalize(vNormal);
+  vec3 V = normalize(vViewPosition);
+  float NdotV = max(dot(N, V), 0.0);
+
+  // Precision algorithmic grid logic
+  vec2 gridUv = vUv * vec2(8.0, 4.0);
+  vec2 gridFract = abs(fract(gridUv) - 0.5);
+  float lines = smoothstep(0.06, 0.015, min(gridFract.x, gridFract.y));
+
+  // Pulse along data bus lines
+  float busWave = sin(vUv.x * 12.0 - uTime * 3.0 + uLayerIndex * 1.5) * 0.5 + 0.5;
+  float activeTrace = lines * busWave;
+
+  // Border pinstripes
+  float borderDist = min(min(vUv.x, 1.0 - vUv.x), min(vUv.y, 1.0 - vUv.y));
+  float border = smoothstep(0.04, 0.01, borderDist);
+
+  // Color composition: Ice cyan, cobalt data lines, luminous silver
+  vec3 baseGlass = vec3(0.12, 0.16, 0.22);
+  vec3 cyanData = vec3(0.55, 0.88, 0.98);
+  vec3 whiteGlint = vec3(0.96, 0.98, 1.0);
+
+  vec3 color = mix(baseGlass, cyanData, activeTrace * 0.85 + border * 0.5);
+  color += whiteGlint * (activeTrace * busWave * 0.6);
+
+  float alpha = (0.15 + activeTrace * 0.65 + border * 0.5) * smoothstep(0.05, 0.75, uHover) * 0.88;
+
+  if (alpha < 0.01) discard;
+
+  gl_FragColor = vec4(color, alpha);
 }
 `;
