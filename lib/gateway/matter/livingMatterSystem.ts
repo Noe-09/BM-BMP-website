@@ -7,6 +7,7 @@ import {
   LineBasicMaterial,
   LineSegments,
   Mesh,
+  MeshBasicMaterial,
   PlaneGeometry,
   ShaderMaterial,
   Vector2,
@@ -145,16 +146,15 @@ export class LivingMatterSystem {
 
   private initMeshes() {
     // 1. FOREGROUND MACRO BLADES (Occupies 20–35% of frame when close to camera)
-    const blade1Geo = this.ownGeometry(new PlaneGeometry(6.5, 14, 48, 64));
-    this.foregroundBlade1 = new Mesh(blade1Geo, this.mainMaterial);
+    const blade1Geo = this.ownGeometry(new PlaneGeometry(6.5, 14, 48, 64));    this.foregroundBlade1 = new Mesh(blade1Geo, this.mainMaterial);
     this.foregroundBlade1.position.set(-1.8, 1.2, 5.0);
-    this.foregroundBlade1.rotation.set(0.2, 0.45, -0.48);
+    this.foregroundBlade1.rotation.set(0.1, -0.4, -0.45);
     this.group.add(this.foregroundBlade1);
 
     const blade2Geo = this.ownGeometry(new PlaneGeometry(7.2, 16, 48, 64));
     this.foregroundBlade2 = new Mesh(blade2Geo, this.mainMaterial);
     this.foregroundBlade2.position.set(1.9, -1.4, -0.5);
-    this.foregroundBlade2.rotation.set(-0.25, -0.38, 0.52);
+    this.foregroundBlade2.rotation.set(-0.15, 0.25, 0.55);
     this.group.add(this.foregroundBlade2);
 
     // 2. ASYMMETRIC TOPOLOGICAL MANIFOLD SHEETS
@@ -178,21 +178,27 @@ export class LivingMatterSystem {
       this.group.add(mesh);
     }
 
-    // 3. CENTRAL HERO MANIFOLD (Fills the viewport center with sculptural living matter topology)
+    // 2. MIDGROUND TENSION SEAM
+    const seamGeo = this.ownGeometry(new PlaneGeometry(1, 14, 16, 64));
+    this.tensionSeamMesh = new Mesh(seamGeo, this.mainMaterial);
+    this.tensionSeamMesh.position.set(-0.8, 1.7, 8.0);
+    this.tensionSeamMesh.rotation.set(0.2, -0.15, 0.0);
+    this.group.add(this.tensionSeamMesh);
+
+    // 3. CENTRAL HERO MANIFOLD
     const heroManifoldGeo = this.ownGeometry(new PlaneGeometry(14, 20, 56, 56));
     const heroManifold = new Mesh(heroManifoldGeo, this.mainMaterial);
     heroManifold.position.set(0.2, 0.1, -17.2);
     heroManifold.rotation.set(0.08, 0.22, -0.32);
     this.group.add(heroManifold);
 
-    // 4. TENSION SEAM MESH (The dynamic physical meridian connecting the two attractor behaviors)
-    const seamGeo = this.ownGeometry(new PlaneGeometry(4.5, 24, 36, 64));
-    this.tensionSeamMesh = new Mesh(seamGeo, this.mainMaterial);
-    this.tensionSeamMesh.position.set(0, 0, -17.5);
-    this.tensionSeamMesh.rotation.set(0.05, 0.18, -0.15);
-    this.group.add(this.tensionSeamMesh);
+    const secondaryManifoldGeo = this.ownGeometry(new PlaneGeometry(12, 18, 48, 48));
+    const secondaryManifold = new Mesh(secondaryManifoldGeo, this.mainMaterial);
+    secondaryManifold.position.set(0.0, 0.0, -17.5);
+    secondaryManifold.rotation.set(-0.1, -0.1, 0.1);
+    this.group.add(secondaryManifold);
 
-    // 5. REFRACTION TRANSMISSION PLIES
+    // 4. REFRACTION / LIGHT-BENDING FILMS
     for (let j = 0; j < 3; j++) {
       const filmGeo = this.ownGeometry(new PlaneGeometry(11, 15, 32, 32));
       const filmMesh = new Mesh(filmGeo, this.filmMaterial);

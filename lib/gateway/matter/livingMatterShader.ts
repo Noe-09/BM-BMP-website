@@ -339,6 +339,15 @@ void main() {
   // Attractor Color Temperature Nuances:
   // Visuals: Warm ivory/pearl luminescence
   // Technical: Crisp steel-mineral clarity
+  // Attractor Specific Behaviors
+  if (uProgress > 0.8) {
+    float endFade = smoothstep(0.8, 0.95, uProgress);
+    if (abs(vEntityType) < 0.1) {
+      // Fade out the chaotic environment field slightly so the distinct entities stand out
+      alpha *= mix(1.0, 0.15, endFade);
+    }
+  }
+
   if (uProgress > 0.85) {
     if (uSelectionBias < -0.01) {
       vec3 warmBias = vec3(0.98, 0.95, 0.91) + sssColor * 0.5;

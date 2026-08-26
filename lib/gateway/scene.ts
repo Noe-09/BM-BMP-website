@@ -12,6 +12,7 @@ import {
   SRGBColorSpace,
   Vector2,
   WebGLRenderer,
+  BoxGeometry,
   type BufferGeometry,
   type Material,
 } from "three";
@@ -151,6 +152,11 @@ export function createGatewayScene(
     const camera = new PerspectiveCamera(46, 1, 0.1, 80);
     camera.position.set(0, 0, INITIAL_STATE.cameraZ);
 
+    if (typeof window !== "undefined") {
+      // (window as any).__GATEWAY_SCENE__ = scene;
+      // (window as any).__GATEWAY_CAMERA__ = camera;
+    }
+
     const ownMaterial = <T extends Material>(material: T) => {
       materials.push(material);
       return material;
@@ -181,6 +187,8 @@ export function createGatewayScene(
 
     const livingMatter = new LivingMatterSystem();
     scene.add(livingMatter.group);
+
+    // DIAGNOSTIC TEST: GIANT GREEN BOX REMOVED
 
     const backdropGeo = ownGeometry(new PlaneGeometry(40, 40));
     const backdropMat = ownMaterial(
