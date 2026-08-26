@@ -61,7 +61,7 @@ export class ChamberEnvironment {
 
   private init() {
     // 1. DEEP PRISMATIC CHAMBER BACKDROP
-    const backdropGeo = this.ownGeometry(new PlaneGeometry(68, 52, 48, 48));
+    const backdropGeo = this.ownGeometry(new PlaneGeometry(72, 54, 48, 48));
     this.backdropMaterial = this.ownMaterial(
       new ShaderMaterial({
         vertexShader: chamberBackdropVertexShader,
@@ -75,7 +75,7 @@ export class ChamberEnvironment {
       }),
     );
     this.backdropMesh = new Mesh(backdropGeo, this.backdropMaterial);
-    this.backdropMesh.position.set(0, 0, -36.0);
+    this.backdropMesh.position.set(0, 0, -36.5);
     this.group.add(this.backdropMesh);
 
     // 2. BM VISUALS WING: REFRACTIVE SPATIAL PLIES (Depth framing)
@@ -91,15 +91,21 @@ export class ChamberEnvironment {
     const pliesData = [
       {
         size: [8.5, 16.0],
-        pos: [-6.2, 1.4, -30.5],
+        pos: [-6.4, 1.5, -29.5],
         rot: [0.12, 0.38, -0.22],
         tint: new Vector3(0.92, 0.88, 0.96),
       },
       {
-        size: [9.5, 18.0],
-        pos: [-7.8, -1.2, -33.5],
+        size: [9.8, 18.5],
+        pos: [-8.2, -1.2, -33.0],
         rot: [-0.15, 0.45, 0.18],
         tint: new Vector3(0.88, 0.94, 0.95),
+      },
+      {
+        size: [10.5, 20.0],
+        pos: [-9.5, 2.0, -35.5],
+        rot: [0.08, 0.32, -0.15],
+        tint: new Vector3(0.94, 0.90, 0.96),
       },
     ];
 
@@ -134,23 +140,28 @@ export class ChamberEnvironment {
     const railsData = [
       {
         size: [0.06, 0.06, 16.0],
-        pos: [2.8, -2.2, -28.0],
+        pos: [2.6, -2.4, -28.0],
         rot: [0.18, -0.32, 0],
       },
       {
         size: [0.05, 0.05, 18.0],
-        pos: [5.6, 2.0, -29.5],
+        pos: [5.4, 2.2, -29.5],
         rot: [-0.15, -0.28, 0],
       },
       {
-        size: [0.06, 0.06, 17.0],
-        pos: [6.8, -1.8, -31.0],
+        size: [0.06, 0.06, 17.5],
+        pos: [7.0, -1.8, -31.5],
         rot: [0.10, -0.24, 0],
       },
       {
-        size: [0.05, 0.05, 15.0],
-        pos: [4.2, 3.4, -30.0],
+        size: [0.05, 0.05, 15.5],
+        pos: [4.0, 3.5, -30.0],
         rot: [-0.22, -0.26, 0],
+      },
+      {
+        size: [0.05, 0.05, 19.0],
+        pos: [8.2, 0.5, -34.0],
+        rot: [-0.05, -0.22, 0],
       },
     ];
 
