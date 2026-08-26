@@ -1,6 +1,7 @@
 import {
   BoxGeometry,
   BufferGeometry,
+  CylinderGeometry,
   DoubleSide,
   Group,
   Mesh,
@@ -11,12 +12,12 @@ import {
   type Material,
 } from "three";
 import {
-  chamberBackdropFragmentShader,
-  chamberBackdropVertexShader,
-  refractivePlyFragmentShader,
-  refractivePlyVertexShader,
-  structuralRailFragmentShader,
-  structuralRailVertexShader,
+  canopyFragmentShader,
+  canopyVertexShader,
+  centerSeamFragmentShader,
+  centerSeamVertexShader,
+  chamberWallFragmentShader,
+  chamberWallVertexShader,
 } from "./chamberShader";
 
 export type ChamberEnvironmentParams = {
@@ -32,14 +33,19 @@ export class ChamberEnvironment {
   private readonly geometries: BufferGeometry[] = [];
   private readonly materials: Material[] = [];
 
-  private backdropMesh!: Mesh;
-  private backdropMaterial!: ShaderMaterial;
+  // Architectural Chamber Meshes
+  private floorPlinthMesh!: Mesh;
+  private ceilingVaultMesh!: Mesh;
+  private deepPortalMesh!: Mesh;
+  private leftCurvedWallMesh!: Mesh;
+  private rightBaffles: Mesh[] = [];
+  private leftCanopies: Mesh[] = [];
+  private centerSeamMesh!: Mesh;
 
-  private leftPliesGroup = new Group();
-  private leftPlyMaterials: ShaderMaterial[] = [];
-
-  private rightRailsGroup = new Group();
-  private rightRailMaterials: ShaderMaterial[] = [];
+  // Materials for uniform updates
+  private wallMaterials: ShaderMaterial[] = [];
+  private canopyMaterials: ShaderMaterial[] = [];
+  private centerSeamMaterial!: ShaderMaterial;
 
   private selectionBiasCurrent = 0;
 
@@ -59,66 +65,93 @@ export class ChamberEnvironment {
     return material;
   }
 
-  private init() {
-    // 1. DEEP PRISMATIC CHAMBER BACKDROP
-    const backdropGeo = this.ownGeometry(new PlaneGeometry(72, 54, 48, 48));
-    this.backdropMaterial = this.ownMaterial(
+  private createWallMaterial(): ShaderMaterial {
+    const mat = this.ownMaterial(
       new ShaderMaterial({
-        vertexShader: chamberBackdropVertexShader,
-        fragmentShader: chamberBackdropFragmentShader,
+        vertexShader: chamberWallVertexShader,
+        fragmentShader: chamberWallFragmentShader,
         uniforms: {
           uTime: { value: 0 },
           uProgress: { value: 0 },
           uSelectionBias: { value: 0 },
-          uPointer: { value: new Vector2(0, 0) },
         },
+        side: DoubleSide,
       }),
     );
-    this.backdropMesh = new Mesh(backdropGeo, this.backdropMaterial);
-    this.backdropMesh.position.set(0, 0, -36.5);
-    this.group.add(this.backdropMesh);
-
-    // 2. BM VISUALS WING: REFRACTIVE SPATIAL PLIES (Depth framing)
-    this.initLeftRefractivePlies();
-    this.group.add(this.leftPliesGroup);
-
-    // 3. BMP TECHNICAL WING: STRUCTURAL PERSPECTIVE RAILS
-    this.initRightStructuralRails();
-    this.group.add(this.rightRailsGroup);
+    this.wallMaterials.push(mat);
+    return mat;
   }
 
-  private initLeftRefractivePlies() {
-    const pliesData = [
+  private init() {
+    // 1. DEEP PORTAL RECESSED HORIZON WALL (Full frustum coverage at depth Z = -35.5)
+    const portalGeo = this.ownGeometry(new PlaneGeometry(88, 56, 32, 32));
+    const portalMat = this.createWallMaterial();
+    this.deepPortalMesh = new Mesh(portalGeo, portalMat);
+    this.deepPortalMesh.position.set(0, 0, -35.5);
+    this.group.add(this.deepPortalMesh);
+
+    // 2. GROUND FOUNDATION PLINTH (Anchors the whole chamber spatially)
+    const floorGeo = this.ownGeometry(new BoxGeometry(40, 2.0, 22, 16, 4, 16));
+    const floorMat = this.createWallMaterial();
+    this.floorPlinthMesh = new Mesh(floorGeo, floorMat);
+    this.floorPlinthMesh.position.set(0, -6.2, -28.0);
+    this.group.add(this.floorPlinthMesh);
+
+    // 3. VAULTED CEILING SLAB (Overhead architectural perspective)
+    const ceilingGeo = this.ownGeometry(new PlaneGeometry(36, 20, 24, 24));
+    const ceilingMat = this.createWallMaterial();
+    this.ceilingVaultMesh = new Mesh(ceilingGeo, ceilingMat);
+    this.ceilingVaultMesh.position.set(0, 6.8, -28.0);
+    this.ceilingVaultMesh.rotation.set(0.65, 0, 0);
+    this.group.add(this.ceilingVaultMesh);
+
+    // 4. BM VISUALS WING: SWEEPING ORGANIC CURVED ALCOVE WALL
+    const leftWallGeo = this.ownGeometry(
+      new CylinderGeometry(18, 18, 20, 32, 4, true, Math.PI * 0.72, Math.PI * 0.52),
+    );
+    const leftWallMat = this.createWallMaterial();
+    this.leftCurvedWallMesh = new Mesh(leftWallGeo, leftWallMat);
+    this.leftCurvedWallMesh.position.set(-7.5, 0.5, -28.5);
+    this.leftCurvedWallMesh.rotation.set(0.10, 0.12, -0.08);
+    this.group.add(this.leftCurvedWallMesh);
+
+    // 5. BM VISUALS WING: TRANSLUCENT REFRACTIVE CANOPY PLIES
+    this.initLeftCanopies();
+
+    // 6. BMP TECHNICAL WING: STEPPED ARCHITECTURAL COLONNADE BAFFLES
+    this.initRightBaffles();
+
+    // 7. CENTER BM LIVING ORIGIN SEAM
+    this.initCenterSeam();
+  }
+
+  private initLeftCanopies() {
+    const canopyData = [
       {
-        size: [8.5, 16.0],
-        pos: [-6.4, 1.5, -29.5],
-        rot: [0.12, 0.38, -0.22],
-        tint: new Vector3(0.92, 0.88, 0.96),
+        size: [8.5, 14.0],
+        pos: [-5.8, 1.8, -26.5],
+        rot: [0.22, 0.35, -0.28],
+        tint: new Vector3(0.94, 0.88, 0.96),
       },
       {
-        size: [9.8, 18.5],
-        pos: [-8.2, -1.2, -33.0],
-        rot: [-0.15, 0.45, 0.18],
-        tint: new Vector3(0.88, 0.94, 0.95),
-      },
-      {
-        size: [10.5, 20.0],
-        pos: [-9.5, 2.0, -35.5],
-        rot: [0.08, 0.32, -0.15],
-        tint: new Vector3(0.94, 0.90, 0.96),
+        size: [9.5, 16.0],
+        pos: [-7.2, -0.8, -30.0],
+        rot: [-0.15, 0.42, 0.16],
+        tint: new Vector3(0.96, 0.89, 0.85),
       },
     ];
 
-    pliesData.forEach((item) => {
+    canopyData.forEach((item) => {
       const geo = this.ownGeometry(
         new PlaneGeometry(item.size[0], item.size[1], 24, 24),
       );
       const mat = this.ownMaterial(
         new ShaderMaterial({
-          vertexShader: refractivePlyVertexShader,
-          fragmentShader: refractivePlyFragmentShader,
+          vertexShader: canopyVertexShader,
+          fragmentShader: canopyFragmentShader,
           uniforms: {
             uTime: { value: 0 },
+            uProgress: { value: 0 },
             uHover: { value: 0 },
             uTint: { value: item.tint },
           },
@@ -127,68 +160,67 @@ export class ChamberEnvironment {
           side: DoubleSide,
         }),
       );
-      this.leftPlyMaterials.push(mat);
+      this.canopyMaterials.push(mat);
 
       const mesh = new Mesh(geo, mat);
       mesh.position.set(item.pos[0], item.pos[1], item.pos[2]);
       mesh.rotation.set(item.rot[0], item.rot[1], item.rot[2]);
-      this.leftPliesGroup.add(mesh);
+      this.leftCanopies.push(mesh);
+      this.group.add(mesh);
     });
   }
 
-  private initRightStructuralRails() {
-    const railsData = [
+  private initRightBaffles() {
+    const baffleData = [
       {
-        size: [0.06, 0.06, 16.0],
-        pos: [2.6, -2.4, -28.0],
-        rot: [0.18, -0.32, 0],
+        size: [1.1, 12.0, 3.8],
+        pos: [6.8, 0.2, -24.5],
+        rot: [0.08, -0.32, 0.04],
       },
       {
-        size: [0.05, 0.05, 18.0],
-        pos: [5.4, 2.2, -29.5],
-        rot: [-0.15, -0.28, 0],
+        size: [1.1, 13.0, 4.2],
+        pos: [8.8, 0.4, -29.0],
+        rot: [0.06, -0.38, 0.03],
       },
       {
-        size: [0.06, 0.06, 17.5],
-        pos: [7.0, -1.8, -31.5],
-        rot: [0.10, -0.24, 0],
-      },
-      {
-        size: [0.05, 0.05, 15.5],
-        pos: [4.0, 3.5, -30.0],
-        rot: [-0.22, -0.26, 0],
-      },
-      {
-        size: [0.05, 0.05, 19.0],
-        pos: [8.2, 0.5, -34.0],
-        rot: [-0.05, -0.22, 0],
+        size: [1.1, 14.0, 4.6],
+        pos: [10.8, 0.6, -33.5],
+        rot: [0.04, -0.45, 0.02],
       },
     ];
 
-    railsData.forEach((item, index) => {
+    baffleData.forEach((item) => {
       const geo = this.ownGeometry(
-        new BoxGeometry(item.size[0], item.size[1], item.size[2]),
+        new BoxGeometry(item.size[0], item.size[1], item.size[2], 8, 16, 8),
       );
-      const mat = this.ownMaterial(
-        new ShaderMaterial({
-          vertexShader: structuralRailVertexShader,
-          fragmentShader: structuralRailFragmentShader,
-          uniforms: {
-            uTime: { value: 0 },
-            uHover: { value: 0 },
-            uRailIndex: { value: index },
-          },
-          transparent: true,
-          depthWrite: false,
-        }),
-      );
-      this.rightRailMaterials.push(mat);
-
+      const mat = this.createWallMaterial();
       const mesh = new Mesh(geo, mat);
       mesh.position.set(item.pos[0], item.pos[1], item.pos[2]);
       mesh.rotation.set(item.rot[0], item.rot[1], item.rot[2]);
-      this.rightRailsGroup.add(mesh);
+      this.rightBaffles.push(mesh);
+      this.group.add(mesh);
     });
+  }
+
+  private initCenterSeam() {
+    const seamGeo = this.ownGeometry(new PlaneGeometry(1.6, 16.0, 16, 48));
+    this.centerSeamMaterial = this.ownMaterial(
+      new ShaderMaterial({
+        vertexShader: centerSeamVertexShader,
+        fragmentShader: centerSeamFragmentShader,
+        uniforms: {
+          uTime: { value: 0 },
+          uProgress: { value: 0 },
+          uSelectionBias: { value: 0 },
+        },
+        transparent: true,
+        depthWrite: false,
+        side: DoubleSide,
+      }),
+    );
+    this.centerSeamMesh = new Mesh(seamGeo, this.centerSeamMaterial);
+    this.centerSeamMesh.position.set(0, 0.2, -26.5);
+    this.group.add(this.centerSeamMesh);
   }
 
   tick(deltaSeconds: number, params: ChamberEnvironmentParams, totalTime: number) {
@@ -197,35 +229,41 @@ export class ChamberEnvironment {
       (params.selectionBias - this.selectionBiasCurrent) *
       Math.min(1, deltaSeconds * dampSpeed);
 
-    // Update backdrop uniforms
-    const bu = this.backdropMaterial.uniforms;
-    bu.uTime.value = totalTime;
-    bu.uProgress.value = params.progress;
-    bu.uSelectionBias.value = this.selectionBiasCurrent;
-    bu.uPointer.value.copy(params.pointer);
+    // Update all architectural wall materials
+    this.wallMaterials.forEach((mat) => {
+      const u = mat.uniforms;
+      u.uTime.value = totalTime;
+      u.uProgress.value = params.progress;
+      u.uSelectionBias.value = this.selectionBiasCurrent;
+    });
 
-    // Update left refractive plies (hover when selectionBias < 0)
+    // Update left canopy materials (active when selectionBias < 0)
     const leftHover = Math.max(0, -this.selectionBiasCurrent);
-    this.leftPlyMaterials.forEach((mat) => {
+    this.canopyMaterials.forEach((mat) => {
       mat.uniforms.uTime.value = totalTime;
+      mat.uniforms.uProgress.value = params.progress;
       mat.uniforms.uHover.value = leftHover;
     });
 
-    // Update right structural rails (hover when selectionBias > 0)
-    const rightHover = Math.max(0, this.selectionBiasCurrent);
-    this.rightRailMaterials.forEach((mat) => {
-      mat.uniforms.uTime.value = totalTime;
-      mat.uniforms.uHover.value = rightHover;
-    });
+    // Update center origin seam
+    const su = this.centerSeamMaterial.uniforms;
+    su.uTime.value = totalTime;
+    su.uProgress.value = params.progress;
+    su.uSelectionBias.value = this.selectionBiasCurrent;
 
-    // Subtle parallax motion
-    if (!params.reducedMotion) {
-      this.leftPliesGroup.position.x = params.pointer.x * 0.25;
-      this.leftPliesGroup.position.y = params.pointer.y * 0.15;
-
-      this.rightRailsGroup.position.x = params.pointer.x * 0.22;
-      this.rightRailsGroup.position.y = params.pointer.y * 0.15;
+    // Emergence scaling and subtle parallax response
+    if (params.reducedMotion) {
+      this.group.scale.setScalar(params.progress > 0.85 ? 1.0 : 0.0001);
+      return;
     }
+
+    const emergence = Math.min(1.0, Math.max(0.0, (params.progress - 0.70) / 0.25));
+    const smoothEmergence = emergence * emergence * (3 - 2 * emergence);
+    this.group.scale.setScalar(Math.max(0.0001, smoothEmergence));
+
+    // Subtle pointer parallax across the physical chamber
+    this.group.position.x = params.pointer.x * 0.35;
+    this.group.position.y = params.pointer.y * 0.22;
   }
 
   dispose() {

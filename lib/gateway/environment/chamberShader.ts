@@ -1,113 +1,104 @@
-export const chamberBackdropVertexShader = /* glsl */ `
+export const chamberWallVertexShader = /* glsl */ `
 uniform float uTime;
 uniform float uProgress;
 
 varying vec2 vUv;
-varying vec3 vWorldPosition;
 varying vec3 vNormal;
+varying vec3 vViewPosition;
+varying vec3 vWorldPosition;
 
 void main() {
   vUv = uv;
 
-  // Gentle subtle spatial breathing across the infinite chamber horizon
-  vec3 pos = position;
-  float breath = sin(uv.x * 3.14159 + uTime * 0.2) * cos(uv.y * 3.14159 - uTime * 0.15) * 0.35;
-  pos.z += breath;
-
-  vec4 worldPos = modelMatrix * vec4(pos, 1.0);
+  vec4 worldPos = modelMatrix * vec4(position, 1.0);
   vWorldPosition = worldPos.xyz;
+
+  vec4 mvPos = viewMatrix * worldPos;
+  vViewPosition = -mvPos.xyz;
   vNormal = normalize(normalMatrix * normal);
 
-  gl_Position = projectionMatrix * viewMatrix * worldPos;
+  gl_Position = projectionMatrix * mvPos;
 }
 `;
 
-export const chamberBackdropFragmentShader = /* glsl */ `
+export const chamberWallFragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uProgress;
 uniform float uSelectionBias;
-uniform vec2 uPointer;
 
 varying vec2 vUv;
-varying vec3 vWorldPosition;
 varying vec3 vNormal;
+varying vec3 vViewPosition;
+varying vec3 vWorldPosition;
 
 void main() {
-  // 1. EDITORIAL MINERAL WHITE FOUNDATION
-  vec3 baseMineral = vec3(0.957, 0.949, 0.925); // #f4f2ec
-  vec3 deepHorizon = vec3(0.855, 0.842, 0.815);
+  vec3 N = normalize(vNormal);
+  vec3 V = normalize(vViewPosition);
 
-  // 2. CENTRAL VANISHING PERSPECTIVE CORRIDOR
-  vec2 center = vUv - vec2(0.5, 0.5);
-  center.x += uPointer.x * 0.04;
-  center.y += uPointer.y * 0.03;
+  if (!gl_FrontFacing) {
+    N = -N;
+  }
 
-  float radialDist = length(center * vec2(1.0, 1.35));
-  float tunnelRecess = smoothstep(0.08, 0.70, radialDist);
+  float NdotV = max(dot(N, V), 0.0);
+  float fresnel = pow(1.0 - NdotV, 2.6);
 
-  vec3 chamberTone = mix(deepHorizon, baseMineral, tunnelRecess * 0.75 + 0.25);
+  // Balanced directional illumination
+  vec3 keyLightDir = normalize(vec3(-0.35, 0.75, 0.55));
+  vec3 fillLightDir = normalize(vec3(0.45, 0.25, 0.65));
 
-  // 3. LEFT WING (BM VISUALS): WARM ETHEREAL AURORA & NEBULA HAZE
-  float leftMask = 1.0 - smoothstep(0.12, 0.62, vUv.x);
-  float visualsBias = max(0.0, -uSelectionBias);
+  float NdotL1 = max(dot(N, keyLightDir), 0.0);
+  float NdotL2 = max(dot(N, fillLightDir), 0.0);
 
-  float wave1 = sin(center.y * 4.5 + uTime * 0.18 + center.x * 2.8);
-  float wave2 = cos(center.x * 3.8 - uTime * 0.12 + center.y * 2.2);
-  float auroraFlow = (wave1 * 0.5 + wave2 * 0.5) * 0.5 + 0.5;
+  // 1. SCULPTURAL EDITORIAL MINERAL FOUNDATION (#f4f2ec)
+  vec3 baseMineral = vec3(0.957, 0.949, 0.925);
+  vec3 deepCrevice = vec3(0.855, 0.842, 0.815);
+  
+  // Real 3D depth-based ambient occlusion
+  float depthMetric = smoothstep(-20.0, -36.0, vWorldPosition.z);
+  vec3 diffuse = mix(baseMineral, deepCrevice, depthMetric * 0.45);
+  diffuse = mix(diffuse * 0.92, diffuse * 1.04, NdotL1 * 0.65 + NdotL2 * 0.35);
 
-  vec3 softLavender = vec3(0.91, 0.86, 0.95);
-  vec3 warmCoral = vec3(0.97, 0.88, 0.83);
-  vec3 opalTeal = vec3(0.87, 0.94, 0.94);
+  // 2. ASYMMETRIC LATERAL TONALITY
+  // Left: warm rose-lavender atmospheric alcove
+  // Right: cool ice-cyan structural colonnade
+  float lateralX = smoothstep(-7.0, 7.0, vWorldPosition.x);
+  vec3 warmSide = mix(baseMineral, vec3(0.93, 0.88, 0.95), 0.45);
+  vec3 coolSide = mix(baseMineral, vec3(0.87, 0.92, 0.96), 0.45);
+  vec3 lateralTone = mix(warmSide, coolSide, lateralX);
 
-  vec3 visualsAurora = mix(softLavender, warmCoral, sin(uTime * 0.25 + center.y * 2.2) * 0.5 + 0.5);
-  visualsAurora = mix(visualsAurora, opalTeal, auroraFlow * 0.45);
+  // Dynamic selection response
+  float visualsHover = max(0.0, -uSelectionBias);
+  float techHover = max(0.0, uSelectionBias);
 
-  float auroraIntensity = leftMask * (0.44 + visualsBias * 0.48) * (1.0 - smoothstep(0.1, 0.82, radialDist));
-  chamberTone = mix(chamberTone, visualsAurora, auroraIntensity);
+  if (vWorldPosition.x < 0.0) {
+    lateralTone = mix(lateralTone, vec3(0.96, 0.88, 0.84), visualsHover * 0.42);
+  } else {
+    lateralTone = mix(lateralTone, vec3(0.80, 0.91, 0.98), techHover * 0.42);
+  }
 
-  // 4. RIGHT WING (BMP TECHNICAL): STRUCTURED CYAN DEPTH & ARCHITECTURAL TRACES
-  float rightMask = smoothstep(0.38, 0.88, vUv.x);
-  float technicalBias = max(0.0, uSelectionBias);
+  // 3. FINE ARCHITECTURAL STONE PANEL SEAMS (Subtle hairline joint lines)
+  float panelY = abs(fract(vWorldPosition.y * 0.35 + 0.5) - 0.5);
+  float panelJoint = smoothstep(0.015, 0.003, panelY) * 0.045;
 
-  // Precision perspective ray channels
-  float angle = atan(center.y, center.x);
-  float rayGrid = abs(sin(angle * 18.0 + center.y * 2.2));
-  float rayLines = smoothstep(0.86, 0.98, rayGrid);
+  // 4. SURFACE COMPOSITION
+  vec3 finalColor = mix(diffuse, lateralTone, 0.45);
+  finalColor += fresnel * vec3(0.98, 0.98, 0.96) * 0.28;
+  finalColor -= panelJoint * vec3(0.12);
 
-  // Horizontal architectural level datums
-  float floorGrid = abs(fract(center.y * 9.0) - 0.5);
-  float floorLines = smoothstep(0.035, 0.01, floorGrid) * smoothstep(0.08, 0.85, center.x);
-
-  vec3 coolSteel = vec3(0.88, 0.91, 0.94);
-  vec3 iceCyan = vec3(0.80, 0.92, 0.98);
-  vec3 silverHighlight = vec3(0.96, 0.98, 1.0);
-
-  vec3 technicalAtmosphere = mix(coolSteel, iceCyan, rayLines * 0.65 + floorLines * 0.45);
-  technicalAtmosphere += silverHighlight * (rayLines * floorLines * 0.4);
-
-  float techIntensity = rightMask * (0.40 + technicalBias * 0.46) * (1.0 - smoothstep(0.1, 0.88, radialDist));
-  chamberTone = mix(chamberTone, technicalAtmosphere, techIntensity);
-
-  // 5. CENTER BM ANCHOR ZONE (LUMINOUS ORIGIN OF REORGANIZATION)
-  float centerBridge = 1.0 - smoothstep(0.0, 0.22, abs(vUv.x - 0.5));
-  vec3 originLuminance = vec3(0.985, 0.975, 0.955);
-  chamberTone = mix(chamberTone, originLuminance, centerBridge * 0.25 * (1.0 - smoothstep(0.04, 0.38, radialDist)));
-
-  // 6. SUBTLE MICRO-MINERAL TEXTURE
-  float grain = (fract(sin(dot(vUv * 600.0, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * 0.012;
-  chamberTone += vec3(grain);
+  // Subtle micro-mineral grain
+  float grain = (fract(sin(dot(vWorldPosition.xy * 25.0, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * 0.01;
+  finalColor += vec3(grain);
 
   // Emergence ramp
-  float emergenceAlpha = smoothstep(0.48, 0.90, uProgress);
-  chamberTone = mix(baseMineral, chamberTone, emergenceAlpha);
+  float emergence = smoothstep(0.65, 0.92, uProgress);
+  finalColor = mix(baseMineral, finalColor, emergence);
 
-  gl_FragColor = vec4(clamp(chamberTone, 0.0, 1.0), 1.0);
+  gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
 }
 `;
 
-export const refractivePlyVertexShader = /* glsl */ `
+export const centerSeamVertexShader = /* glsl */ `
 uniform float uTime;
-uniform float uProgress;
 
 varying vec2 vUv;
 varying vec3 vNormal;
@@ -116,10 +107,9 @@ varying vec3 vViewPosition;
 void main() {
   vUv = uv;
 
-  // Gentle wave ripple across the spatial ply
   vec3 pos = position;
-  float ripple = sin(pos.y * 0.8 + uTime * 0.3) * cos(pos.x * 0.6 + uTime * 0.25) * 0.25;
-  pos.z += ripple;
+  float ripple = sin(pos.y * 1.5 + uTime * 0.8) * 0.05;
+  pos.x += ripple;
 
   vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
   vViewPosition = -mvPos.xyz;
@@ -129,73 +119,93 @@ void main() {
 }
 `;
 
-export const refractivePlyFragmentShader = /* glsl */ `
+export const centerSeamFragmentShader = /* glsl */ `
 uniform float uTime;
+uniform float uProgress;
+uniform float uSelectionBias;
+
+varying vec2 vUv;
+varying vec3 vNormal;
+varying vec3 vViewPosition;
+
+void main() {
+  // Central luminous origin core pulse
+  float centerDist = abs(vUv.x - 0.5) * 2.0;
+  float coreBeam = smoothstep(0.85, 0.02, centerDist);
+
+  float pulse = sin(vUv.y * 6.0 - uTime * 1.8) * 0.5 + 0.5;
+
+  // Ethereal pearlescent core with chromatic dispersion
+  vec3 beamColor = vec3(0.985, 0.975, 0.96);
+  vec3 fringeColor = mix(vec3(0.92, 0.85, 0.98), vec3(0.80, 0.94, 0.98), sin(vUv.y * 3.5 + uTime) * 0.5 + 0.5);
+
+  vec3 color = mix(beamColor, fringeColor, pulse * 0.35);
+
+  float alpha = coreBeam * (0.18 + pulse * 0.22) * smoothstep(0.65, 0.95, uProgress);
+  if (alpha < 0.005) discard;
+
+  gl_FragColor = vec4(color, alpha);
+}
+`;
+
+export const canopyVertexShader = /* glsl */ `
+uniform float uTime;
+
+varying vec2 vUv;
+varying vec3 vNormal;
+varying vec3 vViewPosition;
+varying vec3 vWorldPosition;
+
+void main() {
+  vUv = uv;
+
+  vec3 pos = position;
+  float wave = sin(pos.x * 0.4 + pos.y * 0.3 + uTime * 0.2) * 0.12;
+  pos.z += wave;
+
+  vec4 worldPos = modelMatrix * vec4(pos, 1.0);
+  vWorldPosition = worldPos.xyz;
+
+  vec4 mvPos = viewMatrix * worldPos;
+  vViewPosition = -mvPos.xyz;
+  vNormal = normalize(normalMatrix * normal);
+
+  gl_Position = projectionMatrix * mvPos;
+}
+`;
+
+export const canopyFragmentShader = /* glsl */ `
+uniform float uTime;
+uniform float uProgress;
 uniform float uHover;
 uniform vec3 uTint;
 
 varying vec2 vUv;
 varying vec3 vNormal;
 varying vec3 vViewPosition;
+varying vec3 vWorldPosition;
 
 void main() {
   vec3 N = normalize(vNormal);
   vec3 V = normalize(vViewPosition);
+
+  if (!gl_FrontFacing) {
+    N = -N;
+  }
+
   float NdotV = max(dot(N, V), 0.0);
+  float fresnel = pow(1.0 - NdotV, 2.2);
 
-  // Soft rim dispersion
-  float rim = pow(1.0 - NdotV, 2.4);
+  // Soft thin-film pearlescence
+  vec3 irid = uTint + vec3(
+    sin(vUv.x * 3.5 + uTime * 0.25) * 0.07,
+    cos(vUv.y * 3.0 + uTime * 0.2) * 0.07,
+    0.08
+  );
 
-  // Subtle thin-film iridescence
-  vec3 irid = uTint + vec3(sin(vUv.x * 4.0 + uTime * 0.3) * 0.06, cos(vUv.y * 3.5 + uTime * 0.25) * 0.06, 0.08);
-
-  float alpha = rim * 0.35 * (0.75 + uHover * 0.35);
-  if (alpha < 0.008) discard;
+  float alpha = (0.18 + fresnel * 0.45 + uHover * 0.22) * smoothstep(0.65, 0.95, uProgress);
+  if (alpha < 0.005) discard;
 
   gl_FragColor = vec4(irid, alpha);
-}
-`;
-
-export const structuralRailVertexShader = /* glsl */ `
-uniform float uTime;
-uniform float uProgress;
-
-varying vec2 vUv;
-varying vec3 vNormal;
-varying vec3 vViewPosition;
-
-void main() {
-  vUv = uv;
-  vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
-  vViewPosition = -mvPos.xyz;
-  vNormal = normalize(normalMatrix * normal);
-  gl_Position = projectionMatrix * mvPos;
-}
-`;
-
-export const structuralRailFragmentShader = /* glsl */ `
-uniform float uTime;
-uniform float uHover;
-uniform float uRailIndex;
-
-varying vec2 vUv;
-varying vec3 vNormal;
-varying vec3 vViewPosition;
-
-void main() {
-  // Animated pulse along the depth rail
-  float pulse = abs(fract(vUv.y * 3.2 - uTime * 0.55 + uRailIndex * 0.25) - 0.5);
-  float notch = smoothstep(0.12, 0.02, pulse);
-
-  vec3 railBase = vec3(0.68, 0.72, 0.76);
-  vec3 cyanSignal = vec3(0.55, 0.88, 0.98);
-  vec3 silverSignal = vec3(0.95, 0.98, 1.0);
-
-  vec3 color = mix(railBase, cyanSignal, notch * 0.72 + uHover * 0.32);
-  color += silverSignal * (notch * (0.45 + uHover * 0.65));
-
-  float alpha = (0.24 + notch * 0.48 + uHover * 0.35);
-
-  gl_FragColor = vec4(color, alpha);
 }
 `;
