@@ -22,7 +22,7 @@
   box-sizing: border-box;
 }
 
-.gateway-prototype[data-gateway-phase="user-travel"] {
+.gateway-prototype:is([data-gateway-phase="auto-entry"], [data-gateway-phase="user-travel"], [data-gateway-phase="split"], [data-gateway-phase="preview"]) {
   touch-action: none;
   overscroll-behavior: none;
 }

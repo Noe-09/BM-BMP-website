@@ -11,6 +11,7 @@ export type GatewayPoseInput = {
 };
 
 export type GatewayPose = {
+  reducedMotion: boolean;
   cameraZ: number;
   cameraX: number;
   cameraYaw: number;
@@ -114,6 +115,7 @@ export function deriveGatewayPose(input: GatewayPoseInput): GatewayPose {
     : Math.min(darknessWindow, darknessDecay) * 0.72;
 
   return {
+    reducedMotion: input.reducedMotion,
     cameraZ,
     cameraX,
     cameraYaw,

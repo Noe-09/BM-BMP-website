@@ -1,24 +1,12 @@
 import {
-  Color,
-  DirectionalLight,
-  FogExp2,
-  HemisphereLight,
-  MeshStandardMaterial,
-  PerspectiveCamera,
-  PointLight,
-  Scene,
-  SRGBColorSpace,
-  Vector2,
-  WebGLRenderer,
-  type BufferGeometry,
-  type Material,
+  Color, DirectionalLight, HemisphereLight, PerspectiveCamera,
+  Scene, SRGBColorSpace, Vector2, WebGLRenderer, WebGLRenderTarget,
 } from "three";
-
 import type { GatewayPose } from "./choreography";
-import { LivingMatterSystem } from "./matter/livingMatterSystem";
+import { deriveJourneyFrame } from "./journey/chapterState";
+import { deriveHeroFraming } from "./journey/framing";
+import { SpectralEnvironment } from "./environment/spectralEnvironment";
 import { DualEntitySystem } from "./entities/dualEntitySystem";
-import { ChamberEnvironment } from "./environment/chamberEnvironment";
-import { damp } from "../motion/physics.ts";
 
 export type GatewaySceneController = {
   setTarget(frame: GatewayPose): void;
@@ -29,308 +17,102 @@ export type GatewaySceneController = {
   dispose(): void;
 };
 
-type SceneState = Pick<
-  GatewayPose,
-  | "cameraZ"
-  | "cameraX"
-  | "cameraYaw"
-  | "monolithX"
-  | "leftOpen"
-  | "rightOpen"
-  | "visualLight"
-  | "technicalLight"
-  | "neutralLight"
-  | "identityLeak"
-  | "travelProgress"
-  | "tension"
-  | "aperture"
-  | "eventDarkness"
-  | "selectionBias"
->;
-
-const TRACKED_KEYS = [
-  "cameraZ",
-  "cameraX",
-  "cameraYaw",
-  "monolithX",
-  "leftOpen",
-  "rightOpen",
-  "visualLight",
-  "technicalLight",
-  "neutralLight",
-  "identityLeak",
-  "travelProgress",
-  "tension",
-  "aperture",
-  "eventDarkness",
-  "selectionBias",
-] as const satisfies readonly (keyof SceneState)[];
-
-const INITIAL_STATE: SceneState = {
-  cameraZ: 12,
-  cameraX: 0,
-  cameraYaw: 0,
-  monolithX: 0,
-  leftOpen: 0,
-  rightOpen: 0,
-  visualLight: 0.52,
-  technicalLight: 0.52,
-  neutralLight: 0.52,
-  identityLeak: 0,
-  travelProgress: 0,
-  tension: 0,
-  aperture: 0,
-  eventDarkness: 0,
-  selectionBias: 0,
-};
-
-const EPSILON = 0.0005;
-
-function copyState(pose: GatewayPose): SceneState {
-  return {
-    cameraZ: pose.cameraZ,
-    cameraX: pose.cameraX,
-    cameraYaw: pose.cameraYaw,
-    monolithX: pose.monolithX,
-    leftOpen: pose.leftOpen,
-    rightOpen: pose.rightOpen,
-    visualLight: pose.visualLight,
-    technicalLight: pose.technicalLight,
-    neutralLight: pose.neutralLight,
-    identityLeak: pose.identityLeak,
-    travelProgress: pose.travelProgress ?? 0,
-    tension: pose.tension ?? 0,
-    aperture: pose.aperture ?? 0,
-    eventDarkness: pose.eventDarkness ?? 0,
-    selectionBias: pose.selectionBias ?? 0,
-  };
-}
-
-function smoothingFor(key: keyof SceneState) {
-  if (key === "leftOpen" || key === "rightOpen") return 7;
-  if (key.endsWith("Light") || key === "identityLeak") return 9;
-  if (key === "travelProgress" || key === "aperture") return 6;
-  if (key === "selectionBias") return 8;
-  return 5.5;
-}
-
-export function createGatewayScene(
-  canvas: HTMLCanvasElement,
-): GatewaySceneController {
-  const geometries: BufferGeometry[] = [];
-  const materials: Material[] = [];
+export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneController {
   let renderer: WebGLRenderer | undefined;
-  let resourcesDisposed = false;
-
-  const disposeOwnedResources = () => {
-    if (resourcesDisposed) return;
-    resourcesDisposed = true;
-    for (const geometry of geometries) geometry.dispose();
-    for (const material of materials) material.dispose();
-    renderer?.dispose();
+  let environment: SpectralEnvironment | undefined;
+  let entities: DualEntitySystem | undefined;
+  let refraction: WebGLRenderTarget | undefined;
+  let disposed = false;
+  const dispose = () => {
+    if (disposed) return;
+    disposed = true;
+    environment?.dispose(); entities?.dispose(); refraction?.dispose(); renderer?.dispose();
   };
-
   try {
-    const activeRenderer = new WebGLRenderer({
-      canvas,
-      antialias: true,
-      alpha: false,
-      powerPreference: "high-performance",
-    });
+    const activeRenderer = new WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
     renderer = activeRenderer;
     activeRenderer.outputColorSpace = SRGBColorSpace;
-
+    const capture = new WebGLRenderTarget(1, 1, { depthBuffer: true });
+    refraction = capture;
     const scene = new Scene();
-    const warmMineralWhite = new Color(0xf4f2ec);
-    const deepGraphite = new Color(0x131514);
-    const activeBgColor = warmMineralWhite.clone();
-    scene.background = activeBgColor;
-    const activeFog = new FogExp2(0xf4f2ec, 0.022);
-    scene.fog = activeFog;
-
-    const camera = new PerspectiveCamera(46, 1, 0.1, 80);
-    camera.position.set(0, 0, INITIAL_STATE.cameraZ);
-
-    const ownMaterial = <T extends Material>(material: T) => {
-      materials.push(material);
-      return material;
-    };
-
-    // Decorative mineral wing boundary materials (preserved for subtle lateral spatial presence & contracts)
-    const visualWingMaterial = ownMaterial(
-      new MeshStandardMaterial({
-        color: 0xe2ded5,
-        roughness: 0.9,
-        metalness: 0.02,
-        transparent: true,
-        opacity: 0,
-      }),
-    );
-    const technicalWingMaterial = ownMaterial(
-      new MeshStandardMaterial({
-        color: 0xded9cf,
-        roughness: 0.84,
-        metalness: 0.04,
-        transparent: true,
-        opacity: 0,
-      }),
-    );
-
-    // Initialize the Living Matter system
-    const livingMatter = new LivingMatterSystem();
-    scene.add(livingMatter.group);
-
-    // Initialize the Dual Entity system (BM Visuals & BMP Technical)
-    const dualEntities = new DualEntitySystem();
-    scene.add(dualEntities.group);
-
-    // Initialize the Impossible Chamber Environment
-    const chamber = new ChamberEnvironment();
-    scene.add(chamber.group);
-
-    // Ambient mineral lighting
-    const hemisphere = new HemisphereLight(0xfcfbf7, 0xdedad1, 0.65);
-    scene.add(hemisphere);
-
-    const keyLight = new DirectionalLight(0xfffefb, 1.2);
-    keyLight.position.set(-2, 6, 8);
-    scene.add(keyLight);
-
-    const fillLight = new PointLight(0xe8e4da, 1.4, 25, 2);
-    fillLight.position.set(3, 1, 4);
-    scene.add(fillLight);
-
-    const current = { ...INITIAL_STATE };
-    let target = { ...INITIAL_STATE };
-    let totalElapsedTime = 0;
-    let disposed = false;
-
-    const pointerVec = new Vector2(0, 0);
-
-    const applyState = () => {
-      camera.position.x = current.cameraX;
-      camera.position.z = current.cameraZ;
-      camera.rotation.y = current.cameraYaw;
-
-      // Event darkness affects scene background, fog, and light intensities
-      const darkness = current.eventDarkness;
-      if (darkness > 0.001) {
-        activeBgColor.copy(warmMineralWhite).lerp(deepGraphite, darkness * 0.9);
-        activeFog.color.copy(activeBgColor);
-      } else {
-        activeBgColor.copy(warmMineralWhite);
-        activeFog.color.copy(warmMineralWhite);
-      }
-
-      hemisphere.intensity =
-        (0.65 - darkness * 0.45) * (0.8 + current.neutralLight * 0.4);
-      keyLight.intensity =
-        (1.2 - darkness * 0.8) * (0.8 + current.visualLight * 0.4);
-      fillLight.intensity =
-        (1.4 - darkness * 0.9) * (0.8 + current.technicalLight * 0.4);
-
-      // Material roughness and properties updates
-      visualWingMaterial.roughness = Math.min(
-        1,
-        0.9 + Math.max(0, current.visualLight - 0.7) * 0.2,
-      );
-      technicalWingMaterial.roughness = Math.max(
-        0.56,
-        0.84 - Math.max(0, current.technicalLight - 0.65) * 0.28,
-      );
-    };
-
-    applyState();
+    const bright = new Color(0xeff3f3);
+    const spectralDepth = new Color(0x8ba5b7);
+    const background = bright.clone();
+    scene.background = background;
+    const camera = new PerspectiveCamera(46, 1, .1, 190);
+    camera.position.set(0, 0, 12);
+    const world = new SpectralEnvironment();
+    environment = world;
+    scene.add(world.group);
+    const heroes = new DualEntitySystem();
+    entities = heroes;
+    scene.add(heroes.group);
+    const ambient = new HemisphereLight(0xf6f5fc, 0x8ba9af, 1.05);
+    const key = new DirectionalLight(0xfff5eb, 1.8);
+    key.position.set(-5, 9, 8);
+    scene.add(ambient, key);
+    const pointer = new Vector2();
+    let pose: GatewayPose | null = null;
 
     return {
-      setTarget(frame) {
-        target = copyState(frame);
-      },
-      setPointer(x: number, y: number) {
-        pointerVec.set(x, y);
-        livingMatter.setPointer(x, y);
-        dualEntities.setPointer(x, y);
-      },
+      setTarget(frame) { pose = frame; },
+      setPointer(x, y) { pointer.set(x, y); },
       resize(width, height, dpr) {
         if (disposed || width <= 0 || height <= 0) return;
         activeRenderer.setPixelRatio(dpr);
         activeRenderer.setSize(width, height, false);
+        const widthPixels = Math.round(width * dpr);
+        const heightPixels = Math.round(height * dpr);
+        capture.setSize(Math.max(1, Math.round(widthPixels * .6)), Math.max(1, Math.round(heightPixels * .6)));
+        world.setRefraction(capture.texture, widthPixels, heightPixels);
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
       },
       tick(deltaSeconds) {
-        if (disposed) return false;
-        totalElapsedTime += deltaSeconds;
-
-        for (const key of TRACKED_KEYS) {
-          current[key] = damp(
-            current[key],
-            target[key],
-            smoothingFor(key),
-            deltaSeconds,
-          );
-        }
-
-        livingMatter.tick(
-          deltaSeconds,
-          {
-            progress: current.travelProgress,
-            tension: current.tension,
-            aperture: current.aperture,
-            pointer: pointerVec,
-            eventDarkness: current.eventDarkness,
-            reducedMotion: false,
-            identityLeak: current.identityLeak,
-            selectionBias: current.selectionBias,
-          },
-          totalElapsedTime,
-        );
-
-        dualEntities.tick(
-          deltaSeconds,
-          {
-            progress: current.travelProgress,
-            selectionBias: current.selectionBias,
-            reducedMotion: false,
-            eventDarkness: current.eventDarkness,
-          },
-          totalElapsedTime,
-        );
-
-        chamber.tick(
-          deltaSeconds,
-          {
-            progress: current.travelProgress,
-            selectionBias: current.selectionBias,
-            pointer: pointerVec,
-            reducedMotion: false,
-            eventDarkness: current.eventDarkness,
-          },
-          totalElapsedTime,
-        );
-
-        const settling = TRACKED_KEYS.some(
-          (key) => Math.abs(target[key] - current[key]) > EPSILON,
-        );
-        if (!settling) Object.assign(current, target);
-        applyState();
-        return settling;
+        if (disposed || !pose) return false;
+        const frame = deriveJourneyFrame(pose.reducedMotion ? 1 : pose.travelProgress);
+        // No second damping layer: the controller's displayed progress IS this frame.
+        camera.position.set(pose.cameraX + frame.driftX, frame.driftY, pose.cameraZ);
+        camera.rotation.set(0, pose.cameraYaw, 0);
+        background.copy(bright).lerp(spectralDepth, frame.darkness);
+        world.update(frame, pose.cameraZ, background);
+        ambient.intensity = 1.05 - frame.darkness * .4;
+        key.intensity = 1.8 - frame.darkness * .45;
+        heroes.group.visible = frame.emergence > 0;
+        const heroFraming = deriveHeroFraming(pose.cameraZ, camera.aspect);
+        heroes.group.scale.setScalar(heroFraming.scale);
+        heroes.group.position.z = heroFraming.z;
+        heroes.setPointer(pose.reducedMotion ? 0 : pointer.x, pose.reducedMotion ? 0 : pointer.y);
+        heroes.tick(deltaSeconds, {
+          // Reuse existing emergence kinematics without editing entity geometry or shaders.
+          progress: pose.reducedMotion ? 1 : .72 + frame.emergence * .23,
+          selectionBias: pose.selectionBias,
+          reducedMotion: pose.reducedMotion,
+          eventDarkness: frame.darkness,
+        }, frame.progress * 22);
+        canvas.dataset.journeyChapter = frame.chapter;
+        return frame.progress > 0 && frame.progress < 1;
       },
       render() {
-        if (!disposed) activeRenderer.render(scene, camera);
-      },
-      dispose() {
         if (disposed) return;
-        disposed = true;
-        livingMatter.dispose();
-        dualEntities.dispose();
-        chamber.dispose();
-        scene.clear();
-        disposeOwnedResources();
+        const needsOptics = world.optics.children.some(mesh => mesh.visible);
+        let captureCalls = 0;
+        let captureTriangles = 0;
+        if (needsOptics) {
+          world.optics.visible = false;
+          activeRenderer.setRenderTarget(capture);
+          activeRenderer.render(scene, camera);
+          captureCalls = activeRenderer.info.render.calls;
+          captureTriangles = activeRenderer.info.render.triangles;
+          activeRenderer.setRenderTarget(null);
+          world.optics.visible = true;
+        }
+        activeRenderer.render(scene, camera);
+        canvas.dataset.sceneDrawCalls = String(captureCalls + activeRenderer.info.render.calls);
+        canvas.dataset.sceneTriangles = String(captureTriangles + activeRenderer.info.render.triangles);
+        canvas.dataset.refractionActive = String(needsOptics);
       },
+      dispose() { scene.clear(); dispose(); },
     };
-  } catch (error) {
-    disposeOwnedResources();
-    throw error;
-  }
+  } catch (error) { dispose(); throw error; }
 }
