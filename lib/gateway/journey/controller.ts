@@ -26,6 +26,22 @@ export function seekJourney(state: VisualJourney, to: number, nowMs: number, dur
   return { ...state, autoplayVelocity: 0, seek: { from: state.renderProgress, to: clamp01(to), startedAtMs: nowMs, durationMs: Math.max(1, durationMs) } };
 }
 
+// Autoplay only. Input gain, render damping, idle suppression and seek stay unchanged.
+const speedStops = [[0, 1], [.10, 1], [.18, .76], [.34, .76], [.44, .83], [.54, 1], [.78, 1], [.88, .90], [1, .90]] as const;
+
+export function autoplaySpeedMultiplier(progress: number): number {
+  const p = clamp01(progress);
+  for (let i = 1; i < speedStops.length; i++) {
+    const [end, to] = speedStops[i];
+    if (p <= end) {
+      const [start, from] = speedStops[i - 1];
+      const t = (p - start) / (end - start);
+      return from + (to - from) * t * t * (3 - 2 * t);
+    }
+  }
+  return speedStops[speedStops.length - 1][1];
+}
+
 export function stepJourney(state: VisualJourney, deltaSeconds: number, nowMs: number, autoplayAllowed: boolean): VisualJourney {
   if (state.seek) {
     const t = clamp01((nowMs - state.seek.startedAtMs) / state.seek.durationMs);
@@ -33,7 +49,7 @@ export function stepJourney(state: VisualJourney, deltaSeconds: number, nowMs: n
     return { ...state, targetProgress: progress, renderProgress: progress, autoplayVelocity: 0, seek: t === 1 ? null : state.seek };
   }
   const t = state.lastInputAtMs === null ? 1 : clamp01((nowMs - state.lastInputAtMs - 850) / 900);
-  const autoplayVelocity = autoplayAllowed && state.targetProgress < 1 ? .055 * t * t * (3 - 2 * t) : 0;
+  const autoplayVelocity = autoplayAllowed && state.targetProgress < 1 ? .055 * autoplaySpeedMultiplier(state.targetProgress) * t * t * (3 - 2 * t) : 0;
   const dt = Math.max(0, Math.min(.05, deltaSeconds));
   const targetProgress = clamp01(state.targetProgress + autoplayVelocity * dt);
   let renderProgress = damp(state.renderProgress, targetProgress, 8.5, dt);

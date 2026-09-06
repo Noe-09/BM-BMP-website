@@ -3,6 +3,7 @@ import { createVaultGeometry } from "./spectralGeometry.ts";
 import { createSpectralMaterial } from "./spectralMaterial.ts";
 import { createCarvedGeometry } from "./carvedGeometry.ts";
 import type { JourneyFrame } from "../journey/chapterState.ts";
+import { createSpectralPalette, sampleSpectralPalette } from "./spectralPalette.ts";
 
 const PI = Math.PI;
 type Mass = { mesh: Mesh; material: ShaderMaterial; baseX: number; baseY: number; distance: number; turn: number; role: "vault" | "shelf" | "core" | "far" | "optical"; index: number };
@@ -12,6 +13,8 @@ export class SpectralEnvironment {
   readonly group = new Group();
   readonly optics = new Group();
   private masses: Mass[] = [];
+  private palette = createSpectralPalette();
+  private farPalette = createSpectralPalette();
 
   constructor() {
     this.group.name = "Spectral mineral vault";
@@ -47,6 +50,10 @@ export class SpectralEnvironment {
 
   update(frame: JourneyFrame, cameraZ: number, fog: Color) {
     const p = frame.progress;
+    sampleSpectralPalette(p, this.palette);
+    // A spatial lag, not temporal smoothing: far color evolves more quietly and
+    // reaches the same endpoint in either direction without another clock.
+    sampleSpectralPalette(p - .06 * Math.sin(p * PI), this.farPalette);
     for (const mass of this.masses) {
       const { mesh, material: { uniforms: u }, index, role } = mass;
       const side = index % 2 ? 1 : -1;
@@ -93,6 +100,12 @@ export class SpectralEnvironment {
       u.uSpectral.value = frame.spectral;
       u.uDarkness.value = frame.darkness;
       u.uFogColor.value.copy(fog);
+      const palette = role === "far" ? this.farPalette : this.palette;
+      u.uPearl.value.copy(palette.pearl);
+      u.uCool.value.copy(palette.cool);
+      u.uViolet.value.copy(palette.violet);
+      u.uWarm.value.copy(palette.warm);
+      u.uShadow.value.copy(palette.shadow);
     }
   }
 

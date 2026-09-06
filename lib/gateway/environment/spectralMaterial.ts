@@ -18,6 +18,11 @@ void main() {
 const fragmentShader = /* glsl */ `
 uniform vec3 uColor;
 uniform vec3 uAccent;
+uniform vec3 uPearl;
+uniform vec3 uCool;
+uniform vec3 uViolet;
+uniform vec3 uWarm;
+uniform vec3 uShadow;
 uniform vec3 uFogColor;
 uniform float uSpectral;
 uniform float uDarkness;
@@ -49,29 +54,39 @@ void main() {
   float filterWidth = fwidth(band) * 6.;
   lamina = mix(lamina, .5, clamp(filterWidth, 0., 1.));
   float interference = .5 + .5 * sin(facing * 8. + vUv.y * 4. + uSeed);
-  vec3 opal = mix(vec3(.57, .84, .84), vec3(.78, .68, .90), interference);
-  opal = mix(opal, vec3(1., .73, .60), broad * .35);
+  float distanceToCamera = length(cameraPosition - vWorld);
+  float midground = 1. - smoothstep(12., 38., distanceToCamera);
+  float spectralGain = mix(.48, 1., midground) + uOptical * .20;
+  vec3 opal = mix(uCool, uViolet, smoothstep(.20, .88, interference));
   float interior = 1. - smoothstep(.04, .48, vUv.y);
   float shelter = (.5 + .5 * sin(vUv.x * 7. + uSeed)) * interior;
-  vec3 color = uColor * (.22 + key * .68 + bounce * .15);
-  color = mix(color, uAccent * (.18 + key * .48), interior * .52 + (1. - key) * .15 + lamina * .018);
+  vec3 accent = mix(uAccent, uCool, .65 * spectralGain);
+  vec3 color = mix(uColor, uPearl, .16) * (.22 + key * .68 + bounce * .15);
+  color = mix(color, accent * (.18 + key * .48), interior * .52 + (1. - key) * .15 + lamina * .018);
   color *= 1. - shelter * .30;
   float mineral = .5 + .5 * sin(vLocal.z * 3.2 + sin(vLocal.y * .7 + vLocal.x * .4) * 2.);
   color = mix(color, color * uAccent * 1.4, mineral * interior * .10);
-  color += opal * interior * uSpectral * .10;
+  color += opal * interior * uSpectral * .18 * spectralGain;
   // An analytic studio light field gives the mineral surface reflected volume.
   // These broad reflected windows bend with the world; no screen-space stripes.
   vec3 R = reflect(-V, N);
   float window = exp(-pow((R.y - .48 + .18 * R.x) * 3., 2.));
   float coolWindow = exp(-pow((R.x + .48 - R.z * .32) * 7., 2.));
   float occludedSky = exp(-pow((R.y + .22 + .2 * R.x) * 3., 2.));
-  color *= 1. - occludedSky * (.16 + interior * .18);
-  color += vec3(.93, .98, 1.) * window * (.10 + edge * .20);
-  color += uAccent * coolWindow * (.22 + uSpectral * .22);
-  color += opal * edge * (.10 + uSpectral * .16);
-  color += mix(opal, vec3(1.), .6) * specular * .62;
-  color = mix(color, color * vec3(.55, .64, .73), uDarkness * .52);
-  color += uAccent * pow(edge, 2.) * uSpectral * .18;
+  color *= 1. - occludedSky * (.16 + interior * .18 + uDarkness * .55);
+  // Interference replaces part of a reflection instead of additive whitening.
+  float spectralReflection = (coolWindow * .42 + edge * .32) * uSpectral * spectralGain;
+  color = mix(color, opal * (.32 + key * .46), spectralReflection);
+  color += uPearl * window * (.10 + edge * .20);
+  color += accent * coolWindow * (.22 + uSpectral * .28) * spectralGain;
+  color += opal * edge * (.10 + uSpectral * .24) * spectralGain;
+  // A small warm reflected aperture, attached to surface direction, not screen UV.
+  float warmWindow = exp(-pow((R.x - .38 + R.z * .24) * 9., 2.));
+  color = mix(color, color * uShadow * 2., uDarkness * (1.05 + occludedSky * .45));
+  color = mix(color, uWarm * (.30 + broad * .45), warmWindow * (.08 + edge * .32) * uSpectral * spectralGain);
+  // Pearl response sits above shadow grading to keep the core's edges precise.
+  color += mix(opal, uPearl, .78) * specular * .66;
+  color += opal * pow(edge, 2.) * uSpectral * .18 * spectralGain;
   if (uOptical > .5) {
     vec2 screenUv = gl_FragCoord.xy / uResolution;
     vec2 offset = N.xy * (.013 + edge * .012);
@@ -81,7 +96,6 @@ void main() {
     transmitted.b = texture2D(uBackground, clamp(screenUv + offset * .95, .002, .998)).b;
     color = mix(transmitted * .95, color + opal * edge * .25, .10 + edge * .52);
   }
-  float distanceToCamera = length(cameraPosition - vWorld);
   float fog = 1. - exp(-distanceToCamera * (.006 + uFar * .006));
   color = mix(color, uFogColor, clamp(fog, 0., .94));
   gl_FragColor = vec4(color, uOpacity);
@@ -95,6 +109,8 @@ export function createSpectralMaterial(color: number, accent: number, seed: numb
     transparent: optical, depthWrite: !optical,
     uniforms: {
       uColor: { value: new Color(color) }, uAccent: { value: new Color(accent) },
+      uPearl: { value: new Color() }, uCool: { value: new Color() },
+      uViolet: { value: new Color() }, uWarm: { value: new Color() }, uShadow: { value: new Color() },
       uFogColor: { value: new Color(0xeaf0f1) },
       uSeed: { value: seed },
       uSpectral: { value: .2 }, uDarkness: { value: 0 }, uOpacity: { value: 1 },
