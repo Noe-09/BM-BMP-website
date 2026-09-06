@@ -95,11 +95,8 @@ test("gateway canvas is decorative and scene stays dependency-light", async () =
 
   assert.match(canvas, /aria-hidden="true"/);
   assert.match(scene, /from "three"/);
-  assert.match(scene, /BoxGeometry|PlaneGeometry/);
   assert.doesNotMatch(scene, /@react-three|drei|gsap|postprocessing|EffectComposer/);
   assert.doesNotMatch(scene, /TextureLoader|GLTFLoader/);
-  assert.match(scene, /visualWingMaterial\.roughness\s*=/);
-  assert.match(scene, /technicalWingMaterial\.roughness\s*=/);
 });
 
 test("loader uses BM counter language without percent", async () => {

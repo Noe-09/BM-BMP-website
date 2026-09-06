@@ -14,6 +14,7 @@ import type { CSSProperties, MouseEvent } from "react";
 import { useInteractionProfile } from "@/lib/motion/useInteractionProfile";
 import { damp } from "@/lib/motion/physics";
 import { deriveGatewayPose } from "@/lib/gateway/choreography";
+import { createJourney, impulseJourney, seekJourney, stepJourney } from "@/lib/gateway/journey/controller";
 import {
   acquireGatewayCommitLock,
   getGatewayExpectedPathname,
@@ -24,13 +25,10 @@ import {
   type GatewayNavigationIntent,
 } from "@/lib/gateway/navigation";
 import {
-  applyTravelDelta,
   GATEWAY_TIMING,
   getGatewayPresentation,
   getLoaderTarget,
-  getTravelControlTarget,
   shouldShowSkip,
-  stepTravelProgress,
   type LoaderMode,
 } from "@/lib/gateway/progress";
 import {
@@ -48,7 +46,6 @@ import { TunnelCanvas } from "./TunnelCanvas";
 const SESSION_KEY = "bmGatewaySeen";
 
 type SkipTarget = {
-  from: number;
   startedAt: number;
 };
 
@@ -61,7 +58,12 @@ const isAnimatedPhase = (phase: GatewayPhase) =>
   phase === "ready" ||
   phase === "auto-entry" ||
   phase === "user-travel" ||
+  phase === "split" ||
+  phase === "preview" ||
   phase === "commit";
+
+const isJourneyPhase = (phase: GatewayPhase) =>
+  phase === "auto-entry" || phase === "user-travel" || phase === "split" || phase === "preview";
 
 export function GatewayPrototype() {
   const pathname = usePathname();
@@ -84,7 +86,6 @@ export function GatewayPrototype() {
   const phaseRef = useRef<GatewayPhase>(state.phase);
   const returningRef = useRef(state.returning);
   const reducedMotionRef = useRef(profile.reducedMotion);
-  const coarsePointerRef = useRef(profile.pointer === "coarse");
   const sceneReadyRef = useRef(false);
   const fontsReadyRef = useRef(false);
   const failedRef = useRef(false);
@@ -93,8 +94,7 @@ export function GatewayPrototype() {
   const canSkipRef = useRef(false);
   const exitCompleteRef = useRef(false);
   const exitStartedAtRef = useRef<number | null>(null);
-  const targetProgressRef = useRef(0);
-  const renderedProgressRef = useRef(0);
+  const journeyRef = useRef(createJourney());
   const dragYRef = useRef<number | null>(null);
   const dragPointerIdRef = useRef<number | null>(null);
   const skipTargetRef = useRef<SkipTarget | null>(null);
@@ -125,7 +125,7 @@ export function GatewayPrototype() {
     () =>
       deriveGatewayPose({
         travelProgress,
-        selectionBias,
+        selectionBias: travelProgress >= .985 ? selectionBias : 0,
         exitProgress,
         committed,
         reducedMotion: profile.reducedMotion,
@@ -200,7 +200,6 @@ export function GatewayPrototype() {
     phaseRef.current = state.phase;
     returningRef.current = state.returning;
     reducedMotionRef.current = profile.reducedMotion;
-    coarsePointerRef.current = profile.pointer === "coarse";
     requestFrameRef.current();
   }, [profile.pointer, profile.reducedMotion, state.phase, state.returning]);
 
@@ -234,18 +233,27 @@ export function GatewayPrototype() {
   useEffect(() => {
     if (!enhancementStarted) return;
 
-    const fallbackTimer = window.setTimeout(() => {
-      if (
-        mountedRef.current &&
-        !failedRef.current &&
-        phaseRef.current === "loading"
-      ) {
-        failedRef.current = true;
-        dispatch({ type: "FAIL" });
-      }
-    }, GATEWAY_TIMING.fallbackMs);
-
-    return () => window.clearTimeout(fallbackTimer);
+    let fallbackTimer: number | null = null;
+    const armVisibleTimeout = () => {
+      if (fallbackTimer !== null) window.clearTimeout(fallbackTimer);
+      if (document.hidden) return;
+      fallbackTimer = window.setTimeout(() => {
+        if (
+          mountedRef.current && !failedRef.current &&
+          phaseRef.current === "loading" &&
+          (!sceneReadyRef.current || !fontsReadyRef.current)
+        ) {
+          failedRef.current = true;
+          dispatch({ type: "FAIL" });
+        }
+      }, GATEWAY_TIMING.fallbackMs);
+    };
+    document.addEventListener("visibilitychange", armVisibleTimeout);
+    armVisibleTimeout();
+    return () => {
+      if (fallbackTimer !== null) window.clearTimeout(fallbackTimer);
+      document.removeEventListener("visibilitychange", armVisibleTimeout);
+    };
   }, [enhancementStarted]);
 
   useEffect(() => {
@@ -332,8 +340,7 @@ export function GatewayPrototype() {
       } else if (phase === "ready") {
         if (time - phaseStartedAt >= GATEWAY_TIMING.readyHoldMs) {
           if (returningRef.current || reducedMotionRef.current) {
-            targetProgressRef.current = 1;
-            renderedProgressRef.current = 1;
+            journeyRef.current = createJourney(1);
             setTravelProgress(1);
           }
           dispatch({
@@ -341,58 +348,23 @@ export function GatewayPrototype() {
             reducedMotion: reducedMotionRef.current,
           });
         }
-      } else if (phase === "auto-entry") {
+      } else if (isJourneyPhase(phase)) {
         const skipTarget = skipTargetRef.current;
-        if (skipTarget) {
-          if (skipTarget.startedAt === 0) {
-            skipTarget.startedAt = time;
-            skipTarget.from = renderedProgressRef.current;
-          }
-          const amount = Math.min(
-            1,
-            (time - skipTarget.startedAt) / GATEWAY_TIMING.skipFastForwardMs,
-          );
-          targetProgressRef.current =
-            skipTarget.from + (1 - skipTarget.from) * amount;
-          renderedProgressRef.current = stepTravelProgress(
-            renderedProgressRef.current,
-            targetProgressRef.current,
-            deltaSeconds,
-          );
-          if (amount >= 1 && renderedProgressRef.current >= 0.995) {
-            targetProgressRef.current = 1;
-            renderedProgressRef.current = 1;
-            setTravelProgress(1);
-            dispatch({ type: "AUTO_COMPLETE" });
-            dispatch({ type: "TRAVEL_COMPLETE" });
-          } else {
-            setTravelProgress(renderedProgressRef.current);
-          }
-        } else {
-          const duration = coarsePointerRef.current
-            ? GATEWAY_TIMING.autoEntryCoarseMs
-            : GATEWAY_TIMING.autoEntryMs;
-          const endpoint = coarsePointerRef.current ? 0.72 : 0.68;
-          const amount = Math.min(1, (time - phaseStartedAt) / duration);
-          const next = endpoint * amount;
-          targetProgressRef.current = next;
-          renderedProgressRef.current = next;
-          setTravelProgress(next);
-          if (amount >= 1) dispatch({ type: "AUTO_COMPLETE" });
+        if (skipTarget && skipTarget.startedAt === 0) {
+          skipTarget.startedAt = time;
+          journeyRef.current = seekJourney(journeyRef.current, 1, time, GATEWAY_TIMING.skipFastForwardMs);
         }
-      } else if (phase === "user-travel") {
-        renderedProgressRef.current = stepTravelProgress(
-          renderedProgressRef.current,
-          targetProgressRef.current,
-          deltaSeconds,
-        );
-        if (renderedProgressRef.current >= 0.995) {
-          targetProgressRef.current = 1;
-          renderedProgressRef.current = 1;
-          setTravelProgress(1);
+        const before = journeyRef.current.renderProgress;
+        journeyRef.current = reducedMotionRef.current
+          ? createJourney(1)
+          : stepJourney(journeyRef.current, document.hidden ? 0 : deltaSeconds, time, !document.hidden);
+        const next = journeyRef.current.renderProgress;
+        if (next !== before) setTravelProgress(next);
+        // Lifecycle milestones only move forward. Rewinding is solely visual.
+        if (phase === "auto-entry" && next >= .68) {
+          dispatch({ type: "AUTO_COMPLETE" });
+        } else if (phase === "user-travel" && next === 1) {
           dispatch({ type: "TRAVEL_COMPLETE" });
-        } else {
-          setTravelProgress(renderedProgressRef.current);
         }
       } else if (phase === "commit") {
         if (exitStartedAtRef.current === null) {
@@ -407,7 +379,8 @@ export function GatewayPrototype() {
         if (exitCompleteRef.current) finishCommit();
       }
 
-      schedule();
+      // The endpoint sleeps until input or a lifecycle change explicitly wakes it.
+      if (!(isJourneyPhase(phase) && journeyRef.current.renderProgress === 1 && journeyRef.current.targetProgress === 1)) schedule();
     };
 
     requestFrameRef.current = schedule;
@@ -441,12 +414,12 @@ export function GatewayPrototype() {
   }, []);
 
   const handlePreview = useCallback((division: GatewayDivision) => {
-    if (committedGuardRef.current) return;
+    if (committedGuardRef.current || journeyRef.current.renderProgress < .985) return;
     dispatch({ type: "PREVIEW", division });
   }, []);
 
   const handleClearPreview = useCallback(() => {
-    if (committedGuardRef.current) return;
+    if (committedGuardRef.current || journeyRef.current.renderProgress < .985) return;
     dispatch({ type: "CLEAR_PREVIEW" });
   }, []);
 
@@ -537,32 +510,29 @@ export function GatewayPrototype() {
       return;
     }
     skipTargetRef.current = {
-      from: renderedProgressRef.current,
       startedAt: 0,
     };
     requestFrameRef.current();
   }, []);
 
   const handleWheel = useCallback((event: WheelEvent) => {
-    if (phaseRef.current !== "user-travel") return;
+    if (!isJourneyPhase(phaseRef.current) || reducedMotionRef.current || committedGuardRef.current || event.ctrlKey || event.metaKey) return;
     event.preventDefault();
-    targetProgressRef.current = applyTravelDelta(
-      targetProgressRef.current,
-      event.deltaY,
-    );
+    const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
+    journeyRef.current = impulseJourney(journeyRef.current, event.deltaY * unit, performance.now());
     requestFrameRef.current();
   }, []);
 
   const handleTravelControl = useCallback(() => {
-    const target = getTravelControlTarget(phaseRef.current);
-    if (target === null) return;
-    targetProgressRef.current = target;
+    if (!isJourneyPhase(phaseRef.current) || committedGuardRef.current) return;
+    journeyRef.current = seekJourney(journeyRef.current, 1, performance.now());
     requestFrameRef.current();
   }, []);
 
   const handlePointerDown = useCallback((event: PointerEvent) => {
     if (
-      phaseRef.current !== "user-travel" ||
+      !isJourneyPhase(phaseRef.current) ||
+      reducedMotionRef.current || committedGuardRef.current ||
       event.button !== 0 ||
       dragPointerIdRef.current !== null ||
       (event.target instanceof Element && event.target.closest("a, button"))
@@ -577,7 +547,8 @@ export function GatewayPrototype() {
   const handlePointerMove = useCallback((event: PointerEvent) => {
     const previousY = dragYRef.current;
     if (
-      phaseRef.current !== "user-travel" ||
+      !isJourneyPhase(phaseRef.current) ||
+      reducedMotionRef.current || committedGuardRef.current ||
       previousY === null ||
       dragPointerIdRef.current !== event.pointerId
     ) {
@@ -585,10 +556,7 @@ export function GatewayPrototype() {
     }
     const delta = previousY - event.clientY;
     dragYRef.current = event.clientY;
-    targetProgressRef.current = applyTravelDelta(
-      targetProgressRef.current,
-      delta,
-    );
+    journeyRef.current = impulseJourney(journeyRef.current, delta, performance.now());
     requestFrameRef.current();
   }, []);
 
@@ -604,7 +572,7 @@ export function GatewayPrototype() {
 
   useEffect(() => {
     const root = rootRef.current;
-    if (!root || state.phase !== "user-travel") return;
+    if (!root || !isJourneyPhase(state.phase)) return;
 
     root.addEventListener("wheel", handleWheel, { passive: false });
     root.addEventListener("pointerdown", handlePointerDown);
@@ -642,6 +610,7 @@ export function GatewayPrototype() {
         presentation.enhancementHealthy ? "true" : "false"
       }
       data-gateway-phase={state.phase}
+      data-gateway-visual-progress={travelProgress.toFixed(5)}
       data-gateway-selection={selection}
       data-scene-ready={sceneReady ? "true" : "false"}
       data-fonts-ready={fontsReady ? "true" : "false"}
@@ -665,7 +634,7 @@ export function GatewayPrototype() {
               progress={displayedProgress}
             />
           ) : null}
-          {presentation.showTravelCue ? (
+          {presentation.showTravelCue || (presentation.showSelection && travelProgress < .985) ? (
             <button
               className="gateway-travel-cue"
               type="button"
@@ -675,17 +644,19 @@ export function GatewayPrototype() {
             </button>
           ) : null}
           {presentation.showSelection ? (
-            <SelectionOverlay
-              state={state}
-              leftPercent={pose.leftPercent}
-              rightPercent={pose.rightPercent}
-              enhancementReady={presentation.enhancementHealthy}
-              reducedMotion={profile.reducedMotion}
-              coarsePointer={profile.pointer === "coarse"}
-              onPreview={handlePreview}
-              onClearPreview={handleClearPreview}
-              onCommit={handleCommit}
-            />
+            <div hidden={travelProgress < .985} inert={travelProgress < .985}>
+              <SelectionOverlay
+                state={state}
+                leftPercent={pose.leftPercent}
+                rightPercent={pose.rightPercent}
+                enhancementReady={presentation.enhancementHealthy}
+                reducedMotion={profile.reducedMotion}
+                coarsePointer={profile.pointer === "coarse"}
+                onPreview={handlePreview}
+                onClearPreview={handleClearPreview}
+                onCommit={handleCommit}
+              />
+            </div>
           ) : null}
         </div>
       ) : null}

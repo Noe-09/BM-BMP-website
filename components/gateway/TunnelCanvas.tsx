@@ -66,6 +66,8 @@ export function TunnelCanvas({
 
     let frame = 0;
     let disposed = false;
+    let failed = false;
+    let readySent = false;
     let previousTime = performance.now();
 
     const resize = () => {
@@ -81,21 +83,31 @@ export function TunnelCanvas({
 
     const runFrame = (time: number) => {
       frame = 0;
-      if (disposed || document.hidden) return;
+      if (disposed || failed || document.hidden) return;
 
       const deltaSeconds = Math.min(
         0.05,
         Math.max(0, (time - previousTime) / 1000),
       );
       previousTime = time;
-      controller.tick(deltaSeconds);
-      controller.render();
-      // Continuous animation loop for living matter subtle breathing & pulsation
+      try {
+        controller.tick(deltaSeconds);
+        controller.render();
+        if (!readySent) {
+          readySent = true;
+          readyRef.current();
+        }
+      } catch {
+        failed = true;
+        failureRef.current();
+        return;
+      }
+      // Progress is stationary at the endpoint; the preserved hero hover still renders.
       frame = requestAnimationFrame(runFrame);
     };
 
     const restart = () => {
-      if (disposed || document.hidden || frame) return;
+      if (disposed || failed || document.hidden || frame) return;
       previousTime = performance.now();
       frame = requestAnimationFrame(runFrame);
     };
@@ -130,7 +142,6 @@ export function TunnelCanvas({
 
     resize();
     restart();
-    readyRef.current();
 
     return () => {
       disposed = true;
