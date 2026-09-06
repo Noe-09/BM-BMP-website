@@ -3,6 +3,7 @@ import test from "node:test";
 import { Color, Mesh } from "three";
 import { SpectralEnvironment } from "../lib/gateway/environment/spectralEnvironment.ts";
 import { deriveJourneyFrame } from "../lib/gateway/journey/chapterState.ts";
+import { createSpectralPalette, sampleSpectralPalette } from "../lib/gateway/environment/spectralPalette.ts";
 
 const points = [0, .08, .16, .25, .34, .46, .58, .68, .78, .90, 1];
 const environment = new SpectralEnvironment();
@@ -16,6 +17,7 @@ const sample = p => {
     scale: mesh.scale.toArray(), visible: mesh.visible,
     spectral: mesh.material.uniforms.uSpectral.value,
     opacity: mesh.material.uniforms.uOpacity.value,
+    colors: ["uPearl", "uCool", "uViolet", "uWarm", "uShadow"].flatMap(key => mesh.material.uniforms[key].value.toArray()),
   }));
 };
 
@@ -38,12 +40,33 @@ test("the core swaps actual depth order and relative scale, not just color", () 
 test("numeric scene transforms remain continuous at every chapter boundary", () => {
   for (const p of [.16, .34, .58, .78, .96, .98]) {
     const before = sample(p - 1e-7), after = sample(p + 1e-7);
-    for (let i = 0; i < meshes.length; i++) for (const key of ["position", "rotation", "scale"]) {
+    for (let i = 0; i < meshes.length; i++) for (const key of ["position", "rotation", "scale", "colors"]) {
       before[i][key].forEach((value, axis) => {
         if (typeof value === "number") assert.ok(Math.abs(value - after[i][key][axis]) < .0001, `${p}: ${i}/${key}/${axis}`);
       });
     }
   }
+});
+
+test("chapter colors are continuous, bounded, spatially delayed and reversible", () => {
+  const palette = createSpectralPalette();
+  const colors = p => Object.values(sampleSpectralPalette(p, palette)).flatMap(color => color.toArray());
+  const expected = points.map(colors);
+  for (let i = points.length - 1; i >= 0; i--) assert.deepEqual(colors(points[i]), expected[i]);
+  for (const p of [0, .16, .34, .46, .68, .78, .9, 1]) {
+    const before = colors(p - 1e-7), after = colors(p + 1e-7);
+    before.forEach((value, i) => {
+      assert.ok(value >= 0 && value <= 1);
+      assert.ok(Math.abs(value - after[i]) < .00001);
+    });
+  }
+  sample(.46);
+  const near = meshes.find(mesh => mesh.name.startsWith("optical"));
+  const mid = meshes.find(mesh => mesh.name.startsWith("vault"));
+  const far = meshes.find(mesh => mesh.name.startsWith("far"));
+  assert.deepEqual(near.material.uniforms.uCool.value, mid.material.uniforms.uCool.value);
+  assert.notDeepEqual(far.material.uniforms.uCool.value, mid.material.uniforms.uCool.value);
+  assert.notDeepEqual(colors(1), colors(0));
 });
 
 test("optics are two bounded accent encounters; final chamber retains the same opaque world", () => {

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createJourney, impulseJourney, stepJourney, seekJourney } from "../lib/gateway/journey/controller.ts";
+import { createJourney, impulseJourney, stepJourney, seekJourney, autoplaySpeedMultiplier } from "../lib/gateway/journey/controller.ts";
 import { deriveJourneyFrame } from "../lib/gateway/journey/chapterState.ts";
 import { deriveHeroFraming } from "../lib/gateway/journey/framing.ts";
 
@@ -10,6 +10,44 @@ const advance = (state, seconds, start = 0, autoplay = true) => {
   }
   return state;
 };
+
+test("authored autoplay extends entry by 20–30% without slowing core or concise origin", () => {
+  const duration = (from, to) => {
+    let state = createJourney(from), seconds = 0;
+    while (state.targetProgress < to) {
+      seconds += 1 / 240;
+      state = stepJourney(state, 1 / 240, seconds * 1000, true);
+    }
+    return seconds;
+  };
+  const entryRatio = duration(.16, .58) / ((.58 - .16) / .055);
+  assert.ok(entryRatio >= 1.20 && entryRatio <= 1.30, `entry ratio ${entryRatio}`);
+  assert.ok(Math.abs(duration(0, .1) / (.1 / .055) - 1) < .005);
+  assert.ok(Math.abs(duration(.58, .78) / (.2 / .055) - 1) < .005);
+  assert.equal(autoplaySpeedMultiplier(.25), .76);
+  assert.equal(autoplaySpeedMultiplier(.44), .83);
+  assert.equal(autoplaySpeedMultiplier(.68), 1);
+  assert.equal(autoplaySpeedMultiplier(.95), .9);
+});
+
+test("speed ramps are bounded, continuous and independent of input gain in both directions", () => {
+  for (const p of [0, .08, .1, .16, .18, .25, .34, .44, .46, .54, .58, .68, .78, .88, .90, 1]) {
+    const speed = autoplaySpeedMultiplier(p);
+    assert.ok(speed >= .76 && speed <= 1);
+    assert.ok(Math.abs(autoplaySpeedMultiplier(p - 1e-7) - autoplaySpeedMultiplier(p + 1e-7)) < .00001);
+    for (const pixels of [-100, 100]) {
+      const impulse = impulseJourney(createJourney(p), pixels, 1000);
+      assert.equal(impulse.targetProgress, Math.max(0, Math.min(1, p + pixels * .00075)));
+      const immediate = stepJourney(impulse, 1 / 60, 1016, true);
+      assert.equal(immediate.autoplayVelocity, 0);
+      assert.equal(immediate.targetProgress, impulse.targetProgress);
+      assert.equal(stepJourney(impulse, 1 / 60, 1850, true).autoplayVelocity, 0);
+      const resumed = stepJourney(impulse, 1 / 60, 2750, true);
+      const expected = impulse.targetProgress === 1 ? 0 : .055 * autoplaySpeedMultiplier(impulse.targetProgress);
+      assert.equal(resumed.autoplayVelocity, expected);
+    }
+  }
+});
 
 test("idle autoplay carries the entire journey to an exactly paused endpoint", () => {
   const moving = advance(createJourney(), 4);
