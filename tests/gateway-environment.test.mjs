@@ -37,6 +37,34 @@ test("the core swaps actual depth order and relative scale, not just color", () 
   assert.ok(core[second].scale[0] > passage[second].scale[0]);
 });
 
+test("three cinematic events create readable reveal, core disagreement, and release", () => {
+  const index = name => meshes.findIndex(mesh => mesh.name === name);
+  const vault = index("vault mineral boundary 2"), shelf = index("shelf mineral boundary 3");
+  const first = index("core mineral boundary 4"), second = index("core mineral boundary 5");
+  const revealStart = sample(.26), revealPeak = sample(.36);
+  const startGap = Math.abs(revealStart[vault].position[0] - revealStart[shelf].position[0]);
+  const revealGap = Math.abs(revealPeak[vault].position[0] - revealPeak[shelf].position[0]);
+  assert.ok(revealGap > startGap + 2, `reveal gap ${startGap} → ${revealGap}`);
+
+  const coreStart = sample(.60), corePeak = sample(.75);
+  const startDepth = Math.abs(coreStart[first].position[2] - coreStart[second].position[2]);
+  const coreDepth = Math.abs(corePeak[first].position[2] - corePeak[second].position[2]);
+  assert.ok(coreDepth > startDepth + 3.5, `core depth disagreement ${startDepth} → ${coreDepth}`);
+
+  const releasePeak = sample(.91);
+  const releaseGap = Math.abs(releasePeak[vault].position[0] - releasePeak[shelf].position[0]);
+  assert.ok(releaseGap > 3, `release gap ${releaseGap}`);
+});
+
+test("cinematic density uses exactly three subordinate shared-geometry far echoes", () => {
+  const echoes = meshes.filter(mesh => mesh.name.startsWith("echo spectral boundary"));
+  const farGeometry = new Set(meshes.filter(mesh => mesh.name.startsWith("far mineral boundary")).map(mesh => mesh.geometry));
+  assert.equal(echoes.length, 3);
+  assert.ok(echoes.every(mesh => farGeometry.has(mesh.geometry)));
+  assert.equal(new Set(echoes.map(mesh => mesh.geometry)).size, 3);
+  assert.ok(echoes.every(mesh => !mesh.material.transparent));
+});
+
 test("numeric scene transforms remain continuous at every chapter boundary", () => {
   for (const p of [.16, .34, .58, .78, .96, .98]) {
     const before = sample(p - 1e-7), after = sample(p + 1e-7);
@@ -79,7 +107,7 @@ test("optics are two bounded accent encounters; final chamber retains the same o
     assert.equal(environment.optics.children.filter(mesh => mesh.visible).length, 1);
   }
   sample(1);
-  assert.equal(meshes.filter(mesh => mesh.visible && !mesh.material.transparent).length, 9);
+  assert.equal(meshes.filter(mesh => mesh.visible && !mesh.material.transparent).length, 12);
 });
 
 test("meshed solids are finite, bounded, and static; no per-frame geometry allocation", () => {

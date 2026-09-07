@@ -4,9 +4,10 @@ import { createSpectralMaterial } from "./spectralMaterial.ts";
 import { createCarvedGeometry } from "./carvedGeometry.ts";
 import type { JourneyFrame } from "../journey/chapterState.ts";
 import { createSpectralPalette, sampleSpectralPalette } from "./spectralPalette.ts";
+import { deriveCinematicFrame } from "../journey/cinematicProfile.ts";
 
 const PI = Math.PI;
-type Mass = { mesh: Mesh; material: ShaderMaterial; baseX: number; baseY: number; distance: number; turn: number; role: "vault" | "shelf" | "core" | "far" | "optical"; index: number };
+type Mass = { mesh: Mesh; material: ShaderMaterial; baseX: number; baseY: number; distance: number; turn: number; baseScale: number; role: "vault" | "shelf" | "core" | "far" | "echo" | "optical"; index: number };
 
 /** One continuous vault, with progress-authored cavity and boundary relationships. */
 export class SpectralEnvironment {
@@ -36,6 +37,11 @@ export class SpectralEnvironment {
     this.add("far", 7, { radius: 12, breadth: 4.8, depth: 6, start: .74 * PI, sweep: 1.4 * PI, eccentricity: .78, phase: 2.8 }, 0xd3dbdf, 0x879fb8, -1.2, -3.0, 64, .2);
     this.add("far", 8, { radius: 14, breadth: 4.4, depth: 7, start: -.3 * PI, sweep: 1.6 * PI, eccentricity: .9, phase: 1.4 }, 0xa9c7d0, 0x7796a8, 3.0, 1.0, 91, -.15);
 
+    // Three fixed, shared-buffer echoes extend the same architecture into depth.
+    this.addEcho(6, 11, -.8, 2.1, 57, -.48, .42);
+    this.addEcho(7, 12, 2.8, -1.5, 76, .34, .34);
+    this.addEcho(8, 13, -2.4, .3, 108, -.18, .28);
+
     this.add("optical", 9, { radius: 6.0, breadth: 1.3, depth: .8, start: .55 * PI, sweep: .65 * PI, eccentricity: 1.05, phase: 1.6 }, 0xe7e6ef, 0x7dc9d2, -1, .5, 7, .1);
     this.add("optical", 10, { radius: 5.8, breadth: 1.25, depth: .9, start: -.34 * PI, sweep: .7 * PI, eccentricity: 1, phase: 2.6 }, 0xe7e6ef, 0xe6aba0, 1.5, -.3, 7, -.2);
   }
@@ -45,11 +51,22 @@ export class SpectralEnvironment {
     const mesh = new Mesh(role === "core" || index === 0 ? createCarvedGeometry(index) : createVaultGeometry(shape), material);
     mesh.name = `${role} mineral boundary ${index}`;
     (role === "optical" ? this.optics : this.group).add(mesh);
-    this.masses.push({ mesh, material, baseX: x, baseY: y, distance, turn, role, index });
+    this.masses.push({ mesh, material, baseX: x, baseY: y, distance, turn, baseScale: 1, role, index });
+  }
+
+  private addEcho(sourceIndex: number, index: number, x: number, y: number, distance: number, turn: number, baseScale: number) {
+    const source = this.masses.find(mass => mass.index === sourceIndex);
+    if (!source) return;
+    const material = createSpectralMaterial(0x7895a4, 0x678aa2, index * .37, false, true);
+    const mesh = new Mesh(source.mesh.geometry, material);
+    mesh.name = `echo spectral boundary ${index}`;
+    this.group.add(mesh);
+    this.masses.push({ mesh, material, baseX: x, baseY: y, distance, turn, baseScale, role: "echo", index });
   }
 
   update(frame: JourneyFrame, cameraZ: number, fog: Color) {
     const p = frame.progress;
+    const cinematic = deriveCinematicFrame(p);
     sampleSpectralPalette(p, this.palette);
     // A spatial lag, not temporal smoothing: far color evolves more quietly and
     // reaches the same endpoint in either direction without another clock.
@@ -73,6 +90,10 @@ export class SpectralEnvironment {
         distance += frame.opening * 8;
         rotation += Math.sin(p * PI) * side * .16 + frame.core * side * .24;
         scale = 1 + (1 - frame.formation) * .4 + frame.core * .08 + frame.opening * .7;
+        if (index >= 2) {
+          x -= side * cinematic.reveal * 1.2;
+          x -= side * cinematic.release * 2.8;
+        }
       } else if (role === "core") {
         // A closer face shrinks while its deeper counterpart expands: apparent depth disagrees.
         const first = index === 4;
@@ -82,10 +103,19 @@ export class SpectralEnvironment {
         y += (first ? 1 : -1) * frame.inversion * .65;
         scale = 1 + (1 - frame.formation) * 2.2 + (first ? -.23 : .12) * frame.inversion + frame.opening * 2.2;
         rotation += (first ? -.55 : .65) * frame.inversion;
+        distance += cinematic.coreEvent * (first ? 1.2 : -1.8);
+        rotation += cinematic.coreEvent * (first ? -.14 : .14);
       } else if (role === "far") {
         x += Math.sin(p * PI) * side * .6;
         distance -= p * 6;
         rotation += Math.sin(p * PI) * .025;
+      } else if (role === "echo") {
+        x -= side * cinematic.reveal * .35;
+        x += side * cinematic.release * 1.1;
+        y += Math.sin(p * PI + index) * .16;
+        distance -= p * 4 + cinematic.destination * 2.2;
+        rotation += side * cinematic.reveal * .05;
+        scale = mass.baseScale * (1 + cinematic.destination * .12);
       } else {
         const event = index === 9 ? frame.nearFirst : frame.nearSecond;
         x += side * (1 - event) * 8;
@@ -117,7 +147,9 @@ export class SpectralEnvironment {
   }
 
   dispose() {
-    for (const { mesh, material } of this.masses) { mesh.geometry.dispose(); material.dispose(); }
+    const geometries = new Set(this.masses.map(({ mesh }) => mesh.geometry));
+    for (const geometry of geometries) geometry.dispose();
+    for (const { material } of this.masses) material.dispose();
     this.masses = [];
     this.optics.clear();
     this.group.clear();
