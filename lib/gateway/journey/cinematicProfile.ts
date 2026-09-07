@@ -33,6 +33,7 @@ export function deriveCinematicFrame(progress: number) {
   const passageDepth = compactEnvelope(.28, .68, .94, p);
   const authoredSpeed = cinematicSpeedMultiplier(p);
   const opticalEnergy = clamp01((authoredSpeed - .58) / .42) * (.76 + .24 * coreEvent);
+  const backgroundDepth = clamp01((passageDepth * .42 + coreEvent * .32) * (1 - release * .92));
   return {
     progress: p,
     reveal,
@@ -40,6 +41,7 @@ export function deriveCinematicFrame(progress: number) {
     release,
     destination,
     opticalEnergy,
+    backgroundDepth,
     exposure: clamp01(.90 - passageDepth * .14 + release * .10),
     haze: clamp01(passageDepth * .65 * (1 - release * .35)),
     glow: clamp01(opticalEnergy * (.35 + coreEvent * .30)),

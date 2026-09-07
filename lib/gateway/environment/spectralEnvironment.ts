@@ -136,6 +136,13 @@ export class SpectralEnvironment {
       u.uViolet.value.copy(palette.violet);
       u.uWarm.value.copy(palette.warm);
       u.uShadow.value.copy(palette.shadow);
+      const isFar = role === "far" || role === "echo";
+      const energyScale = role === "optical" ? 1 : isFar ? .42 : .82;
+      u.uOpticalEnergy.value = Math.min(1, cinematic.opticalEnergy * energyScale);
+      u.uDestination.value = cinematic.destination * (index === 6 ? 1 : role === "echo" ? .36 : isFar ? .18 : 0);
+      u.uExposure.value = cinematic.exposure * (isFar ? .94 : 1);
+      u.uHaze.value = cinematic.haze * (isFar ? 1 : .68);
+      u.uGlow.value = cinematic.glow * (role === "optical" ? 1 : isFar ? .30 : .72);
     }
   }
 

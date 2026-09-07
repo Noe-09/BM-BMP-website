@@ -18,6 +18,11 @@ const sample = p => {
     spectral: mesh.material.uniforms.uSpectral.value,
     opacity: mesh.material.uniforms.uOpacity.value,
     colors: ["uPearl", "uCool", "uViolet", "uWarm", "uShadow"].flatMap(key => mesh.material.uniforms[key].value.toArray()),
+    opticalEnergy: mesh.material.uniforms.uOpticalEnergy?.value,
+    destination: mesh.material.uniforms.uDestination?.value,
+    exposure: mesh.material.uniforms.uExposure?.value,
+    haze: mesh.material.uniforms.uHaze?.value,
+    glow: mesh.material.uniforms.uGlow?.value,
   }));
 };
 
@@ -95,6 +100,32 @@ test("chapter colors are continuous, bounded, spatially delayed and reversible",
   assert.deepEqual(near.material.uniforms.uCool.value, mid.material.uniforms.uCool.value);
   assert.notDeepEqual(far.material.uniforms.uCool.value, mid.material.uniforms.uCool.value);
   assert.notDeepEqual(colors(1), colors(0));
+});
+
+test("cinematic light hierarchy is progress-authored and layered by depth", () => {
+  const at = (state, name) => state[meshes.findIndex(mesh => mesh.name === name)];
+  const origin = sample(0), passage = sample(.46), core = sample(.75), emergence = sample(.91);
+  for (const state of [origin, passage, core, emergence]) for (const mesh of state) {
+    for (const key of ["opticalEnergy", "destination", "exposure", "haze", "glow"])
+      assert.ok(Number.isFinite(mesh[key]) && mesh[key] >= 0 && mesh[key] <= 1, `${key}: ${mesh[key]}`);
+  }
+
+  const mid = at(core, "vault mineral boundary 2");
+  const near = at(core, "optical mineral boundary 9");
+  const far = at(core, "far mineral boundary 7");
+  assert.ok(near.opticalEnergy > mid.opticalEnergy);
+  assert.ok(far.opticalEnergy < mid.opticalEnergy);
+  assert.ok(at(passage, "far mineral boundary 6").destination > at(passage, "far mineral boundary 7").destination);
+  assert.ok(at(core, "vault mineral boundary 2").haze !== at(origin, "vault mineral boundary 2").haze);
+  assert.ok(at(emergence, "vault mineral boundary 2").exposure > at(core, "vault mineral boundary 2").exposure);
+  assert.ok(mid.glow > at(origin, "vault mineral boundary 2").glow);
+});
+
+test("cinematic material uniforms reconstruct exactly in reverse and shuffled order", () => {
+  const points = [0, .08, .16, .26, .34, .36, .44, .46, .58, .60, .68, .72, .75, .78, .80, .82, .90, .91, .98, 1];
+  const expected = points.map(sample);
+  for (let i = points.length - 1; i >= 0; i--) assert.deepEqual(sample(points[i]), expected[i]);
+  for (const index of [12, 3, 17, 0, 9, 19, 6]) assert.deepEqual(sample(points[index]), expected[index]);
 });
 
 test("optics are two bounded accent encounters; final chamber retains the same opaque world", () => {

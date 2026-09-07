@@ -160,3 +160,11 @@ test("cinematic curves remain bounded and continuous at every authored boundary"
     assert.ok(Math.abs(cinematicSpeedMultiplier(p - 1e-7) - cinematicSpeedMultiplier(p + 1e-7)) < .00001, `${p}: speed`);
   }
 });
+
+test("cinematic depth follows light to deep to high-contrast core to light", () => {
+  assert.equal(deriveCinematicFrame(0).backgroundDepth, 0);
+  assert.ok(deriveCinematicFrame(.68).backgroundDepth > .5);
+  assert.ok(deriveCinematicFrame(.75).backgroundDepth > deriveCinematicFrame(.46).backgroundDepth);
+  assert.ok(deriveCinematicFrame(.91).backgroundDepth < deriveCinematicFrame(.75).backgroundDepth);
+  assert.equal(deriveCinematicFrame(1).backgroundDepth, 0);
+});
