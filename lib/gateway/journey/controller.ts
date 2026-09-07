@@ -1,4 +1,5 @@
 import { clamp01, damp } from "../../motion/physics.ts";
+import { cinematicSpeedMultiplier } from "./cinematicProfile.ts";
 
 export type VisualJourney = {
   targetProgress: number;
@@ -49,7 +50,9 @@ export function stepJourney(state: VisualJourney, deltaSeconds: number, nowMs: n
     return { ...state, targetProgress: progress, renderProgress: progress, autoplayVelocity: 0, seek: t === 1 ? null : state.seek };
   }
   const t = state.lastInputAtMs === null ? 1 : clamp01((nowMs - state.lastInputAtMs - 850) / 900);
-  const autoplayVelocity = autoplayAllowed && state.targetProgress < 1 ? .055 * autoplaySpeedMultiplier(state.targetProgress) * t * t * (3 - 2 * t) : 0;
+  const autoplayVelocity = autoplayAllowed && state.targetProgress < 1
+    ? .055 * autoplaySpeedMultiplier(state.targetProgress) * cinematicSpeedMultiplier(state.targetProgress) * t * t * (3 - 2 * t)
+    : 0;
   const dt = Math.max(0, Math.min(.05, deltaSeconds));
   const targetProgress = clamp01(state.targetProgress + autoplayVelocity * dt);
   let renderProgress = damp(state.renderProgress, targetProgress, 8.5, dt);
