@@ -26,13 +26,13 @@ All event envelopes use smoothstep on progress. Optical energy continues to deri
 
 ## Tasks
 
-- [ ] Add `lib/gateway/environment/breakthroughState.ts`: pure chapter/event score. Verify finite bounded output, strict reverse equality, boundary continuity, and dark/release contrast in `tests/gateway-breakthrough.test.mjs`.
-- [ ] Add `architecturalGeometry.ts`: static bevelled polygonal cavity sections. Re-author `spectralEnvironment.ts` with two pearl boundaries, six architectural slices, a complementary core pair, distant returns, and bounded optics. Shared buffers where appropriate; dispose each unique buffer once.
-- [ ] Re-author `spectralMaterial.ts` and chapter swatches: pearl shell versus graphite architectural faces, bevel-edge energy, engraved spatial lamination, restrained atmosphere. Feed the new dark/release field into `scene.ts` without changing entity lights/logic.
-- [ ] Replace obsolete geometry-specific environment tests with assertions for depth exchange, physical release clearance, deterministic transforms/uniforms, finite normals, static buffers, disposal, and a <100,000 triangle environment budget.
-- [ ] Browser inspect .00, .08, .16, .25, .34, .46, .58, .68, .78, .90, 1 plus exact hero-event peaks. Reject unreadable silhouettes, prop soup, empty core, and final occlusion; revise composition as necessary.
-- [ ] Verify normal autoplay, forward/reverse wheel, idle resume, final pause/rewind, original hero interactions, console/WebGL, mobile framing, and measured draw/triangle counts. Run tests, typecheck, lint, build, and frozen diff audit.
-- [ ] Write checkpoint 16 and update AUTO-CONTINUE. Commit stable completed pass; do not push, merge, create PR, or reactivate the paused automation.
+- [x] Add `lib/gateway/environment/breakthroughState.ts`: pure chapter/event score. Verify finite bounded output, strict reverse equality, boundary continuity, and dark/release contrast in `tests/gateway-breakthrough.test.mjs`.
+- [x] Add `architecturalGeometry.ts`: static bevelled polygonal cavity sections. Re-author `spectralEnvironment.ts` with two pearl boundaries, six architectural slices, a complementary core pair, distant returns, and bounded optics. Shared buffers where appropriate; dispose each unique buffer once.
+- [x] Re-author `spectralMaterial.ts` and chapter swatches: pearl shell versus graphite architectural faces, bevel-edge energy, engraved spatial lamination, restrained atmosphere. Feed the new dark/release field into `scene.ts` without changing entity lights/logic.
+- [x] Replace obsolete geometry-specific environment tests with assertions for depth exchange, physical release clearance, deterministic transforms/uniforms, finite normals, static buffers, disposal, and a <100,000 triangle environment budget.
+- [x] Browser inspect .00, .08, .16, .25, .34, .46, .58, .68, .78, .90, 1 plus exact hero-event peaks. Reject unreadable silhouettes, prop soup, empty core, and final occlusion; revise composition as necessary.
+- [x] Verify normal autoplay, forward/reverse wheel, idle resume, final pause/rewind, original hero interactions, console/WebGL, mobile framing, and measured draw/triangle counts. Run tests, typecheck, lint, build, and frozen diff audit.
+- [x] Write checkpoint 16 and update AUTO-CONTINUE. Commit stable completed pass; do not push, merge, create PR, or reactivate the paused automation.
 
 ## Verification gates
 
