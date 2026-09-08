@@ -11,10 +11,11 @@ test("breakthrough score reconstructs exactly in arbitrary journey order", () =>
     assert.ok(Number.isFinite(value) && value >= 0 && value <= 1);
 });
 
-test("core pressure and release have distinct contrasting endpoints", () => {
+test("spatial release preserves the core's dark atmosphere into arrival", () => {
   assert.equal(deriveBreakthroughFrame(0).blackout, 0);
   assert.ok(deriveBreakthroughFrame(.68).blackout > .98);
-  assert.equal(deriveBreakthroughFrame(1).blackout, 0);
+  assert.equal(deriveBreakthroughFrame(1).blackout, 1);
+  for (const p of [.78, .80, .86, .90, .96, 1]) assert.equal(deriveBreakthroughFrame(p).blackout, 1);
   assert.equal(deriveBreakthroughFrame(.54).exchange, 0);
   assert.equal(deriveBreakthroughFrame(.74).exchange, 1);
   assert.equal(deriveBreakthroughFrame(.80).release, 0);

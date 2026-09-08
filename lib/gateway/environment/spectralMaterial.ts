@@ -127,7 +127,7 @@ void main() {
     color += uPearl * specular * (.045 + uDarkness * .035) * lightPool;
     color += cutColor * engraving * apertureLight * uDarkness * .005;
     color += mix(uCool, uPearl, .5) * cut * uDestination * .32;
-    color += uPearl * bevel * uRelease * .24;
+    color += mix(uCool, uPearl, .35) * bevel * uRelease * .055;
     // A cut exposes graded internal material rather than a flat coloured side.
     float depthGrain = .5 + .5 * sin(vLocal.z * 32. + layer * .3);
     depthGrain = mix(depthGrain, .5, clamp(fwidth(vLocal.z * 32.), 0., 1.));
@@ -138,7 +138,9 @@ void main() {
     // Before the shell ruptures the architecture is submerged in pearl haze;
     // its cut depth resolves as the same physical boundaries approach.
     color = mix(uPearl * .82, color, .12 + .88 * uRupture);
-    color = mix(color, uPearl * (.90 + lightPool * .04), uRelease * .60);
+    vec3 arrivalGraphite = vec3(.004, .008, .014) + uCool * lightPool * .009;
+    // Keep residual architecture subordinate, with its cut edges still legible.
+    color = mix(color, arrivalGraphite, uRelease * (.48 - cut * .22));
   }
   if (uArchitectural < .5 && uField < .5 && uOptical < .5)
     color = mix(color, uPearl * .90, .30 * (1. - uDarkness));
@@ -150,7 +152,8 @@ void main() {
     float halo = exp(-dot(q, q) * 1.7);
     float arc = smoothstep(-.4, .7, q.x - q.y * .8);
     vec3 deepField = vec3(.0008, .0015, .003) + uCool * halo * .018;
-    deepField += mix(uCool, uWarm, arc) * (caustic * .28 + echo * .035) * (.2 + arc * .8);
+    deepField += mix(uCool, uWarm, arc) * (caustic * mix(.28, .10, uRelease) + echo * .035) * (.2 + arc * .8);
+    deepField += uRelease * (vec3(.003, .006, .011) + uViolet * halo * .012);
     vec3 brightField = uPearl * (.82 + halo * .13) + mix(uCool, uViolet, arc) * caustic * .065;
     color = mix(brightField, deepField, uDarkness);
   }

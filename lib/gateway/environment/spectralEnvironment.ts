@@ -10,7 +10,7 @@ const PI = Math.PI;
 type Role = "shell" | "fracture" | "core" | "far" | "field" | "optical";
 type Boundary = { mesh: Mesh<BufferGeometry, ShaderMaterial>; role: Role; index: number; angle: number };
 
-/** Pearl shell → tectonic fracture → inverted chamber → physical white release. */
+/** Pearl shell → tectonic fracture → inverted chamber → dark spectral arrival. */
 export class SpectralEnvironment {
   readonly group = new Group();
   readonly optics = new Group();
@@ -122,7 +122,7 @@ export class SpectralEnvironment {
       u.uDarkness.value = b.blackout;
       u.uOpticalEnergy.value = b.opticalEnergy * (role === "far" ? .4 : role === "optical" ? 1 : .85);
       u.uDestination.value = role === "far" ? (index === 2 ? .85 : .22) * (1 - b.release * .75) : 0;
-      u.uExposure.value = .94 - b.blackout * .35 + b.release * .06;
+      u.uExposure.value = .94 - b.blackout * .35 - b.release * .03;
       u.uHaze.value = role === "far" ? .7 : .2;
       u.uGlow.value = b.opticalEnergy * .6;
       u.uRupture.value = b.rupture;

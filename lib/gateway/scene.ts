@@ -38,6 +38,7 @@ export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneContr
     const scene = new Scene();
     const bright = new Color(0xeff3f3);
     const spectralDepth = new Color(0x03060c);
+    const arrivalDepth = new Color(0x101b28);
     const background = bright.clone();
     scene.background = background;
     const camera = new PerspectiveCamera(46, 1, .1, 190);
@@ -77,6 +78,7 @@ export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneContr
         camera.position.set(pose.cameraX + frame.driftX, frame.driftY, pose.cameraZ);
         camera.rotation.set(0, pose.cameraYaw, 0);
         background.copy(bright).lerp(spectralDepth, breakthrough.blackout);
+        background.lerp(arrivalDepth, breakthrough.release);
         world.update(frame, pose.cameraZ, background);
         ambient.intensity = 1.05 - frame.darkness * .4;
         key.intensity = 1.8 - frame.darkness * .45;
