@@ -7,7 +7,7 @@ import { deriveJourneyFrame } from "./journey/chapterState";
 import { deriveHeroFraming } from "./journey/framing";
 import { SpectralEnvironment } from "./environment/spectralEnvironment";
 import { DualEntitySystem } from "./entities/dualEntitySystem";
-import { deriveCinematicFrame } from "./journey/cinematicProfile";
+import { deriveBreakthroughFrame } from "./environment/breakthroughState";
 
 export type GatewaySceneController = {
   setTarget(frame: GatewayPose): void;
@@ -37,7 +37,7 @@ export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneContr
     refraction = capture;
     const scene = new Scene();
     const bright = new Color(0xeff3f3);
-    const spectralDepth = new Color(0x465562);
+    const spectralDepth = new Color(0x03060c);
     const background = bright.clone();
     scene.background = background;
     const camera = new PerspectiveCamera(46, 1, .1, 190);
@@ -72,11 +72,11 @@ export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneContr
       tick(deltaSeconds) {
         if (disposed || !pose) return false;
         const frame = deriveJourneyFrame(pose.reducedMotion ? 1 : pose.travelProgress);
-        const cinematic = deriveCinematicFrame(frame.progress);
+        const breakthrough = deriveBreakthroughFrame(frame.progress);
         // No second damping layer: the controller's displayed progress IS this frame.
         camera.position.set(pose.cameraX + frame.driftX, frame.driftY, pose.cameraZ);
         camera.rotation.set(0, pose.cameraYaw, 0);
-        background.copy(bright).lerp(spectralDepth, cinematic.backgroundDepth);
+        background.copy(bright).lerp(spectralDepth, breakthrough.blackout);
         world.update(frame, pose.cameraZ, background);
         ambient.intensity = 1.05 - frame.darkness * .4;
         key.intensity = 1.8 - frame.darkness * .45;
