@@ -9,11 +9,12 @@ export function deriveBreakthroughFrame(progress: number) {
   const compression = smoothRange(.38, .60, p);
   const exchange = smoothRange(.54, .74, p);
   const release = smoothRange(.80, .96, p);
-  const blackout = smoothRange(.38, .60, p) * (1 - smoothRange(.80, .94, p));
+  // Spatial release opens the chamber without resetting its established dark mood.
+  const blackout = smoothRange(.38, .60, p);
   return {
     progress: p, rupture, compression, exchange, release, blackout,
     architecture: smoothRange(.08, .38, p),
     opticalEnergy: deriveCinematicFrame(p).opticalEnergy,
-    spectral: clamp01(.12 + rupture * .48 + blackout * .4 - release * .78),
+    spectral: clamp01(.12 + rupture * .48 + blackout * .4 - release * .55),
   };
 }

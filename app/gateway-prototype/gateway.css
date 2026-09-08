@@ -22,6 +22,18 @@
   box-sizing: border-box;
 }
 
+/* Only the live destination overlay uses the dark chamber palette. The loader
+   and non-WebGL fallback retain their original readable light treatment. */
+.gateway-prototype[data-gateway-enhanced="true"][data-scene-ready="true"] .gateway-selection {
+  --gateway-ink: #e6edf2;
+  --gateway-muted: #b7c8d2;
+  --gateway-line: rgba(183, 208, 220, 0.32);
+  --gateway-unselected-title-opacity: 0.82;
+  --gateway-unselected-action-opacity: 0.88;
+  color: var(--gateway-ink);
+  text-shadow: 0 1px 3px #071019, 0 2px 16px rgba(3, 9, 15, 0.9);
+}
+
 .gateway-prototype:is([data-gateway-phase="auto-entry"], [data-gateway-phase="user-travel"], [data-gateway-phase="split"], [data-gateway-phase="preview"]) {
   touch-action: none;
   overscroll-behavior: none;
