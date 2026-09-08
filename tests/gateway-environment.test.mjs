@@ -18,6 +18,11 @@ const sample = p => {
     spectral: mesh.material.uniforms.uSpectral.value,
     opacity: mesh.material.uniforms.uOpacity.value,
     colors: ["uPearl", "uCool", "uViolet", "uWarm", "uShadow"].flatMap(key => mesh.material.uniforms[key].value.toArray()),
+    opticalEnergy: mesh.material.uniforms.uOpticalEnergy?.value,
+    destination: mesh.material.uniforms.uDestination?.value,
+    exposure: mesh.material.uniforms.uExposure?.value,
+    haze: mesh.material.uniforms.uHaze?.value,
+    glow: mesh.material.uniforms.uGlow?.value,
   }));
 };
 
@@ -35,6 +40,34 @@ test("the core swaps actual depth order and relative scale, not just color", () 
   assert.ok(core[first].position[2] < core[second].position[2]);
   assert.ok(core[first].scale[0] < passage[first].scale[0]);
   assert.ok(core[second].scale[0] > passage[second].scale[0]);
+});
+
+test("three cinematic events create readable reveal, core disagreement, and release", () => {
+  const index = name => meshes.findIndex(mesh => mesh.name === name);
+  const vault = index("vault mineral boundary 2"), shelf = index("shelf mineral boundary 3");
+  const first = index("core mineral boundary 4"), second = index("core mineral boundary 5");
+  const revealStart = sample(.26), revealPeak = sample(.36);
+  const startGap = Math.abs(revealStart[vault].position[0] - revealStart[shelf].position[0]);
+  const revealGap = Math.abs(revealPeak[vault].position[0] - revealPeak[shelf].position[0]);
+  assert.ok(revealGap > startGap + 2, `reveal gap ${startGap} → ${revealGap}`);
+
+  const coreStart = sample(.60), corePeak = sample(.75);
+  const startDepth = Math.abs(coreStart[first].position[2] - coreStart[second].position[2]);
+  const coreDepth = Math.abs(corePeak[first].position[2] - corePeak[second].position[2]);
+  assert.ok(coreDepth > startDepth + 3.5, `core depth disagreement ${startDepth} → ${coreDepth}`);
+
+  const releasePeak = sample(.91);
+  const releaseGap = Math.abs(releasePeak[vault].position[0] - releasePeak[shelf].position[0]);
+  assert.ok(releaseGap > 3, `release gap ${releaseGap}`);
+});
+
+test("cinematic density uses exactly three subordinate shared-geometry far echoes", () => {
+  const echoes = meshes.filter(mesh => mesh.name.startsWith("echo spectral boundary"));
+  const farGeometry = new Set(meshes.filter(mesh => mesh.name.startsWith("far mineral boundary")).map(mesh => mesh.geometry));
+  assert.equal(echoes.length, 3);
+  assert.ok(echoes.every(mesh => farGeometry.has(mesh.geometry)));
+  assert.equal(new Set(echoes.map(mesh => mesh.geometry)).size, 3);
+  assert.ok(echoes.every(mesh => !mesh.material.transparent));
 });
 
 test("numeric scene transforms remain continuous at every chapter boundary", () => {
@@ -69,6 +102,32 @@ test("chapter colors are continuous, bounded, spatially delayed and reversible",
   assert.notDeepEqual(colors(1), colors(0));
 });
 
+test("cinematic light hierarchy is progress-authored and layered by depth", () => {
+  const at = (state, name) => state[meshes.findIndex(mesh => mesh.name === name)];
+  const origin = sample(0), passage = sample(.46), core = sample(.75), emergence = sample(.91);
+  for (const state of [origin, passage, core, emergence]) for (const mesh of state) {
+    for (const key of ["opticalEnergy", "destination", "exposure", "haze", "glow"])
+      assert.ok(Number.isFinite(mesh[key]) && mesh[key] >= 0 && mesh[key] <= 1, `${key}: ${mesh[key]}`);
+  }
+
+  const mid = at(core, "vault mineral boundary 2");
+  const near = at(core, "optical mineral boundary 9");
+  const far = at(core, "far mineral boundary 7");
+  assert.ok(near.opticalEnergy > mid.opticalEnergy);
+  assert.ok(far.opticalEnergy < mid.opticalEnergy);
+  assert.ok(at(passage, "far mineral boundary 6").destination > at(passage, "far mineral boundary 7").destination);
+  assert.ok(at(core, "vault mineral boundary 2").haze !== at(origin, "vault mineral boundary 2").haze);
+  assert.ok(at(emergence, "vault mineral boundary 2").exposure > at(core, "vault mineral boundary 2").exposure);
+  assert.ok(mid.glow > at(origin, "vault mineral boundary 2").glow);
+});
+
+test("cinematic material uniforms reconstruct exactly in reverse and shuffled order", () => {
+  const points = [0, .08, .16, .26, .34, .36, .44, .46, .58, .60, .68, .72, .75, .78, .80, .82, .90, .91, .98, 1];
+  const expected = points.map(sample);
+  for (let i = points.length - 1; i >= 0; i--) assert.deepEqual(sample(points[i]), expected[i]);
+  for (const index of [12, 3, 17, 0, 9, 19, 6]) assert.deepEqual(sample(points[index]), expected[index]);
+});
+
 test("optics are two bounded accent encounters; final chamber retains the same opaque world", () => {
   for (const p of [0, .08, .16, .46, .78, .90, 1]) {
     sample(p);
@@ -79,7 +138,7 @@ test("optics are two bounded accent encounters; final chamber retains the same o
     assert.equal(environment.optics.children.filter(mesh => mesh.visible).length, 1);
   }
   sample(1);
-  assert.equal(meshes.filter(mesh => mesh.visible && !mesh.material.transparent).length, 9);
+  assert.equal(meshes.filter(mesh => mesh.visible && !mesh.material.transparent).length, 12);
 });
 
 test("meshed solids are finite, bounded, and static; no per-frame geometry allocation", () => {

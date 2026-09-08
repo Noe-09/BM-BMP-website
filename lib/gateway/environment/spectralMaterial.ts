@@ -25,6 +25,11 @@ uniform vec3 uWarm;
 uniform vec3 uShadow;
 uniform vec3 uFogColor;
 uniform float uSpectral;
+uniform float uOpticalEnergy;
+uniform float uDestination;
+uniform float uExposure;
+uniform float uHaze;
+uniform float uGlow;
 uniform float uDarkness;
 uniform float uOpacity;
 uniform float uOptical;
@@ -56,7 +61,7 @@ void main() {
   float interference = .5 + .5 * sin(facing * 8. + vUv.y * 4. + uSeed);
   float distanceToCamera = length(cameraPosition - vWorld);
   float midground = 1. - smoothstep(12., 38., distanceToCamera);
-  float spectralGain = mix(.48, 1., midground) + uOptical * .20;
+  float spectralGain = (mix(.48, 1., midground) + uOptical * .20) * (.82 + uOpticalEnergy * .28);
   vec3 opal = mix(uCool, uViolet, smoothstep(.20, .88, interference));
   float interior = 1. - smoothstep(.04, .48, vUv.y);
   float shelter = (.5 + .5 * sin(vUv.x * 7. + uSeed)) * interior;
@@ -87,16 +92,22 @@ void main() {
   // Pearl response sits above shadow grading to keep the core's edges precise.
   color += mix(opal, uPearl, .78) * specular * .66;
   color += opal * pow(edge, 2.) * uSpectral * .18 * spectralGain;
+  float destinationRim = pow(edge, 3.6) * (.45 + .55 * sin(vUv.y * 9. + uSeed) * sin(vUv.y * 9. + uSeed));
+  color += mix(uCool, uPearl, .74) * destinationRim * uDestination * .52;
+  color += mix(uViolet, uPearl, .62) * pow(edge, 4.) * uGlow * .075;
   if (uOptical > .5) {
     vec2 screenUv = gl_FragCoord.xy / uResolution;
-    vec2 offset = N.xy * (.013 + edge * .012);
+    vec2 offset = N.xy * (.013 + edge * .012) * (1. + uOpticalEnergy * .22);
     vec3 transmitted;
     transmitted.r = texture2D(uBackground, clamp(screenUv + offset * 1.05, .002, .998)).r;
     transmitted.g = texture2D(uBackground, clamp(screenUv + offset, .002, .998)).g;
     transmitted.b = texture2D(uBackground, clamp(screenUv + offset * .95, .002, .998)).b;
     color = mix(transmitted * .95, color + opal * edge * .25, .10 + edge * .52);
   }
-  float fog = 1. - exp(-distanceToCamera * (.006 + uFar * .006));
+  color *= mix(.92, 1.08, uExposure);
+  color = color / (1. + max(max(color.r, color.g), color.b) * .075);
+  color = mix(color, color * uShadow * 1.8, uHaze * uFar * .26);
+  float fog = 1. - exp(-distanceToCamera * (.0055 + uFar * .005 + uHaze * .0015));
   color = mix(color, uFogColor, clamp(fog, 0., .94));
   gl_FragColor = vec4(color, uOpacity);
   #include <tonemapping_fragment>
@@ -113,7 +124,9 @@ export function createSpectralMaterial(color: number, accent: number, seed: numb
       uViolet: { value: new Color() }, uWarm: { value: new Color() }, uShadow: { value: new Color() },
       uFogColor: { value: new Color(0xeaf0f1) },
       uSeed: { value: seed },
-      uSpectral: { value: .2 }, uDarkness: { value: 0 }, uOpacity: { value: 1 },
+      uSpectral: { value: .2 }, uOpticalEnergy: { value: 0 }, uDestination: { value: 0 },
+      uExposure: { value: .9 }, uHaze: { value: 0 }, uGlow: { value: 0 },
+      uDarkness: { value: 0 }, uOpacity: { value: 1 },
       uOptical: { value: optical ? 1 : 0 }, uFar: { value: far ? 1 : 0 },
       uBackground: { value: null }, uResolution: { value: new Vector2(1, 1) },
     },

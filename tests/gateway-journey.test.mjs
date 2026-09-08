@@ -3,6 +3,7 @@ import test from "node:test";
 import { createJourney, impulseJourney, stepJourney, seekJourney, autoplaySpeedMultiplier } from "../lib/gateway/journey/controller.ts";
 import { deriveJourneyFrame } from "../lib/gateway/journey/chapterState.ts";
 import { deriveHeroFraming } from "../lib/gateway/journey/framing.ts";
+import { cinematicSpeedMultiplier, deriveCinematicFrame } from "../lib/gateway/journey/cinematicProfile.ts";
 
 const advance = (state, seconds, start = 0, autoplay = true) => {
   for (let i = 1; i <= Math.round(seconds * 60); i++) {
@@ -11,19 +12,8 @@ const advance = (state, seconds, start = 0, autoplay = true) => {
   return state;
 };
 
-test("authored autoplay extends entry by 20–30% without slowing core or concise origin", () => {
-  const duration = (from, to) => {
-    let state = createJourney(from), seconds = 0;
-    while (state.targetProgress < to) {
-      seconds += 1 / 240;
-      state = stepJourney(state, 1 / 240, seconds * 1000, true);
-    }
-    return seconds;
-  };
-  const entryRatio = duration(.16, .58) / ((.58 - .16) / .055);
-  assert.ok(entryRatio >= 1.20 && entryRatio <= 1.30, `entry ratio ${entryRatio}`);
-  assert.ok(Math.abs(duration(0, .1) / (.1 / .055) - 1) < .005);
-  assert.ok(Math.abs(duration(.58, .78) / (.2 / .055) - 1) < .005);
+test("the baseline entry profile remains available to the cinematic multiplier", () => {
+  assert.equal(autoplaySpeedMultiplier(0), 1);
   assert.equal(autoplaySpeedMultiplier(.25), .76);
   assert.equal(autoplaySpeedMultiplier(.44), .83);
   assert.equal(autoplaySpeedMultiplier(.68), 1);
@@ -43,7 +33,7 @@ test("speed ramps are bounded, continuous and independent of input gain in both 
       assert.equal(immediate.targetProgress, impulse.targetProgress);
       assert.equal(stepJourney(impulse, 1 / 60, 1850, true).autoplayVelocity, 0);
       const resumed = stepJourney(impulse, 1 / 60, 2750, true);
-      const expected = impulse.targetProgress === 1 ? 0 : .055 * autoplaySpeedMultiplier(impulse.targetProgress);
+      const expected = impulse.targetProgress === 1 ? 0 : .055 * autoplaySpeedMultiplier(impulse.targetProgress) * cinematicSpeedMultiplier(impulse.targetProgress);
       assert.equal(resumed.autoplayVelocity, expected);
     }
   }
@@ -129,4 +119,52 @@ test("responsive framing keeps both heroes in front of the chamber at a constant
       assert.ok(6 * framing.scale < halfWidth);
     }
   }
+});
+
+test("cinematic autoplay creates the approved 20–30 percent longer authored arc", () => {
+  const stops = [[0, .70], [.15, .74], [.35, .78], [.55, .86], [.72, 1], [.80, 1], [.90, .64], [1, .58]];
+  for (const [progress, expected] of stops) assert.equal(cinematicSpeedMultiplier(progress), expected);
+
+  let state = createJourney(), elapsed = 0;
+  while (state.targetProgress < 1 && elapsed < 40) {
+    elapsed += .001;
+    state = stepJourney(state, .001, elapsed * 1000, true);
+  }
+  assert.ok(Math.abs(elapsed - 25.877) < .02, `cinematic target duration ${elapsed}`);
+});
+
+test("cinematic events and optical energy reconstruct solely from normalized progress", () => {
+  const points = [0, .08, .15, .16, .25, .26, .34, .35, .36, .44, .46, .55, .58, .60, .68, .72, .75, .78, .80, .82, .90, .91, .98, 1];
+  const expected = points.map(deriveCinematicFrame);
+  for (let i = points.length - 1; i >= 0; i--) assert.deepEqual(deriveCinematicFrame(points[i]), expected[i]);
+  for (const index of [8, 1, 17, 4, 22, 0, 15]) assert.deepEqual(deriveCinematicFrame(points[index]), expected[index]);
+
+  assert.equal(deriveCinematicFrame(.26).reveal, 0);
+  assert.equal(deriveCinematicFrame(.36).reveal, 1);
+  assert.equal(deriveCinematicFrame(.44).reveal, 0);
+  assert.equal(deriveCinematicFrame(.60).coreEvent, 0);
+  assert.equal(deriveCinematicFrame(.75).coreEvent, 1);
+  assert.equal(deriveCinematicFrame(.82).coreEvent, 0);
+  assert.equal(deriveCinematicFrame(.80).release, 0);
+  assert.equal(deriveCinematicFrame(.98).release, 1);
+  assert.equal(deriveCinematicFrame(.75).opticalEnergy, 1);
+  assert.ok(deriveCinematicFrame(.90).opticalEnergy < deriveCinematicFrame(.75).opticalEnergy);
+});
+
+test("cinematic curves remain bounded and continuous at every authored boundary", () => {
+  for (const p of [0, .15, .26, .35, .36, .44, .55, .60, .72, .75, .80, .82, .90, .98, 1]) {
+    const frame = deriveCinematicFrame(p);
+    for (const value of Object.values(frame)) assert.ok(Number.isFinite(value) && value >= 0 && value <= 1, `${p}: ${value}`);
+    const before = deriveCinematicFrame(p - 1e-7), after = deriveCinematicFrame(p + 1e-7);
+    for (const key of Object.keys(frame)) assert.ok(Math.abs(before[key] - after[key]) < .00001, `${p}: ${key}`);
+    assert.ok(Math.abs(cinematicSpeedMultiplier(p - 1e-7) - cinematicSpeedMultiplier(p + 1e-7)) < .00001, `${p}: speed`);
+  }
+});
+
+test("cinematic depth follows light to deep to high-contrast core to light", () => {
+  assert.equal(deriveCinematicFrame(0).backgroundDepth, 0);
+  assert.ok(deriveCinematicFrame(.68).backgroundDepth > .5);
+  assert.ok(deriveCinematicFrame(.75).backgroundDepth > deriveCinematicFrame(.46).backgroundDepth);
+  assert.ok(deriveCinematicFrame(.91).backgroundDepth < deriveCinematicFrame(.75).backgroundDepth);
+  assert.equal(deriveCinematicFrame(1).backgroundDepth, 0);
 });
