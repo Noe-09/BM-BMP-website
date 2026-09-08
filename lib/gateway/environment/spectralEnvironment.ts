@@ -1,163 +1,146 @@
-import { Color, Group, Mesh, type ShaderMaterial, type Texture } from "three";
+import { Color, Group, Mesh, type BufferGeometry, type ShaderMaterial, type Texture } from "three";
 import { createVaultGeometry } from "./spectralGeometry.ts";
+import { createArchitecturalGeometry, createChamberFieldGeometry } from "./architecturalGeometry.ts";
 import { createSpectralMaterial } from "./spectralMaterial.ts";
-import { createCarvedGeometry } from "./carvedGeometry.ts";
 import type { JourneyFrame } from "../journey/chapterState.ts";
 import { createSpectralPalette, sampleSpectralPalette } from "./spectralPalette.ts";
-import { deriveCinematicFrame } from "../journey/cinematicProfile.ts";
+import { deriveBreakthroughFrame } from "./breakthroughState.ts";
 
 const PI = Math.PI;
-type Mass = { mesh: Mesh; material: ShaderMaterial; baseX: number; baseY: number; distance: number; turn: number; baseScale: number; role: "vault" | "shelf" | "core" | "far" | "echo" | "optical"; index: number };
+type Role = "shell" | "fracture" | "core" | "far" | "field" | "optical";
+type Boundary = { mesh: Mesh<BufferGeometry, ShaderMaterial>; role: Role; index: number; angle: number };
 
-/** One continuous vault, with progress-authored cavity and boundary relationships. */
+/** Pearl shell → tectonic fracture → inverted chamber → physical white release. */
 export class SpectralEnvironment {
   readonly group = new Group();
   readonly optics = new Group();
-  private masses: Mass[] = [];
+  private boundaries: Boundary[] = [];
   private palette = createSpectralPalette();
   private farPalette = createSpectralPalette();
 
   constructor() {
-    this.group.name = "Spectral mineral vault";
+    this.group.name = "The parted chamber";
     this.optics.name = "Two optical boundary encounters";
     this.group.add(this.optics);
-
-    // Connected major boundaries: broad sections, nonmatching openings, shared axis.
-    this.add("vault", 0, { radius: 5.2, breadth: 2.2, depth: 2.15, start: .02 * PI, sweep: 1.22 * PI, eccentricity: .83, phase: .4 }, 0xf0efef, 0x9cbed0, -1.1, .9, 10, -.20);
-    this.add("shelf", 1, { radius: 5.6, breadth: 2.5, depth: 2.8, start: .94 * PI, sweep: 1.13 * PI, eccentricity: .76, phase: 1.8 }, 0xdbe8e6, 0x73aeb4, .9, -1.3, 11, .1);
-    this.add("vault", 2, { radius: 5.1, breadth: 2.0, depth: 2.4, start: -.35 * PI, sweep: .93 * PI, eccentricity: 1.02, phase: 2.4 }, 0xdcd6ed, 0x9a87b7, 2.4, 1.1, 17, -.4);
-    this.add("shelf", 3, { radius: 5.9, breadth: 2.7, depth: 2.2, start: .67 * PI, sweep: 1.02 * PI, eccentricity: .85, phase: 3.1 }, 0xf1ded5, 0xc18eaa, -2.2, -1.2, 22, .18);
-
-    // These interleaved internal faces separate into contradictory cavities in the core.
-    this.add("core", 4, { radius: 4.2, breadth: 1.7, depth: 2.1, start: -.1 * PI, sweep: 1.16 * PI, eccentricity: .86, phase: 4.0 }, 0x83b8c4, 0x367b96, -.45, .5, 27, -.2);
-    this.add("core", 5, { radius: 4.5, breadth: 1.65, depth: 2.4, start: .87 * PI, sweep: 1.15 * PI, eccentricity: .92, phase: 4.6 }, 0xc4b5df, 0x75659d, .8, -.35, 32, .15);
-
-    // Far field is architecture, not a painted backdrop; it survives emergence.
-    this.add("far", 6, { radius: 9.8, breadth: 3.4, depth: 5, start: -.25 * PI, sweep: 1.42 * PI, eccentricity: .78, phase: .9 }, 0x8ab5c1, 0x4c819b, 1.5, 2.5, 47, -.3);
-    this.add("far", 7, { radius: 12, breadth: 4.8, depth: 6, start: .74 * PI, sweep: 1.4 * PI, eccentricity: .78, phase: 2.8 }, 0xd3dbdf, 0x879fb8, -1.2, -3.0, 64, .2);
-    this.add("far", 8, { radius: 14, breadth: 4.4, depth: 7, start: -.3 * PI, sweep: 1.6 * PI, eccentricity: .9, phase: 1.4 }, 0xa9c7d0, 0x7796a8, 3.0, 1.0, 91, -.15);
-
-    // Three fixed, shared-buffer echoes extend the same architecture into depth.
-    this.addEcho(6, 11, -.8, 2.1, 57, -.48, .42);
-    this.addEcho(7, 12, 2.8, -1.5, 76, .34, .34);
-    this.addEcho(8, 13, -2.4, .3, 108, -.18, .28);
-
-    this.add("optical", 9, { radius: 6.0, breadth: 1.3, depth: .8, start: .55 * PI, sweep: .65 * PI, eccentricity: 1.05, phase: 1.6 }, 0xe7e6ef, 0x7dc9d2, -1, .5, 7, .1);
-    this.add("optical", 10, { radius: 5.8, breadth: 1.25, depth: .9, start: -.34 * PI, sweep: .7 * PI, eccentricity: 1, phase: 2.6 }, 0xe7e6ef, 0xe6aba0, 1.5, -.3, 7, -.2);
+    for (let i = 0; i < 2; i++) this.add("shell", i, createVaultGeometry({ radius: 3.6, breadth: 2.3, depth: 1.8,
+      start: -.18 * PI + i * PI, sweep: 1.12 * PI, eccentricity: .84, phase: .6 + i * 1.8 }), i * PI);
+    // Six adjoining portions of a common aperture. The cuts expose solid depth;
+    // broad outer faces extend into the field instead of terminating as shards.
+    for (let i = 0; i < 6; i++) {
+      const angle = i * PI / 3 + .16;
+      this.add("fracture", i, createArchitecturalGeometry(angle, PI / 3 - .035, 5.2, 22, 1.8 + i % 3 * .85, 1, 4), angle + PI / 6);
+    }
+    this.add("core", 0, createArchitecturalGeometry(-.22 * PI, 1.46 * PI, 4.4, 10.5, 3.1, 4, 7), 0);
+    this.add("core", 1, createArchitecturalGeometry(.78 * PI, 1.46 * PI, 4.4, 10.5, 3.1, 4, 7), PI);
+    const far = createArchitecturalGeometry(-.20 * PI, 1.50 * PI, 14, 46, 4.5, 4);
+    for (let i = 0; i < 3; i++) this.add("far", i, far, i * 1.9);
+    this.add("field", 0, createChamberFieldGeometry(), 0);
+    for (let i = 0; i < 2; i++) this.add("optical", i, createVaultGeometry({ radius: 5.7, breadth: .9, depth: .65,
+      start: .5 * PI + i * PI, sweep: .6 * PI, eccentricity: 1, phase: 1.6 + i }), i * PI);
   }
 
-  private add(role: Mass["role"], index: number, shape: Parameters<typeof createVaultGeometry>[0], color: number, accent: number, x: number, y: number, distance: number, turn: number) {
-    const material = createSpectralMaterial(color, accent, shape.phase, role === "optical", role === "far");
-    const mesh = new Mesh(role === "core" || index === 0 ? createCarvedGeometry(index) : createVaultGeometry(shape), material);
-    mesh.name = `${role} mineral boundary ${index}`;
+  private add(role: Role, index: number, geometry: BufferGeometry, angle: number) {
+    const architectural = role === "fracture" || role === "core" || role === "far";
+    const material = createSpectralMaterial(0xe8edf0, index % 2 ? 0xd48b72 : 0x62bfc7,
+      index * .83, role === "optical", role === "far", architectural);
+    material.uniforms.uField.value = role === "field" ? 1 : 0;
+    const mesh = new Mesh(geometry, material);
+    mesh.name = `${role} chamber boundary ${index}`;
     (role === "optical" ? this.optics : this.group).add(mesh);
-    this.masses.push({ mesh, material, baseX: x, baseY: y, distance, turn, baseScale: 1, role, index });
-  }
-
-  private addEcho(sourceIndex: number, index: number, x: number, y: number, distance: number, turn: number, baseScale: number) {
-    const source = this.masses.find(mass => mass.index === sourceIndex);
-    if (!source) return;
-    const material = createSpectralMaterial(0x7895a4, 0x678aa2, index * .37, false, true);
-    const mesh = new Mesh(source.mesh.geometry, material);
-    mesh.name = `echo spectral boundary ${index}`;
-    this.group.add(mesh);
-    this.masses.push({ mesh, material, baseX: x, baseY: y, distance, turn, baseScale, role: "echo", index });
+    this.boundaries.push({ mesh, role, index, angle });
   }
 
   update(frame: JourneyFrame, cameraZ: number, fog: Color) {
-    const p = frame.progress;
-    const cinematic = deriveCinematicFrame(p);
-    sampleSpectralPalette(p, this.palette);
-    // A spatial lag, not temporal smoothing: far color evolves more quietly and
-    // reaches the same endpoint in either direction without another clock.
-    sampleSpectralPalette(p - .06 * Math.sin(p * PI), this.farPalette);
-    for (const mass of this.masses) {
-      const { mesh, material: { uniforms: u }, index, role } = mass;
+    const b = deriveBreakthroughFrame(frame.progress);
+    sampleSpectralPalette(b.progress, this.palette);
+    sampleSpectralPalette(b.progress - .055 * Math.sin(b.progress * PI), this.farPalette);
+    for (const { mesh, role, index, angle } of this.boundaries) {
+      const u = mesh.material.uniforms;
       const side = index % 2 ? 1 : -1;
-      let x = mass.baseX;
-      let y = mass.baseY;
-      let distance = mass.distance;
-      let scale = 1;
-      let rotation = mass.turn;
-
-      if (role === "vault" || role === "shelf") {
-        // Gathering, pressure and release share the SAME boundary surfaces.
-        x += side * (1 - frame.formation) * (index === 0 ? .5 : 2.6);
-        x += side * frame.opening * (index < 2 ? 5.8 : 3.2);
-        y += (role === "vault" ? 1 : -1) * frame.opening * 1.8;
-        distance -= frame.passage * (index < 2 ? 1.8 : 5.5);
-        distance += (1 - frame.formation) * (index < 2 ? 4 : 2);
-        distance += frame.opening * 8;
-        rotation += Math.sin(p * PI) * side * .16 + frame.core * side * .24;
-        scale = 1 + (1 - frame.formation) * .4 + frame.core * .08 + frame.opening * .7;
-        if (index >= 2) {
-          x -= side * cinematic.reveal * 1.2;
-          x -= side * cinematic.release * 2.8;
-        }
+      let x = 0, y = 0, distance = 12, scale = 1, rx = 0, ry = 0, rz = 0;
+      mesh.visible = true;
+      if (role === "shell") {
+        x = -side * (.5 + b.rupture * 5 + b.release * 10);
+        y = -side * (.5 + b.rupture * 7 + b.release * 12);
+        distance = 10 + b.rupture * 4;
+        scale = 1;
+        rz = side * (.12 + b.rupture * .30);
+        ry = side * b.rupture * .20;
+      } else if (role === "fracture") {
+        const spread = .18 + b.rupture * (1.1 + index % 2 * .65) - b.compression * .7 + b.release * 17;
+        x = Math.cos(angle) * spread;
+        y = Math.sin(angle) * spread;
+        distance = 34 - b.architecture * 21 + index * 1.85;
+        distance += b.exchange * side * 2.0 + b.release * 12;
+        rx = Math.sin(angle) * (.10 + b.rupture * .28 - b.compression * .14 + b.release * .32);
+        ry = -Math.cos(angle) * (.10 + b.rupture * .40 - b.compression * .12 + b.release * .44);
+        rz = side * b.rupture * .06 + b.exchange * .20 - b.release * side * .32;
       } else if (role === "core") {
-        // A closer face shrinks while its deeper counterpart expands: apparent depth disagrees.
-        const first = index === 4;
-        distance -= frame.passage * 8 + frame.core * (first ? 2 : 10);
-        distance += frame.opening * 4;
-        x += (first ? -1 : 1) * frame.separation * (1 - frame.opening) * .75;
-        y += (first ? 1 : -1) * frame.inversion * .65;
-        scale = 1 + (1 - frame.formation) * 2.2 + (first ? -.23 : .12) * frame.inversion + frame.opening * 2.2;
-        rotation += (first ? -.55 : .65) * frame.inversion;
-        distance += cinematic.coreEvent * (first ? 1.2 : -1.8);
-        rotation += cinematic.coreEvent * (first ? -.14 : .14);
+        const first = index === 0;
+        distance = (first ? 24 : 35) - b.compression * 7 + b.exchange * (first ? 9 : -13) + b.release * 18;
+        // Compensation preserves the apparent opening while real depth order
+        // reverses; opposing tilts reveal the discontinuous spatial relationship.
+        scale = distance / 25 * (1 + b.exchange * (first ? -.14 : .15));
+        x = (first ? -.5 : .5) + side * b.exchange * 1.4 + side * b.release * 40;
+        y = side * (b.exchange * .9 + b.release * 6);
+        rx = side * (.14 + b.exchange * .38);
+        ry = side * (.12 + b.exchange * .72);
+        rz = -.36 + b.exchange * side * .54 + b.release * side * .45;
       } else if (role === "far") {
-        x += Math.sin(p * PI) * side * .6;
-        distance -= p * 6;
-        rotation += Math.sin(p * PI) * .025;
-      } else if (role === "echo") {
-        x -= side * cinematic.reveal * .35;
-        x += side * cinematic.release * 1.1;
-        y += Math.sin(p * PI + index) * .16;
-        distance -= p * 4 + cinematic.destination * 2.2;
-        rotation += side * cinematic.reveal * .05;
-        scale = mass.baseScale * (1 + cinematic.destination * .12);
+        distance = 46 + index * 22 - b.architecture * 5;
+        x = (index === 1 ? 2.4 : -1.8) + b.exchange * side * 1.4;
+        y = index === 2 ? -2 : 1.5;
+        scale = 1 + index * .24 + b.release * .38;
+        rz = angle - .22 + b.exchange * side * .12;
+        rx = .20 * side;
+        ry = -.18 + index * .16;
+      } else if (role === "field") {
+        distance = 122;
+        x = -4 + b.exchange * 2;
+        y = 2;
+        rz = -.12 + b.exchange * .12;
       } else {
-        const event = index === 9 ? frame.nearFirst : frame.nearSecond;
-        x += side * (1 - event) * 8;
-        distance += (1 - event) * 10;
+        const event = index === 0 ? frame.nearFirst : frame.nearSecond;
         mesh.visible = event > .001;
-        u.uOpacity.value = event * .94;
-        rotation += event * side * .12;
+        x = side * (1 + (1 - event) * 10);
+        y = side * .7;
+        distance = 7 + (1 - event) * 10;
+        rz = side * event * .15;
+        u.uOpacity.value = event * .90;
       }
       mesh.position.set(x, y, cameraZ - distance);
+      mesh.rotation.set(rx, ry, rz);
       mesh.scale.setScalar(scale);
-      mesh.rotation.set(.10 * Math.sin(index * 1.4) + frame.core * side * .07, .14 * Math.cos(index * 1.1) + frame.inversion * side * .10, rotation);
-      u.uSpectral.value = frame.spectral;
-      u.uDarkness.value = frame.darkness;
-      u.uFogColor.value.copy(fog);
       const palette = role === "far" ? this.farPalette : this.palette;
       u.uPearl.value.copy(palette.pearl);
       u.uCool.value.copy(palette.cool);
       u.uViolet.value.copy(palette.violet);
       u.uWarm.value.copy(palette.warm);
       u.uShadow.value.copy(palette.shadow);
-      const isFar = role === "far" || role === "echo";
-      const energyScale = role === "optical" ? 1 : isFar ? .42 : .82;
-      u.uOpticalEnergy.value = Math.min(1, cinematic.opticalEnergy * energyScale);
-      u.uDestination.value = cinematic.destination * (index === 6 ? 1 : role === "echo" ? .36 : isFar ? .18 : 0);
-      u.uExposure.value = cinematic.exposure * (isFar ? .94 : 1);
-      u.uHaze.value = cinematic.haze * (isFar ? 1 : .68);
-      u.uGlow.value = cinematic.glow * (role === "optical" ? 1 : isFar ? .30 : .72);
+      u.uFogColor.value.copy(fog);
+      u.uSpectral.value = b.spectral;
+      u.uDarkness.value = b.blackout;
+      u.uOpticalEnergy.value = b.opticalEnergy * (role === "far" ? .4 : role === "optical" ? 1 : .85);
+      u.uDestination.value = role === "far" ? (index === 2 ? .85 : .22) * (1 - b.release * .75) : 0;
+      u.uExposure.value = .94 - b.blackout * .35 + b.release * .06;
+      u.uHaze.value = role === "far" ? .7 : .2;
+      u.uGlow.value = b.opticalEnergy * .6;
+      u.uRupture.value = b.rupture;
+      u.uRelease.value = b.release;
     }
   }
 
   setRefraction(texture: Texture, width: number, height: number) {
-    for (const { role, material } of this.masses) if (role === "optical") {
-      material.uniforms.uBackground.value = texture;
-      material.uniforms.uResolution.value.set(width, height);
+    for (const { role, mesh } of this.boundaries) if (role === "optical") {
+      mesh.material.uniforms.uBackground.value = texture;
+      mesh.material.uniforms.uResolution.value.set(width, height);
     }
   }
 
   dispose() {
-    const geometries = new Set(this.masses.map(({ mesh }) => mesh.geometry));
-    for (const geometry of geometries) geometry.dispose();
-    for (const { material } of this.masses) material.dispose();
-    this.masses = [];
+    for (const geometry of new Set(this.boundaries.map(({ mesh }) => mesh.geometry))) geometry.dispose();
+    for (const { mesh } of this.boundaries) mesh.material.dispose();
+    this.boundaries = [];
     this.optics.clear();
     this.group.clear();
   }
