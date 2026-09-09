@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { ServiceIndex } from "@/components/services/ServiceIndex";
 import { PageHero } from "@/components/site/PageHero";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -12,15 +13,26 @@ export const metadata: Metadata = {
 
 export default function BMVisualPage() {
   return (
-    <main className="bmp-page bmp-page--visual">
+    <div className="bmp-page bmp-page--visual">
       <SiteHeader />
-      <PageHero
-        eyebrow={SERVICES.visual.name.value}
-        headline={SERVICES.visual.headline.value}
-        intro={SERVICES.visual.supportingCopy.value}
-        tone="visual"
-      />
+      <main>
+        <PageHero
+          eyebrow={SERVICES.visual.name.value}
+          headline={SERVICES.visual.headline.value}
+          intro={SERVICES.visual.supportingCopy.value}
+          tone="visual"
+        />
+        <ServiceIndex
+          name={SERVICES.visual.name.value}
+          groups={SERVICES.visual.groups.value}
+          action={{
+            label: SERVICES.visual.action.label.value,
+            href: SERVICES.visual.action.href.value,
+          }}
+          tone="visual"
+        />
+      </main>
       <SiteFooter />
-    </main>
+    </div>
   );
 }

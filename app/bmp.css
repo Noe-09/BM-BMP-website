@@ -435,6 +435,260 @@
   font-weight: 580;
 }
 
+.bmp-service-index {
+  padding-block: clamp(4rem, 9vw, 9rem);
+}
+
+.bmp-service-index[data-tone="visual"] {
+  color: #f4f1e9;
+  background: #10100f;
+}
+
+.bmp-service-index[data-tone="tech"] {
+  color: #0d2425;
+  background: #c8f5e5;
+}
+
+.bmp-service-index ol {
+  list-style: none;
+}
+
+.bmp-service-index li {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 1rem;
+  align-items: baseline;
+  padding-block: clamp(1.2rem, 2.8vw, 2.5rem);
+  border-top: 1px solid currentColor;
+}
+
+.bmp-service-index li:last-child {
+  border-bottom: 1px solid currentColor;
+}
+
+.bmp-service-index li span {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+}
+
+.bmp-service-index li strong {
+  max-width: 22ch;
+  font-size: clamp(1.6rem, 4.3vw, 4.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  font-weight: 570;
+}
+
+.bmp-service-index__action {
+  display: flex;
+  justify-content: space-between;
+  margin-top: clamp(4rem, 9vw, 9rem);
+  padding-block: 1rem;
+  border-block: 1px solid currentColor;
+  font-size: clamp(1.1rem, 2vw, 1.8rem);
+}
+
+.bmp-about-story {
+  padding-block: clamp(5rem, 11vw, 11rem);
+}
+
+.bmp-about-story p {
+  position: relative;
+  width: min(100%, 900px);
+  margin-left: auto;
+  padding: clamp(1.5rem, 4vw, 3.5rem) 0 clamp(1.5rem, 4vw, 3.5rem) 64px;
+  border-top: 1px solid rgba(16, 16, 15, 0.28);
+  font-size: clamp(1.2rem, 2vw, 1.85rem);
+  line-height: 1.48;
+}
+
+.bmp-about-story p::before {
+  content: attr(data-paragraph);
+  position: absolute;
+  left: 0;
+  top: clamp(1.8rem, 4.3vw, 3.8rem);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+}
+
+.bmp-about-highlight {
+  padding-block: clamp(5rem, 11vw, 11rem);
+  color: #f4f1e9;
+  background: #10100f;
+  font-size: clamp(3rem, 8vw, 8.7rem);
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+  font-weight: 650;
+}
+
+.bmp-about-process {
+  padding-block: clamp(5rem, 10vw, 10rem);
+}
+
+.bmp-about-process ol {
+  list-style: none;
+}
+
+.bmp-about-process li {
+  display: grid;
+  grid-template-columns: 52px minmax(120px, 0.7fr) 1fr;
+  gap: clamp(1rem, 3vw, 3rem);
+  padding-block: clamp(1.4rem, 3vw, 2.6rem);
+  border-top: 1px solid rgba(16, 16, 15, 0.3);
+}
+
+.bmp-about-process li:last-child {
+  border-bottom: 1px solid rgba(16, 16, 15, 0.3);
+}
+
+.bmp-about-process span {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+}
+
+.bmp-about-process h2 {
+  font-size: clamp(1.5rem, 3vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.bmp-about-process p {
+  max-width: 540px;
+  line-height: 1.55;
+}
+
+.bmp-about-team {
+  padding-block: clamp(4rem, 9vw, 8rem);
+  color: #f4f1e9;
+  background: #4320a8;
+}
+
+.bmp-about-team p {
+  width: min(100%, 850px);
+  margin-left: auto;
+  font-size: clamp(1.6rem, 3.8vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.bmp-creator-index {
+  min-height: 55svh;
+  padding-block: clamp(5rem, 10vw, 10rem);
+  color: #f1edff;
+  background: #261162;
+}
+
+.bmp-creator-index .bmp-empty-state {
+  font-size: clamp(3rem, 9vw, 9rem);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+}
+
+.bmp-contact {
+  padding-block: clamp(5rem, 10vw, 10rem);
+}
+
+.bmp-contact__grid {
+  display: grid;
+  gap: clamp(4rem, 9vw, 9rem);
+}
+
+.bmp-contact-form {
+  display: grid;
+}
+
+.bmp-contact-form__field {
+  position: relative;
+  display: grid;
+  gap: 0.8rem;
+  padding: 1.4rem 0 1.4rem 54px;
+  border-top: 1px solid rgba(16, 16, 15, 0.3);
+}
+
+.bmp-contact-form__field::before {
+  content: attr(data-field-index);
+  position: absolute;
+  top: 1.65rem;
+  left: 0;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+}
+
+.bmp-contact-form__field label {
+  font-size: clamp(1.15rem, 2.1vw, 1.9rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+.bmp-contact-form input,
+.bmp-contact-form textarea {
+  width: 100%;
+  padding: 0.65rem 0;
+  border: 0;
+  border-bottom: 1px solid rgba(16, 16, 15, 0.2);
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.bmp-contact-form textarea {
+  resize: vertical;
+}
+
+.bmp-contact-form button {
+  min-height: 56px;
+  margin-top: 2rem;
+  border: 1px solid #10100f;
+  background: transparent;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.bmp-contact__aside {
+  align-self: start;
+}
+
+.bmp-contact__work-link {
+  display: flex;
+  justify-content: space-between;
+  padding-block: 1rem;
+  border-block: 1px solid currentColor;
+  font-size: clamp(1.2rem, 2vw, 1.8rem);
+}
+
+.bmp-contact__channels {
+  margin-top: 3rem;
+  list-style: none;
+}
+
+.bmp-contact__channels a {
+  display: grid;
+  grid-template-columns: 38px 1fr auto;
+  gap: 0.7rem;
+  padding-block: 1.2rem;
+  border-bottom: 1px solid rgba(16, 16, 15, 0.3);
+}
+
+.bmp-contact__channels span:first-child,
+.bmp-contact__channels small {
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+}
+
+.bmp-contact__channels small {
+  grid-column: 2;
+  opacity: 0.62;
+}
+
+.bmp-contact__channels span:last-child {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+}
+
 .bmp-empty-state {
   padding: clamp(2rem, 5vw, 4rem) 0;
   border-block: 1px solid currentColor;
@@ -492,6 +746,10 @@
     grid-template-columns: 1.6fr 0.8fr;
   }
 
+  .bmp-contact__grid {
+    grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.7fr);
+  }
+
   .bmp-footer__line {
     grid-column: 1 / -1;
   }
@@ -518,6 +776,14 @@
 
   .bmp-capability-world h2 {
     font-size: clamp(4.6rem, 25vw, 8rem);
+  }
+
+  .bmp-about-process li {
+    grid-template-columns: 40px 1fr;
+  }
+
+  .bmp-about-process p {
+    grid-column: 2;
   }
 
   .bmp-header__inner {
