@@ -26,7 +26,7 @@ export async function generateMetadata({
     title: caseStudy.project.title,
     description: caseStudy.seoDescription,
     openGraph: {
-      title: `${caseStudy.project.title} — BM Visuals`,
+      title: `${caseStudy.project.title} — BMP`,
       description: caseStudy.seoDescription,
       type: "website",
     },

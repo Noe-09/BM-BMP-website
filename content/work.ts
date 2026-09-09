@@ -1,9 +1,11 @@
 import {
   approvedCopy,
   hasContentValue,
+  structuredData,
   type AssetReference,
   type ContentField,
 } from "./types.ts";
+import { projectRegistry } from "../lib/projects/selected-work.ts";
 
 const SOURCE = "canonical-docx:work";
 
@@ -80,6 +82,41 @@ export function getPublishedWorkProjects(
   );
 }
 
+const VERIFIED_REPOSITORY_SOURCE =
+  "verified-repository:project-registry@2026-09-09";
+
+const verifiedRepositoryProjects: WorkProject[] = projectRegistry.map((project) => ({
+  name: approvedCopy(project.title, VERIFIED_REPOSITORY_SOURCE),
+  slug: structuredData(project.slug, VERIFIED_REPOSITORY_SOURCE),
+  status: structuredData(project.status, project.publication.source),
+  categories: structuredData(project.categories, VERIFIED_REPOSITORY_SOURCE),
+  challenge: approvedCopy(project.challenge, VERIFIED_REPOSITORY_SOURCE),
+  created: approvedCopy(project.created, VERIFIED_REPOSITORY_SOURCE),
+  heroAssets: structuredData(
+    project.previewAssets.slice(0, 3).map((asset) => ({
+      ...asset,
+      kind: "image" as const,
+      status: "verified" as const,
+    })),
+    project.publication.source,
+  ),
+  outcome: approvedCopy(project.outcome, VERIFIED_REPOSITORY_SOURCE),
+  caseStudy: {
+    challenge: approvedCopy(project.caseStudy.challenge, VERIFIED_REPOSITORY_SOURCE),
+    direction: approvedCopy(project.caseStudy.direction, VERIFIED_REPOSITORY_SOURCE),
+    built: approvedCopy(project.caseStudy.built, VERIFIED_REPOSITORY_SOURCE),
+    significance: approvedCopy(
+      project.caseStudy.significance,
+      VERIFIED_REPOSITORY_SOURCE,
+    ),
+    next: approvedCopy(project.caseStudy.next, VERIFIED_REPOSITORY_SOURCE),
+  },
+  publication: {
+    status: project.publication.status,
+    source: project.publication.source,
+  },
+}));
+
 export const WORK = {
   headline: approvedCopy("Things we have designed, built, and explored.", SOURCE),
   intro: approvedCopy(
@@ -109,5 +146,5 @@ export const WORK = {
     ] as const,
     SOURCE,
   ),
-  projects: [] as WorkProject[],
+  projects: verifiedRepositoryProjects,
 } as const;

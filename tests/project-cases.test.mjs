@@ -19,7 +19,7 @@ test("HAVEN is a ready concept case with final canonical facts", () => {
   ]);
   assert.equal(haven?.title, "HAVEN");
   assert.equal(haven?.year, "2026");
-  assert.equal(haven?.status, "Concept Project");
+  assert.equal(haven?.status, "Concept");
   assert.deepEqual(haven?.disciplines, [
     "Hospitality",
     "Editorial",
@@ -38,7 +38,7 @@ test("case studies resolve shared facts from the canonical project record", () =
   assert.equal(fabriclism?.project.title, "FABRICLISM");
   assert.equal(fabriclism?.project.liveUrl, "https://demo-fabriclism.vercel.app/");
   assert.equal(aurelia?.project.liveUrl, "https://aurelia-skin.vercel.app/");
-  assert.equal(aether?.project.status, "Experimental Concept");
+  assert.equal(aether?.project.status, "Experiment");
   assert.deepEqual(aether?.project.disciplines, [
     "Digital Exhibition",
     "Fashion Campaign",
@@ -73,7 +73,7 @@ test("Fabriclism presents the final Personal Uniform experience", () => {
   ]);
   assert.equal(
     fabriclism?.seoDescription,
-    "A BM Visuals concept case study for Fabriclism, a Personal Uniform fashion-commerce experience combining state-driven storytelling, editorial interaction and functional shopping.",
+    "A BMP concept case study for Fabriclism, a Personal Uniform fashion-commerce experience combining state-driven storytelling, editorial interaction and functional shopping.",
   );
   assert.deepEqual(fabriclism?.sections.at(-1)?.heading, [
     "Enter the world.",
