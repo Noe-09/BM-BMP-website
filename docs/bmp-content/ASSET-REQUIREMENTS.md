@@ -14,15 +14,15 @@ Existing files are inventory candidates, not proof that the canonical document h
 
 | Existing asset | Required asset | Optional enhancement | Missing proof |
 | --- | --- | --- | --- |
-| Current BM Visual hero system and concept-project imagery | A BMP-level visual system that can represent Visual, Tech, and Creator without fabricated proof | Restrained interactive brand motif | Verified BM Tech and BMP Creator proof suitable for the Home capability blocks |
+| Current BM Visual hero system and concept-project imagery | Resolved with a CSS-authored BMP master-brand composition that requires no unsupported project proof | Restrained progressive enhancement after the clarity layer | Verified BM Tech and BMP Creator proof if project media is added later |
 
 ## Work
 
 | Existing asset | Required asset | Optional enhancement | Missing proof |
 | --- | --- | --- | --- |
-| Project folders for Fabriclism, Aurelia Skin, Haven, Æther, Personal Branding, Dental, Coffee, and Spa | For every published project: 1–3 hero visuals, desktop screenshot, mobile screenshot, motion/interaction capture, process material, and system/demo proof where relevant | Curated case-study transitions and project-specific page themes | Public-use approval, project authorship, project classification, supported narrative, and verified outcome |
+| Project folders for Fabriclism, Aurelia Skin, Haven, Æther, Personal Branding, Dental, Coffee, and Spa | Resolved for the four published concept/experiment records: local hero/proof media is readable and each live destination returned HTTP 200 on 2026-09-09 | Additional curated process media where evidence exists | Human evidence for client relationships, ownership, commercial outcomes, or publication of any other project folder |
 
-The first four concepts already have richer case-study media and walkthroughs. The other project folders contain useful candidate media but do not currently have verified canonical project records.
+Fabriclism, Aurelia Skin, Haven, and Æther are the only published records. The other project folders remain excluded candidates because they do not have verified public records.
 
 ## BM Visual
 

@@ -13,7 +13,7 @@
 | About Us | `/about` | `app/about/page.tsx` | Create | `content/about.ts` |
 | Contact / Start a Project | `/contact` | `app/contact/page.tsx` | Modify | `content/contact.ts` |
 
-The canonical document supplies page names, not URL slugs. The proposed slugs are therefore awaiting approval in `PROPOSED-CHANGES.md`.
+The canonical document supplies page names, not URL slugs. The slugs above were approved in Proposal 1 and are implemented.
 
 ## Shared route architecture
 

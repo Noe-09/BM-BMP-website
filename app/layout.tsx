@@ -13,7 +13,6 @@ export const metadata: Metadata = {
   },
   description:
     "BMP is a creative-tech studio turning business problems and ideas into brands, digital systems, and products.",
-  metadataBase: new URL("https://bmvisuals.example.com"),
   openGraph: {
     title: "BMP — Creative × Technology × Products",
     description:

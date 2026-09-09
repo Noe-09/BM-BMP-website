@@ -5,22 +5,20 @@ This list contains only production information not supplied by the canonical DOC
 ## Global
 
 - Canonical public URL and production domain.
-- Approved route slugs for BM Visual, BM Tech, BMP Creator, and About Us.
-- Page-specific SEO titles and descriptions.
 - Open Graph and social-sharing image content.
 - Canonical navigation behavior for linking the independent Gateway to the website.
-- Approved footer content beyond the public sitemap and brand positioning.
+- Any approved footer content beyond the canonical sitemap, brand promise, and positioning now in use.
 
 ## Work
 
-- Verified project records for every intended Work entry.
-- Approved mapping of existing repository concepts to the five canonical Work categories.
-- Verified one-sentence challenge for each project.
-- Verified description of what BMP created for each project.
-- Verified outcome or supported qualitative intended improvement for each project.
-- Approved case-study copy for The challenge, The direction, What we built, Why it matters, and Next.
-- Verification that existing live URLs, project names, years, disciplines, and concept-status labels remain current and public-ready.
-- Approved Work ordering and featured-project selection.
+Fabriclism, Aurelia Skin, Haven, and Æther are now verified against repository proof assets and live HTTP responses. They publish as three `Concept` records and one `Experiment`; none is represented as client work or owned product work.
+
+Remaining gaps:
+
+- Any Work entry beyond the four verified repository records.
+- Human evidence before any future `Client Work` or `Owned Product` classification.
+- Quantitative results, client attribution, testimonials, awards, or commercial outcomes; none are currently supplied or published.
+- Future Work ordering or featured-project changes beyond the verified repository order.
 
 ## BMP Creator
 
@@ -50,3 +48,10 @@ This list contains only production information not supplied by the canonical DOC
 - Analytics destination and consent requirements, if analytics will be used.
 - Production error-monitoring configuration, if required.
 - Final accessibility statement or privacy/legal content, if required before launch.
+
+## Resolved in this integration
+
+- Public route slugs and canonical shared navigation.
+- Page-specific titles and descriptions derived from approved or verified copy.
+- Canonical Work categories, required five-part case-study summary, and public project-status classification.
+- Contact form UI boundary; submission remains intentionally inactive until the delivery gaps above are resolved.
