@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { Container } from "@/components/ui/Container";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteHeader } from "@/components/site/SiteHeader";
 
 const contacts = [
   {
@@ -25,18 +26,7 @@ const contacts = [
 export default function ContactPage() {
   return (
     <main className="contact-page">
-      <header className="site-nav">
-        <Container className="site-nav__inner">
-          <Link href="/" className="site-mark" aria-label="BM Visuals home">
-            BM VISUALS
-          </Link>
-          <nav className="site-nav__links" aria-label="Primary navigation">
-            <Link href="/#work">Work</Link>
-            <Link href="/#studio">Studio</Link>
-            <Link href="/contact">Contact</Link>
-          </nav>
-        </Container>
-      </header>
+      <SiteHeader />
 
       <section className="contact-hero">
         <Container>
@@ -72,13 +62,7 @@ export default function ContactPage() {
         </Container>
       </section>
 
-      <footer className="contact-footer bm-rule">
-        <Container className="contact-footer__inner">
-          <p>Digital experience division of BM · Vietnam</p>
-          <p>Working internationally.</p>
-          <Link href="/">Back to BM Visuals ↑</Link>
-        </Container>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

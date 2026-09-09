@@ -4,19 +4,20 @@ import { SceneThemeController } from "@/components/motion/SceneThemeController";
 import "./globals.css";
 import "./motion.css";
 import "./site.css";
+import "./bmp.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "BM Visuals — Digital Experience Division of BM",
-    template: "%s — BM Visuals",
+    default: "BMP — Creative × Technology × Products",
+    template: "%s — BMP",
   },
   description:
-    "BM Visuals is the digital experience division of BM, crafting brand websites, ecommerce and distinctive digital experiences.",
+    "BMP is a creative-tech studio turning business problems and ideas into brands, digital systems, and products.",
   metadataBase: new URL("https://bmvisuals.example.com"),
   openGraph: {
-    title: "BM Visuals — Digital Experience Division of BM",
+    title: "BMP — Creative × Technology × Products",
     description:
-      "BM Visuals is the digital experience division of BM, crafting brand websites, ecommerce and distinctive digital experiences.",
+      "BMP is a creative-tech studio turning business problems and ideas into brands, digital systems, and products.",
     type: "website",
   },
 };

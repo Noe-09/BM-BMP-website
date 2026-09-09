@@ -143,7 +143,8 @@ git commit -m "feat: add canonical BMP content boundary"
 - Create: `app/about/page.tsx`
 - Create: `app/bmp.css`
 - Modify: `app/layout.tsx`
-- Modify: `app/globals.css`
+- Modify: `app/page.tsx`
+- Modify: `app/contact/page.tsx`
 - Modify: `tests/accessibility-markup.test.mjs`
 
 **Interfaces:**
