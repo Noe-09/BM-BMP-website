@@ -1,29 +1,19 @@
-import { CapabilitiesIndex } from "@/components/home/CapabilitiesIndex";
-import { ClosingScene } from "@/components/home/ClosingScene";
-import { HeroSequence } from "@/components/home/HeroSequence";
-import { StudioProcess } from "@/components/home/StudioProcess";
-import { SelectedWork } from "@/components/work/SelectedWork";
+import { BmpHero } from "@/components/home/BmpHero";
+import { CapabilityWorlds } from "@/components/home/CapabilityWorlds";
+import { ValueFramework } from "@/components/home/ValueFramework";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
-import "./ending.css";
-import "./home.css";
 
 export default function Home() {
   return (
-    <main className="home-page">
+    <div className="bmp-page bmp-home">
       <SiteHeader />
-
-      <HeroSequence />
-
-      <SelectedWork />
-
-      <CapabilitiesIndex />
-
-      <StudioProcess />
-
-      <ClosingScene />
-
+      <main>
+        <BmpHero />
+        <CapabilityWorlds />
+        <ValueFramework />
+      </main>
       <SiteFooter />
-    </main>
+    </div>
   );
 }
