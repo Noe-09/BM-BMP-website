@@ -1,59 +1,53 @@
-# BM Visuals Website — Project Instructions
+# BMP Website — Project Instructions
 
 ## 1. Project Mission
 
-Build a premium creative studio website for BM Visuals.
+Build a premium creative-tech studio website for BMP.
 
 This website is not simply a marketing website.
 
-The website itself must act as proof of BM Visuals' capability in:
+The website itself must act as proof of BMP's capability across:
 
-- digital art direction
-- UI/UX
-- creative frontend development
-- motion
-- interactive experiences
-- visual storytelling
-- ecommerce presentation
-- conversion-aware web design
+- BM Visual: creative and visual services
+- BM Tech: digital systems and technical solutions
+- BMP Creator: products and apps built by BMP
 
 The finished website should make visitors feel:
 
-"This team clearly understands design, technology and brand experience."
+"This studio turns business problems and ideas into credible brands, useful systems, and real digital products."
 
 ## Current Build Scope
 
-This repository may eventually support the broader BM / BMP brand ecosystem.
+The approved public brand architecture is:
 
-However, the CURRENT BUILD PHASE is strictly focused on:
+- BMP = master brand / credibility layer
+- BM Visual = creative & visual services
+- BM Tech = digital systems & technical solutions
+- BMP Creator = products/apps built by BMP
 
-BM VISUALS.
+Canonical positioning:
 
-For this phase:
-
-- Build BM Visuals only.
-- Do not create BMP Technical pages.
-- Do not add BMP Technical services to BM Visuals navigation.
-- Do not introduce AI automation, operational software or technical consulting into BM Visuals homepage messaging.
-- BMP Technical exists only as brand context unless explicitly requested later.
+BMP is a creative-tech studio turning business problems and ideas into brands, digital systems, and products.
 
 Current public website scope:
 
 - /
 - /work
 - /work/[slug]
-- /studio
+- /bm-visual
+- /bm-tech
+- /creator
+- /about
 - /contact
-- /lab only if core pages are already strong
 
-The priority is to make BM Visuals a premium creative digital studio website.
+Do not silently add major public pages.
 
-Do not expand scope without explicit approval.
+The approved Gateway is a frozen independent experience. Do not modify or integrate it without explicit approval.
 ---
 
-## 2. BM Visuals Positioning
+## 2. BM Visual Positioning
 
-BM Visuals is the front-of-house creative digital studio.
+BM Visual is BMP's creative and visual services division.
 
 Primary areas:
 
@@ -67,15 +61,15 @@ Primary areas:
 - motion and interaction
 - conversion-facing digital experiences
 
-BM Visuals focuses on what customers SEE, FEEL and INTERACT WITH.
+BM Visual focuses on what customers see, feel, and interact with.
 
 ---
 
-## 3. BM Visuals vs BMP Technical
+## 3. BM Visual and BM Tech
 
-BMP Technical is a separate technical division.
+BM Tech is BMP's digital systems and technical solutions division.
 
-BMP focuses on:
+BM Tech focuses on:
 
 - automation
 - AI systems
@@ -84,14 +78,16 @@ BMP focuses on:
 - internal business systems
 - custom technical infrastructure
 
-Do NOT turn the BM Visuals website into:
+Do not present BM Tech as generic AI or software outsourcing. Technology is a tool; the business problem comes first.
+
+Do not turn BM Visual into:
 
 - an AI consultancy website
 - an automation agency website
 - a software development outsourcing website
 - a generic technology company website
 
-BM Visuals should remain strongly focused on:
+BM Visual should remain strongly focused on:
 
 BRAND + EXPERIENCE + DESIGN + DIGITAL CRAFT.
 
@@ -99,20 +95,13 @@ BRAND + EXPERIENCE + DESIGN + DIGITAL CRAFT.
 
 ## 4. Target Audience
 
-BM Visuals should be especially attractive to:
+Primary audience:
 
-- fashion brands
-- jewelry brands
-- accessory brands
-- beauty brands
-- skincare brands
-- hospitality brands
-- lifestyle brands
-- creative founders
-- aesthetic-first businesses
-- modern companies that care about digital perception
+- local brands and SMBs
+- founders and lean teams
+- businesses that need stronger digital presence or useful systems without building a full internal department
 
-The website should still communicate enough commercial credibility to serve broader businesses when appropriate.
+BM Visual may remain especially attractive to aesthetic-first brands and businesses that care about digital perception.
 
 ---
 
@@ -355,11 +344,15 @@ Less important projects belong in All Work or BM Lab.
 
 Concept projects are allowed.
 
-Concept projects must be clearly labeled:
+Every published Work record must have one verified public status:
 
-- Concept Project
-- Self-Initiated
-- Experimental
+- Client Work
+- Concept
+- Demo
+- Experiment
+- Owned Product
+
+Concept, Demo, Experiment, and Owned Product work must be honestly labeled. Client Work must never be inferred.
 
 Never imply a fictional client relationship.
 
@@ -409,17 +402,21 @@ Production assets should come from:
 
 ## 17. Content Source of Truth
 
-Website copy must follow:
+Website copy must follow the canonical source:
 
-`docs/CONTENT.md`
+`BMP_Website_Brand_Core_Content_Studio_08-09-2026.docx`
+
+The approved implementation architecture and audits live in:
+
+`docs/bmp-content/`
 
 Do not invent major marketing claims without approval.
 
-Portfolio structure must follow:
+Legacy portfolio structure may be reused only when it does not conflict with the canonical source:
 
 `docs/PROJECTS.md`
 
-Site structure must follow:
+Legacy site structure is reference material only:
 
 `docs/SITE_ARCHITECTURE.md`
 
@@ -427,9 +424,9 @@ Visual decisions must follow:
 
 `docs/DESIGN_DIRECTION.md`
 
-Implementation order must follow:
+Implementation order for canonical integration follows:
 
-`docs/BUILD_PLAN.md`
+`docs/bmp-content/IMPLEMENTATION-PHASES.md`
 
 ---
 
@@ -491,14 +488,14 @@ Whenever choosing between more effects and better craft, choose better craft.
 
 When project documents appear to conflict, follow this priority:
 
-1. CLAUDE.md
-2. docs/DESIGN_DIRECTION.md
-3. docs/SITE_ARCHITECTURE.md
-4. docs/CONTENT.md
-5. docs/PROJECTS.md
-6. docs/DESIGN_SYSTEM.md
-7. docs/MOTION_SYSTEM.md
-8. docs/BUILD_PLAN.md
+1. Explicit current human instructions
+2. `BMP_Website_Brand_Core_Content_Studio_08-09-2026.docx`
+3. `CLAUDE.md`
+4. `docs/bmp-content/`
+5. `docs/DESIGN_DIRECTION.md`
+6. `docs/PROJECTS.md`
+7. `docs/DESIGN_SYSTEM.md`
+8. `docs/MOTION_SYSTEM.md`
 
 If a contradiction can materially change the design, architecture or brand direction:
 
@@ -511,12 +508,12 @@ Do not silently choose one interpretation.
 
 The `/agent-os` directory contains broader company operating agents and workflows.
 
-For the current BM Visuals website build:
+For the current BMP website build:
 
 - Do not modify `/agent-os`.
 - Do not use Sales, Finance, Market Intelligence or BMP workflows as website requirements.
 - `agent-os/agents/frontend-builder.md` and `brand-guardian.md` may be consulted only if explicitly useful.
-- Website source-of-truth remains CLAUDE.md and `/docs`.
+- Website source-of-truth remains the canonical DOCX, this file, and `docs/bmp-content/` in that order.
 
 Do not expand website scope based on `/agent-os`.
 
