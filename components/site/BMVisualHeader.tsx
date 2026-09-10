@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Container } from "@/components/ui/Container";
+import { CompactNavigation } from "@/components/site/CompactNavigation";
 import { NAVIGATION } from "@/content/navigation";
 
 const divisionNavigation = NAVIGATION.items.filter(
@@ -27,6 +28,7 @@ export function BMVisualHeader() {
             </Link>
           ))}
         </nav>
+        <CompactNavigation items={divisionNavigation} />
       </Container>
     </header>
   );

@@ -225,7 +225,7 @@ test("Creator stays honest when no product record is verified", async () => {
   assert.doesNotMatch(html, /Client Work|Owned Product/);
 });
 
-test("Contact publishes canonical fields without pretending submission works", async () => {
+test("Contact publishes canonical fields through a functional submission boundary", async () => {
   const html = await getPage("/contact");
   const exactCopy = [
     "Have a problem worth solving?",
@@ -241,8 +241,13 @@ test("Contact publishes canonical fields without pretending submission works", a
     "View our work",
   ];
   for (const value of exactCopy) assert.ok(html.includes(value), value);
-  assert.match(html, /<button[^>]*disabled[^>]*>Start a project<\/button>/);
-  assert.doesNotMatch(html, /<form[^>]+action=/);
+  assert.match(html, /<form[^>]+action=/);
+  assert.doesNotMatch(html, /<button[^>]*disabled[^>]*>Start a project<\/button>/);
+  assert.match(html, /<input[^>]+type="email"[^>]+name="contact"/);
+  assert.match(html, /<input[^>]+type="url"[^>]+name="reference"/);
+  assert.ok(html.includes("Required"));
+  assert.ok(html.includes("Optional"));
+  assert.ok(html.includes("Project inquiry status"));
   assert.match(html, /href="https:\/\/zalo\.me\/0326034128"/);
   assert.match(html, /href="\/work"/);
 });

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { NAVIGATION } from "@/content/navigation";
 import { Container } from "@/components/ui/Container";
+import { CompactNavigation } from "@/components/site/CompactNavigation";
 
 export function SiteHeader() {
   return (
@@ -25,6 +26,7 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
+        <CompactNavigation items={NAVIGATION.items} />
       </Container>
     </header>
   );

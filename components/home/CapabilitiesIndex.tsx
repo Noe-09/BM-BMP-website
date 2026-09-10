@@ -11,6 +11,12 @@ type CapabilitiesIndexProps = {
   groups: readonly string[];
 };
 
+function getLabelLength(label: string) {
+  if (label.length > 52) return "extra-long";
+  if (label.length > 40) return "long";
+  return "standard";
+}
+
 export function CapabilitiesIndex({ groups }: CapabilitiesIndexProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const profile = useInteractionProfile();
@@ -37,6 +43,7 @@ export function CapabilitiesIndex({ groups }: CapabilitiesIndexProps) {
                 <button
                   type="button"
                   className="capability-index-row"
+                  data-label-length={getLabelLength(capability.title)}
                   aria-pressed={activeIndex === index}
                   onPointerEnter={() => profile.allowPointerDepth && setActiveIndex(index)}
                   onFocus={() => setActiveIndex(index)}
