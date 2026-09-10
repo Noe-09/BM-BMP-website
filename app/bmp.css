@@ -33,7 +33,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-block: clamp(2.5rem, 5vw, 5rem) clamp(2rem, 4vw, 4rem);
+  padding-block: clamp(1.5rem, 4vh, 3.5rem);
 }
 
 .bmp-home-hero__eyebrow {
@@ -44,8 +44,8 @@
 
 .bmp-home-hero h1 {
   max-width: 15ch;
-  margin-block: clamp(4rem, 9vw, 8rem);
-  font-size: clamp(3.3rem, 8.3vw, 8.8rem);
+  margin-block: clamp(2rem, 5vh, 4rem);
+  font-size: clamp(3.3rem, min(7.3vw, 11.5vh), 8.8rem);
   line-height: 0.9;
   letter-spacing: -0.065em;
   font-weight: 680;
@@ -934,11 +934,15 @@
 
   .bmp-header__inner {
     align-items: flex-start;
+    gap: 10px;
     padding-block: 15px;
   }
 
   .bmp-header__nav {
+    gap: 9px;
     padding-bottom: 4px;
+    font-size: 0.54rem;
+    letter-spacing: 0.055em;
   }
 
   .bmp-header__nav a:nth-child(4),
@@ -947,7 +951,7 @@
   }
 
   .bmp-header__action {
-    padding-left: 14px;
+    padding-left: 8px;
   }
 
   .bmp-page-hero {

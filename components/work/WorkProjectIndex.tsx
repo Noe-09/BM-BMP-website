@@ -50,7 +50,7 @@ export function WorkProjectIndex() {
         </div>
 
         <div className="bmp-work-list" aria-live="polite">
-          {visibleProjects.map((project) => (
+          {visibleProjects.map((project, index) => (
             <article
               key={project.slug}
               className="bmp-work-record"
@@ -73,6 +73,7 @@ export function WorkProjectIndex() {
                   src={project.previewAssets[0].src}
                   alt={project.previewAssets[0].alt}
                   fill
+                  loading={index === 0 ? "eager" : "lazy"}
                   sizes="(max-width: 767px) 100vw, 78vw"
                 />
               </figure>

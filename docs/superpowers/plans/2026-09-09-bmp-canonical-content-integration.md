@@ -45,11 +45,11 @@
 - Produces: `ContentField<T>`, `ApprovedCopy<T>`, `StructuredData<T>`, `MissingContent`, `AssetReference`, `CTA`, `ProjectStatus`, `WorkCategory`, `WorkProject`, `getPublishedWorkProjects()`.
 - Produces: `brand`, `navigation`, `home`, `about`, `services`, `creator`, `work`, and `contact` named exports.
 
-- [ ] **Step 1: Read the test-writing rules**
+- [x] **Step 1: Read the test-writing rules**
 
 Run: `sed -n '1,320p' /Users/noe/.codex/plugins/cache/openai-curated-remote/superpowers/6.3.0/skills/test-driven-development/writing-good-tests.md`
 
-- [ ] **Step 2: Write the failing canonical-content test**
+- [x] **Step 2: Write the failing canonical-content test**
 
 Add assertions that import all `content/*.ts` exports and verify:
 
@@ -77,13 +77,13 @@ assert.deepEqual(getPublishedWorkProjects([]), []);
 
 Read all public route/component sources and assert that `You are BMP Content Studio` and `WHEN I GIVE YOU A TOPIC` do not appear.
 
-- [ ] **Step 3: Run the test and verify RED**
+- [x] **Step 3: Run the test and verify RED**
 
 Run: `node --test tests/bmp-content.test.mjs`
 
 Expected: FAIL with module-not-found for `content/index.ts`.
 
-- [ ] **Step 4: Implement status primitives and exact canonical modules**
+- [x] **Step 4: Implement status primitives and exact canonical modules**
 
 Use a discriminated field type:
 
@@ -102,11 +102,11 @@ export type ProjectStatus =
 
 Transcribe the exact Home, About, service, Creator, Contact, mission, vision, values, differentiators, audience, voice, Work taxonomy, and case-section labels from the DOCX. Encode the Creator product list as an empty typed array. `getPublishedWorkProjects()` returns only records with `publication.status === "verified"`, a verified project status, and all required public fields.
 
-- [ ] **Step 5: Align repository guidance**
+- [x] **Step 5: Align repository guidance**
 
 Replace only the obsolete BM Visual-only build-scope and BMP Technical prohibition in `CLAUDE.md` with the approved BMP sitemap and naming map. Preserve compatible design, engineering, accessibility, and Gateway safety instructions.
 
-- [ ] **Step 6: Run focused tests and verify GREEN**
+- [x] **Step 6: Run focused tests and verify GREEN**
 
 Run: `node --test tests/bmp-content.test.mjs`
 
@@ -116,7 +116,7 @@ Run: `npm run typecheck`
 
 Expected: PASS.
 
-- [ ] **Step 7: Canonical copy diff and checkpoint**
+- [x] **Step 7: Canonical copy diff and checkpoint**
 
 Compare every exported approved string with the extracted DOCX text, then run:
 
@@ -151,21 +151,21 @@ git commit -m "feat: add canonical BMP content boundary"
 - Consumes: `navigation`, `brand`, and page content exports.
 - Produces: shared `SiteHeader`, `SiteFooter`, `PageHero`, and `EmptyState` Server Components.
 
-- [ ] **Step 1: Write failing route and shell tests**
+- [x] **Step 1: Write failing route and shell tests**
 
 Assert that every route file exists, imports canonical data, has one page-level heading, and uses the shared shell. Assert the header uses links for `/work`, `/bm-visual`, `/bm-tech`, `/creator`, `/about`, and `/contact`. Assert the shell does not contain `Solutions`, `Pricing`, `Platform`, or generic dropdown/menu-card markup.
 
-- [ ] **Step 2: Run the test and verify RED**
+- [x] **Step 2: Run the test and verify RED**
 
 Run: `node --test tests/bmp-shell.test.mjs tests/accessibility-markup.test.mjs`
 
 Expected: FAIL because routes and shared components are missing and the legacy accessibility assertion expects BM Visual-only descriptors.
 
-- [ ] **Step 3: Implement the shared BMP shell and route skeletons**
+- [x] **Step 3: Implement the shared BMP shell and route skeletons**
 
 Create a semantic header/footer driven by `content/navigation.ts`. Use `aria-label="Primary navigation"`, a visible keyboard focus state, and a compact mobile treatment that keeps the Contact destination available. Add static page metadata in each Server Component. Route skeletons render approved page headlines and no fabricated entries.
 
-- [ ] **Step 4: Update root metadata and public guidance tests**
+- [x] **Step 4: Update root metadata and public guidance tests**
 
 Set root metadata from canonical positioning:
 
@@ -176,11 +176,11 @@ description: "BMP is a creative-tech studio turning business problems and ideas 
 
 Replace the obsolete BM Visual-only accessibility test with assertions for canonical names and semantic shared navigation.
 
-- [ ] **Step 5: Add the shared visual foundation**
+- [x] **Step 5: Add the shared visual foundation**
 
 Add `app/bmp.css` with a restrained fixed/sticky brand-led header, editorial typography, strong rules, asymmetric grids, visible focus, reduced motion, and responsive behavior. Do not use generic rounded card grids, pills, dashboard motifs, neon, glassmorphism, or large agency menus.
 
-- [ ] **Step 6: Run focused tests and checkpoint**
+- [x] **Step 6: Run focused tests and checkpoint**
 
 Run: `node --test tests/bmp-shell.test.mjs tests/accessibility-markup.test.mjs`
 
@@ -210,29 +210,29 @@ git commit -m "feat: add BMP routes and shared shell"
 - Consumes: `home`, `brand`, and canonical navigation routes.
 - Produces: semantic, immediate `BmpHero` and three `CapabilityWorlds` destination links.
 
-- [ ] **Step 1: Write the failing Home contract test**
+- [x] **Step 1: Write the failing Home contract test**
 
 Assert the source contains the canonical eyebrow, headline, supporting copy, both CTA labels, three exact capability headings/supporting paragraphs, and links to approved destinations. Assert canonical hero copy is present in regular semantic markup rather than supplied only through a canvas, loader, timeout, or readiness state.
 
-- [ ] **Step 2: Run the test and verify RED**
+- [x] **Step 2: Run the test and verify RED**
 
 Run: `node --test tests/bmp-home.test.mjs`
 
 Expected: FAIL because the existing Home is BM Visual-only.
 
-- [ ] **Step 3: Implement the semantic hero**
+- [x] **Step 3: Implement the semantic hero**
 
 Render `Creative × Technology × Products`, the exact headline and supporting paragraph, `Explore our work`, and `Start a project` in the initial Server Component HTML. Use progressive CSS-only composition; do not gate content on JavaScript.
 
-- [ ] **Step 4: Implement three destination worlds**
+- [x] **Step 4: Implement three destination worlds**
 
 Create one shared editorial composition with three full-width/asymmetric destinations. BM Visual uses atmospheric image/color behavior, BM Tech uses precise structural lines, and BMP Creator uses product-oriented experimental indexing. Preserve exact copy and shared BMP type/spacing.
 
-- [ ] **Step 5: Add value framework and restraint**
+- [x] **Step 5: Add value framework and restraint**
 
 Render `Look better. Work better. Build something real.` as a transitional editorial statement, not three feature cards.
 
-- [ ] **Step 6: Run focused tests and checkpoint**
+- [x] **Step 6: Run focused tests and checkpoint**
 
 Run: `node --test tests/bmp-home.test.mjs tests/bmp-content.test.mjs`
 
@@ -265,29 +265,29 @@ git commit -m "feat: build canonical BMP home"
 - Consumes: exact `about`, `services`, `creator`, and `contact` content exports.
 - Produces: public service index, honest Creator empty state, and an accessible contact form whose submission remains inactive until configuration exists.
 
-- [ ] **Step 1: Write failing page-copy and semantics tests**
+- [x] **Step 1: Write failing page-copy and semantics tests**
 
 Assert exact About paragraphs, highlight, `Understand / Define / Build / Review / Improve`, lean-team wording, both six-item service lists, Creator headline/supporting copy, Contact headline/body/fields, and CTA labels. Assert Creator has no fake product cards. Assert every form control has a label and the inactive submit control is disabled while submission is `MISSING_CONTENT`.
 
-- [ ] **Step 2: Run the test and verify RED**
+- [x] **Step 2: Run the test and verify RED**
 
 Run: `node --test tests/bmp-pages.test.mjs`
 
 Expected: FAIL because the skeleton pages do not contain complete canonical content and the old Contact page has no canonical form.
 
-- [ ] **Step 3: Build About and division pages**
+- [x] **Step 3: Build About and division pages**
 
 Render all canonical About copy faithfully. Build BM Visual as the expressive service surface and BM Tech as the structural service surface without adding services or claims. Service groups use semantic lists with outcome-led canonical supporting copy.
 
-- [ ] **Step 4: Build honest Creator state**
+- [x] **Step 4: Build honest Creator state**
 
 Render the canonical Creator copy and CTA. When `creator.products` is empty, render the shared honest empty state and no invented product name, status, image, demo, or link.
 
-- [ ] **Step 5: Build the Contact boundary**
+- [x] **Step 5: Build the Contact boundary**
 
 Render the seven canonical fields with required state from data. Keep the canonical submit button disabled while `contact.submission.status === "MISSING_CONTENT"`. Retain the existing verified Zalo, LinkedIn, and Facebook links as separate direct-contact paths without presenting them as canonical form destinations.
 
-- [ ] **Step 6: Run focused tests and checkpoint**
+- [x] **Step 6: Run focused tests and checkpoint**
 
 Run: `node --test tests/bmp-pages.test.mjs tests/bmp-content.test.mjs`
 
@@ -325,29 +325,29 @@ git commit -m "feat: add canonical BMP destination pages"
 - Consumes: canonical Work categories/schema and existing concept assets/copy.
 - Produces: verified public `ProjectStatus` on every Work record, honest category/status labels, and reusable canonical case-section structure.
 
-- [ ] **Step 1: Verify existing project evidence**
+- [x] **Step 1: Verify existing project evidence**
 
 For Fabriclism, Aurelia Skin, Haven, and Æther, check local asset existence, current repository labeling, live URL response, absence of client language, and absence of metrics/results claims. Record only supported status: `Concept` for the first three and `Experiment` for Æther unless contrary evidence is found. If a record fails verification, keep it draft and omit it from public output.
 
-- [ ] **Step 2: Write failing Work publication tests**
+- [x] **Step 2: Write failing Work publication tests**
 
 Test that invalid/unverified records are excluded, every returned public record has one approved `ProjectStatus`, and source/project markup visibly renders status. Replace legacy assertions for `Concept Project` and `Experimental Concept` with `Concept` and `Experiment`.
 
-- [ ] **Step 3: Run the test and verify RED**
+- [x] **Step 3: Run the test and verify RED**
 
 Run: `node --test tests/bmp-work.test.mjs tests/project-cases.test.mjs`
 
 Expected: FAIL because the old registry uses non-canonical status labels and the Work index is incomplete.
 
-- [ ] **Step 4: Migrate verified project records**
+- [x] **Step 4: Migrate verified project records**
 
 Add publication verification, canonical status, canonical category mapping, challenge, created output, hero assets, supported qualitative outcome, and case fields. Preserve concept framing and existing source copy; never convert a concept into client work. Missing case fields remain `MISSING_CONTENT` and do not receive invented prose.
 
-- [ ] **Step 5: Build Work index and adapt case routes**
+- [x] **Step 5: Build Work index and adapt case routes**
 
 Render canonical Work headline, intro, categories, project status, challenge, what BMP created, hero media, supported outcome, and View project/See process CTA. Case pages use canonical section labels: The challenge, The direction, What we built, Why it matters, Next. Unknown or unpublished slugs call `notFound()`.
 
-- [ ] **Step 6: Run focused tests and checkpoint**
+- [x] **Step 6: Run focused tests and checkpoint**
 
 Run: `node --test tests/bmp-work.test.mjs tests/project-cases.test.mjs tests/selected-work-interaction.test.mjs`
 
@@ -376,21 +376,21 @@ git commit -m "feat: build verified BMP work hub"
 - Consumes: all public content modules and routes.
 - Produces: a final canonical parity check and current unresolved-gap inventory.
 
-- [ ] **Step 1: Write the failing parity test**
+- [x] **Step 1: Write the failing parity test**
 
 Assert all locked lines, CTAs, Work categories, service arrays, lean-team wording, project status labels, and route links. Assert public sources contain none of: `You are BMP Content Studio`, `Funnel stage`, `Nano Banana image prompts`, invented metric patterns, `Concept Project`, or `Experimental Concept`.
 
-- [ ] **Step 2: Run the test and verify RED**
+- [x] **Step 2: Run the test and verify RED**
 
 Run: `node --test tests/bmp-content-parity.test.mjs`
 
 Expected: FAIL on any remaining legacy naming/copy or missing route contract. If it passes immediately, strengthen it against the identified legacy source before continuing.
 
-- [ ] **Step 3: Resolve tested parity defects and reconcile audits**
+- [x] **Step 3: Resolve tested parity defects and reconcile audits**
 
 Fix only evidence-backed mismatches. Update gap and asset documents so resolved entries are removed and unresolved contact, proof, metadata, and Creator gaps remain explicit.
 
-- [ ] **Step 4: Run the complete automated verification**
+- [x] **Step 4: Run the complete automated verification**
 
 Run: `npm test`
 
@@ -402,15 +402,15 @@ Run: `npm run build`
 
 Expected: all commands exit 0 with no test failures, type errors, lint errors, or build errors.
 
-- [ ] **Step 5: Verify the public site in a browser**
+- [x] **Step 5: Verify the public site in a browser**
 
 Start the development server and inspect `/`, `/work`, every published `/work/[slug]`, `/bm-visual`, `/bm-tech`, `/creator`, `/about`, and `/contact` at desktop and mobile widths. Check headings, navigation, focus order, form labels/disabled state, image loading/alt text, reduced-motion behavior, console errors, and first-view Home clarity.
 
-- [ ] **Step 6: Verify the frozen Gateway**
+- [x] **Step 6: Verify the frozen Gateway**
 
 Confirm `git diff origin/main -- app/gateway-prototype components/gateway lib/gateway tests/gateway-*.test.mjs` is empty. Smoke-test all three Gateway routes without changing them.
 
-- [ ] **Step 7: Final content diff and checkpoint**
+- [x] **Step 7: Final content diff and checkpoint**
 
 Re-extract the canonical DOCX text and compare all approved public strings. Run unsupported-claim and internal-prompt scans, then:
 

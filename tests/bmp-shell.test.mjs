@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { readFile } from "node:fs/promises";
 import net from "node:net";
 import test, { after, before } from "node:test";
 
@@ -137,4 +138,18 @@ test("the restrained primary navigation exposes every canonical destination", as
   assert.doesNotMatch(html, />Pricing</i);
   assert.doesNotMatch(html, />Platform</i);
   assert.doesNotMatch(html, />Solutions</i);
+});
+
+test("the mobile shell compacts primary navigation without hiding Contact", async () => {
+  const css = await readFile(new URL("../app/bmp.css", import.meta.url), "utf8");
+  const mobileStart = css.indexOf("@media (max-width: 760px)");
+  const mobileEnd = css.indexOf("@media (prefers-reduced-motion: reduce)");
+  const mobileRules = css.slice(mobileStart, mobileEnd);
+
+  assert.match(mobileRules, /\.bmp-header__inner[\s\S]*?gap:/);
+  assert.match(mobileRules, /\.bmp-header__nav[\s\S]*?font-size:/);
+  assert.doesNotMatch(
+    mobileRules,
+    /\.bmp-header__nav a:nth-child\(6\)[\s\S]*?display:\s*none/,
+  );
 });

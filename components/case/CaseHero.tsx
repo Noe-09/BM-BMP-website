@@ -17,7 +17,7 @@ export function CaseHero({ caseStudy }: { caseStudy: ProjectCase }) {
           src={caseStudy.heroAsset.src}
           alt=""
           fill
-          priority
+          loading="eager"
           sizes="100vw"
           className="case-hero__image"
         />

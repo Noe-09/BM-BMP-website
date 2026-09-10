@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { access } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import net from "node:net";
 import test, { after, before } from "node:test";
 
@@ -168,4 +168,26 @@ test("every case study uses the BMP shell and canonical five-section structure",
     for (const heading of sectionHeadings) assert.ok(html.includes(heading));
     assert.doesNotMatch(html, /BM VISUALS|Digital experience division of BM/);
   }
+});
+
+test("route-primary Work imagery opts into eager loading", async () => {
+  const caseHero = await readFile(
+    new URL("../components/case/CaseHero.tsx", import.meta.url),
+    "utf8",
+  );
+  const workIndex = await readFile(
+    new URL("../components/work/WorkProjectIndex.tsx", import.meta.url),
+    "utf8",
+  );
+  const caseScenes = await readFile(
+    new URL("../components/case/CaseScenes.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(caseHero, /loading="eager"/);
+  assert.match(workIndex, /loading=\{[^}]*\? "eager" : "lazy"\}/);
+  assert.match(
+    caseScenes,
+    /asset\.src === caseStudy\.heroAsset\.src \? "eager" : "lazy"/,
+  );
 });

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { readFile } from "node:fs/promises";
 import net from "node:net";
 import test, { after, before } from "node:test";
 
@@ -155,4 +156,12 @@ test("Home presents three canonical capability worlds with exact copy", async ()
     assert.match(html, new RegExp(`href="${href}"`));
   }
   assert.doesNotMatch(html, /bmp-capability-card/);
+});
+
+test("Home headline is capped by viewport height so decision content stays in frame", async () => {
+  const css = await readFile(new URL("../app/bmp.css", import.meta.url), "utf8");
+  const headlineRule = css.match(/\.bmp-home-hero h1 \{([\s\S]*?)\}/)?.[1] ?? "";
+
+  assert.match(headlineRule, /font-size:\s*clamp\([^;]*min\([^;]*vh/);
+  assert.match(headlineRule, /margin-block:\s*clamp\([^;]*vh/);
 });
