@@ -37,11 +37,23 @@ async function waitForServer(url) {
 before(async () => {
   const port = await reservePort();
   const requestedUrl = `http://127.0.0.1:${port}`;
-  server = spawn(process.execPath, [nextBin.pathname, "dev", "--hostname", "127.0.0.1", "--port", String(port)], {
-    cwd: new URL("..", import.meta.url),
-    env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
-    stdio: ["ignore", "pipe", "pipe"],
-  });
+  server = spawn(
+    process.execPath,
+    [
+      nextBin.pathname,
+      "dev",
+      "--webpack",
+      "--hostname",
+      "127.0.0.1",
+      "--port",
+      String(port),
+    ],
+    {
+      cwd: new URL("..", import.meta.url),
+      env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
+      stdio: ["ignore", "pipe", "pipe"],
+    },
+  );
   let startupOutput = "";
   const startup = new Promise((resolve, reject) => {
     let settled = false;
@@ -140,16 +152,17 @@ test("the restrained primary navigation exposes every canonical destination", as
   assert.doesNotMatch(html, />Solutions</i);
 });
 
-test("the mobile shell compacts primary navigation without hiding Contact", async () => {
+test("the responsive shell uses an intentional compact menu without hiding destinations", async () => {
+  const response = await fetch(baseUrl);
+  const html = await response.text();
   const css = await readFile(new URL("../app/bmp.css", import.meta.url), "utf8");
-  const mobileStart = css.indexOf("@media (max-width: 760px)");
+  const mobileStart = css.indexOf("@media (max-width: 900px)");
   const mobileEnd = css.indexOf("@media (prefers-reduced-motion: reduce)");
   const mobileRules = css.slice(mobileStart, mobileEnd);
 
-  assert.match(mobileRules, /\.bmp-header__inner[\s\S]*?gap:/);
-  assert.match(mobileRules, /\.bmp-header__nav[\s\S]*?font-size:/);
-  assert.doesNotMatch(
-    mobileRules,
-    /\.bmp-header__nav a:nth-child\(6\)[\s\S]*?display:\s*none/,
-  );
+  assert.match(html, /<details[^>]+class="compact-nav"/);
+  assert.match(html, /aria-label="Compact navigation"/);
+  assert.match(mobileRules, /\.bmp-header__nav\s*\{[\s\S]*?display:\s*none/);
+  assert.match(mobileRules, /\.compact-nav\s*\{[\s\S]*?display:\s*block/);
+  assert.doesNotMatch(css, /\.bmp-header__nav a:nth-child/);
 });

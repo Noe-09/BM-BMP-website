@@ -10,7 +10,17 @@ test("capability controls retain native button semantics inside a real list", as
 
   assert.match(source, /<ul className="capabilities-index__list"/);
   assert.match(source, /<li key=\{capability\.id\}>/);
+  assert.match(source, /data-label-length=\{getLabelLength\(capability\.title\)\}/);
   assert.doesNotMatch(source, /role="listitem"/);
+});
+
+test("capability typography has explicit long-label tiers at every responsive size", async () => {
+  const css = await readFile(new URL("../app/ending.css", import.meta.url), "utf8");
+
+  assert.match(css, /data-label-length="long"/);
+  assert.match(css, /data-label-length="extra-long"/);
+  assert.match(css, /@media \(max-width: 1023px\)[\s\S]*data-label-length="long"/);
+  assert.match(css, /@media \(max-width: 767px\)[\s\S]*data-label-length="extra-long"/);
 });
 
 test("public routes consistently identify BMP as the canonical master brand", async () => {

@@ -1,18 +1,23 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import {
-  CAPABILITIES,
-  PROCESS_STEPS,
-  getProcessStepIndex,
-} from "../lib/home/ending.ts";
+import * as ending from "../lib/home/ending.ts";
+import { SERVICES } from "../content/services.ts";
 
-test("capabilities expose six distinct disciplines backed by existing project media", () => {
-  assert.equal(CAPABILITIES.length, 6);
-  assert.equal(new Set(CAPABILITIES.map(({ id }) => id)).size, 6);
-  assert.equal(new Set(CAPABILITIES.map(({ title }) => title)).size, 6);
+const { PROCESS_STEPS, getProcessStepIndex } = ending;
 
-  for (const capability of CAPABILITIES) {
+test("canonical BM Visual services retain six distinct proof-backed presentations", () => {
+  assert.equal(typeof ending.getVisualCapabilities, "function");
+  const capabilities = ending.getVisualCapabilities(SERVICES.visual.groups.value);
+
+  assert.equal(capabilities.length, 6);
+  assert.deepEqual(
+    capabilities.map(({ title }) => title),
+    SERVICES.visual.groups.value,
+  );
+  assert.equal(new Set(capabilities.map(({ id }) => id)).size, 6);
+
+  for (const capability of capabilities) {
     assert.match(capability.proof.src, /^\/projects\//);
     assert.ok(capability.proof.alt.length > 0);
     assert.doesNotMatch(capability.proof.src, /\/coffee\//);

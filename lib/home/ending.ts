@@ -8,23 +8,25 @@ export type Capability = {
   proof: { src: string; alt: string; project: string };
 };
 
-export const CAPABILITIES: Capability[] = [
+type CapabilityPresentation = Omit<Capability, "title">;
+
+const CAPABILITY_PRESENTATIONS: CapabilityPresentation[] = [
   {
-    id: "digital-experiences",
+    id: "brand-identity",
     number: "01",
-    title: "Digital Experiences",
-    detail: "Distinctive digital worlds shaped around how a brand should feel—not a template it should fill.",
+    detail:
+      "A clearer visual direction connects identity, typography, imagery and everyday brand use.",
     proof: {
-      src: "/projects/aether/hero.webp",
-      alt: "ÆTHER digital exhibition opening with optical specimen and oversized type",
-      project: "ÆTHER",
+      src: "/projects/aurelia/hero.png",
+      alt: "Aurelia Skin visual direction pairing portraiture with product imagery",
+      project: "AURELIA SKIN",
     },
   },
   {
-    id: "ecommerce",
+    id: "website-presentation",
     number: "02",
-    title: "E-commerce",
-    detail: "Commerce that keeps campaign energy intact from first impression to product decision.",
+    detail:
+      "Landing-page direction aligns hierarchy, imagery and interaction around the message.",
     proof: {
       src: "/projects/fabriclism/uniform-index.webp",
       alt: "Fabriclism Uniform Index combining curated looks with editorial product discovery",
@@ -32,43 +34,43 @@ export const CAPABILITIES: Capability[] = [
     },
   },
   {
-    id: "art-direction",
+    id: "social-visual-systems",
     number: "03",
-    title: "Art Direction",
-    detail: "Image, typography and interface composed as one recognizable visual language.",
+    detail:
+      "Repeatable visual rules help social content feel connected without making every asset identical.",
     proof: {
-      src: "/projects/aurelia/hero.png",
-      alt: "Aurelia Skin art direction pairing translucent portraiture with serum packaging",
-      project: "AURELIA SKIN",
-    },
-  },
-  {
-    id: "ui-ux",
-    number: "04",
-    title: "UI / UX",
-    detail: "Clear systems with deliberate hierarchy, pacing and useful interaction at every scale.",
-    proof: {
-      src: "/projects/fabriclism/product.webp",
-      alt: "Fabriclism 058 Corefit Tee product interface with an editorial gallery and commerce controls",
+      src: "/projects/fabriclism/campaign.webp",
+      alt: "Fabriclism campaign composition with oversized typography and editorial fashion imagery",
       project: "FABRICLISM",
     },
   },
   {
-    id: "creative-development",
+    id: "marketing-creatives",
+    number: "04",
+    detail:
+      "Campaign systems give launches and promotions a recognizable visual thread.",
+    proof: {
+      src: "/projects/haven/ritual.webp",
+      alt: "HAVEN ritual composition with editorial typography and coffee-process imagery",
+      project: "HAVEN",
+    },
+  },
+  {
+    id: "ai-assisted-production",
     number: "05",
-    title: "Creative Development",
-    detail: "Frontend craft that protects the concept while keeping the experience fast and resilient.",
+    detail:
+      "AI-assisted exploration can widen concept development while direction and judgment remain intentional.",
     proof: {
       src: "/projects/aether/deconstructed.webp",
-      alt: "ÆTHER deconstructed specimen interface built as an experimental web experience",
+      alt: "ÆTHER deconstructed specimen interface with layered visual studies",
       project: "ÆTHER",
     },
   },
   {
-    id: "interaction-motion",
+    id: "lightweight-motion",
     number: "06",
-    title: "Interaction & Motion",
-    detail: "Movement used for focus, spatial continuity and character—never decoration alone.",
+    detail:
+      "Lightweight motion gives logos, openings and transitions a more distinctive rhythm.",
     proof: {
       src: "/projects/aether/specimen.webp",
       alt: "ÆTHER specimen interface demonstrating an interaction-led campaign system",
@@ -76,6 +78,21 @@ export const CAPABILITIES: Capability[] = [
     },
   },
 ];
+
+export function getVisualCapabilities(
+  groups: readonly string[],
+): Capability[] {
+  if (groups.length !== CAPABILITY_PRESENTATIONS.length) {
+    throw new Error(
+      `Expected ${CAPABILITY_PRESENTATIONS.length} canonical BM Visual service groups, received ${groups.length}.`,
+    );
+  }
+
+  return groups.map((title, index) => ({
+    ...CAPABILITY_PRESENTATIONS[index],
+    title,
+  }));
+}
 
 export const PROCESS_STEPS = [
   { number: "01", title: "Understand", detail: "Find the sharpest version of the problem." },

@@ -38,7 +38,15 @@ before(async () => {
   const requestedUrl = `http://127.0.0.1:${port}`;
   server = spawn(
     process.execPath,
-    [nextBin.pathname, "dev", "--hostname", "127.0.0.1", "--port", String(port)],
+    [
+      nextBin.pathname,
+      "dev",
+      "--webpack",
+      "--hostname",
+      "127.0.0.1",
+      "--port",
+      String(port),
+    ],
     {
       cwd: new URL("..", import.meta.url),
       env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
@@ -148,6 +156,45 @@ test("BM Visual and BM Tech publish every canonical service group and CTA", asyn
   }
 });
 
+test("BM Visual renders the flagship experience inside the BMP architecture", async () => {
+  const html = await getPage("/bm-visual");
+
+  for (const section of [
+    "hero",
+    "selected-work",
+    "capabilities",
+    "studio",
+    "closing",
+  ]) {
+    assert.ok(
+      html.includes(`data-bm-visual-section="${section}"`),
+      `BM Visual should render its ${section} flagship region`,
+    );
+  }
+
+  for (const destination of [
+    'href="/"',
+    'href="/work"',
+    'href="/bm-tech"',
+    'href="/creator"',
+    'href="/about"',
+    'href="/contact"',
+  ]) {
+    assert.ok(html.includes(destination), `BM Visual should retain ${destination}`);
+  }
+
+  for (const slug of ["fabriclism", "aurelia-skin", "haven", "aether"]) {
+    assert.ok(
+      html.includes(`href="/work/${slug}"`),
+      `BM Visual should reuse the shared ${slug} case study`,
+    );
+  }
+
+  assert.ok(html.includes("Make the brand worth noticing."));
+  assert.ok(html.includes("Improve your visual presence"));
+  assert.doesNotMatch(html, /data-bm-visual-layout="service-only"/);
+});
+
 test("About publishes the canonical story, process, and team position", async () => {
   const html = await getPage("/about");
   const exactCopy = [
@@ -178,7 +225,7 @@ test("Creator stays honest when no product record is verified", async () => {
   assert.doesNotMatch(html, /Client Work|Owned Product/);
 });
 
-test("Contact publishes canonical fields without pretending submission works", async () => {
+test("Contact publishes canonical fields through a functional submission boundary", async () => {
   const html = await getPage("/contact");
   const exactCopy = [
     "Have a problem worth solving?",
@@ -194,8 +241,13 @@ test("Contact publishes canonical fields without pretending submission works", a
     "View our work",
   ];
   for (const value of exactCopy) assert.ok(html.includes(value), value);
-  assert.match(html, /<button[^>]*disabled[^>]*>Start a project<\/button>/);
-  assert.doesNotMatch(html, /<form[^>]+action=/);
+  assert.match(html, /<form[^>]+action=/);
+  assert.doesNotMatch(html, /<button[^>]*disabled[^>]*>Start a project<\/button>/);
+  assert.match(html, /<input[^>]+type="email"[^>]+name="contact"/);
+  assert.match(html, /<input[^>]+type="url"[^>]+name="reference"/);
+  assert.ok(html.includes("Required"));
+  assert.ok(html.includes("Optional"));
+  assert.ok(html.includes("Project inquiry status"));
   assert.match(html, /href="https:\/\/zalo\.me\/0326034128"/);
   assert.match(html, /href="\/work"/);
 });

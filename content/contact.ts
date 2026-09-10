@@ -6,7 +6,7 @@ const contactField = (
   name: string,
   label: string,
   required: boolean,
-  kind: "text" | "textarea" | "url",
+  kind: "text" | "email" | "textarea" | "url",
 ) => ({
   name: structuredData(name, "structured-data:contact-field"),
   label: approvedCopy(label, SOURCE),
@@ -23,7 +23,7 @@ export const CONTACT = {
   fields: [
     contactField("name", "Name", true, "text"),
     contactField("business", "Business / brand", true, "text"),
-    contactField("contact", "Email / contact", true, "text"),
+    contactField("contact", "Email / contact", true, "email"),
     contactField(
       "project",
       "What are you trying to improve or build?",

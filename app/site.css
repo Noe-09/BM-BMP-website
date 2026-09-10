@@ -15,6 +15,17 @@ a { color: inherit; text-decoration: none; }
 .site-nav:not(.site-nav--flagship) .site-nav__links a:last-child { color: #ff7a58; opacity: 1; }
 .site-nav__links a:hover { opacity: 1; }
 
+.compact-nav { position: relative; display: none; margin-left: auto; }
+.compact-nav summary { min-height: 44px; display: flex; align-items: center; gap: 18px; padding: 0 12px; border: 1px solid currentColor; cursor: pointer; list-style: none; font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; }
+.compact-nav summary::-webkit-details-marker { display: none; }
+.compact-nav summary span { transition: transform .2s ease; }
+.compact-nav[open] summary span { transform: rotate(45deg); }
+.compact-nav__links { position: absolute; top: calc(100% + 10px); right: 0; width: min(78vw, 320px); display: grid; padding: 10px 16px; color: #f4f1e9; background: #0a0a0a; border: 1px solid rgba(244,241,233,.22); box-shadow: 0 18px 45px rgba(0,0,0,.22); }
+.compact-nav__links a { min-height: 44px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(244,241,233,.16); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; }
+.compact-nav__links a:last-child { border-bottom: 0; color: #ff7a58; }
+.compact-nav summary:focus-visible,
+.compact-nav__links a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
 .section-label,.section-index { color: var(--foreground-muted); font-size: .7rem; line-height: 1.2; text-transform: uppercase; letter-spacing: .14em; }
 
 .work-section { padding: clamp(5rem,9vw,9rem) 0 clamp(7rem,12vw,13rem); }
@@ -63,8 +74,14 @@ a { color: inherit; text-decoration: none; }
   .contact-intro p { grid-column: 7/-1; }
 }
 
+@media (max-width: 900px) {
+  .bmp-header .bmp-header__nav,
+  .site-nav--flagship .site-nav__links { display: none; }
+  .bmp-header .compact-nav,
+  .site-nav--flagship .compact-nav { display: block; }
+}
+
 @media (max-width: 767px) {
-  .site-nav__links a:not(:last-child) { display: none; }
   .project--2,.project--3,.project--4 { width: 100%; margin-left: 0; }
   .project-media { aspect-ratio: 4/3; }
   .work-heading-row { align-items: flex-end; }

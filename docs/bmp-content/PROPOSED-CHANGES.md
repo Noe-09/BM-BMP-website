@@ -175,3 +175,25 @@
 **RECOMMENDATION:** Treat the semantic hero as the permanent base layer and add experimental behavior only after its readability is secured.
 
 **STATUS:** APPROVED
+
+## Proposal 9 Contact operational messages and delivery configuration
+
+**PROPOSAL:** Add concise operational form feedback and connect the approved submission boundary through one provider-neutral webhook setting.
+
+**CURRENT DOCUMENT DIRECTION:** The canonical document defines the inquiry fields and action label but does not provide success/error copy, a delivery provider, or a destination.
+
+**PROPOSED CHANGE:** Use “Thanks — your project inquiry has been received. We’ll review the problem and get back to you.” after a verified successful delivery. Use “We couldn’t send your project inquiry. Please try again or use one of the direct contact options.” when delivery cannot be verified. Configure delivery with the server-only `BMP_INQUIRY_WEBHOOK_URL` environment value.
+
+**WHY:** A functional form needs truthful, accessible feedback while the delivery destination remains an operational configuration concern.
+
+**BENEFIT:** Keeps canonical brand copy untouched, avoids a CRM dependency, and allows BMP to choose any HTTPS webhook-capable delivery provider.
+
+**RISK:** The form cannot complete delivery until the environment value is configured in Vercel.
+
+**CONTENT IMPACT:** Adds only proposed operational success, validation, pending, and error feedback; no canonical brand or service copy changes.
+
+**IMPLEMENTATION IMPACT:** Adds client validation, a Server Action, a provider-neutral webhook adapter, and one required server-side environment value.
+
+**RECOMMENDATION:** Configure `BMP_INQUIRY_WEBHOOK_URL` with the approved inquiry destination in Vercel before declaring submission delivery live.
+
+**STATUS:** PROPOSED — requires the delivery destination to be configured.
