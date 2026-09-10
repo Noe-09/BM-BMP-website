@@ -4,42 +4,43 @@ import test from "node:test";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 
-test("gateway fallback exposes both BM divisions and approved short descriptions", async () => {
+test("gateway fallback exposes all three canonical destinations", async () => {
   const source = await read("../components/gateway/GatewayFallback.tsx");
 
-  assert.match(source, /BM VISUALS/);
-  assert.match(source, /Creative \/ Digital Experience/);
-  assert.match(source, /Digital identities/);
-  assert.match(source, /with motion, story and distinction\./);
-  assert.match(source, /href="\/"/);
-
-  assert.match(source, /BMP TECHNICAL/);
-  assert.match(source, /Technology \/ AI Systems/);
-  assert.match(source, /AI systems, product logic/);
-  assert.match(source, /and technical execution\./);
-  assert.match(source, /href="\/gateway-prototype\/technical"/);
+  assert.match(source, /GATEWAY_DIVISIONS/);
+  assert.match(source, /getGatewayDestination/);
+  assert.doesNotMatch(source, /BM VISUALS|BMP TECHNICAL/);
+  assert.doesNotMatch(source, /gateway-prototype\/technical/);
+  assert.match(source, /destination\.href/);
+  assert.match(source, /destination\.publicLabel/);
+  assert.match(source, /destination\.headline/);
 });
 
-test("selection overlay contains approved short copy and both real CTAs", async () => {
-  const source = await read("../components/gateway/SelectionOverlay.tsx");
+test("selection previews and briefing decisions have distinct semantics", async () => {
+  const selection = await read("../components/gateway/SelectionOverlay.tsx");
+  const briefing = await read("../components/gateway/BriefingOverlay.tsx");
   const css = await read("../app/gateway-prototype/gateway.css");
 
-  assert.match(source, /Digital identities/);
-  assert.match(source, /with motion, story and distinction\./);
-  assert.match(source, /AI systems, product logic/);
-  assert.match(source, /and technical execution\./);
-  assert.match(source, /ENTER VISUALS/);
-  assert.match(source, /ENTER TECHNICAL/);
-  assert.match(source, /href="\/"/);
-  assert.match(source, /href="\/gateway-prototype\/technical"/);
-  assert.match(source, /gateway-core-mark/);
-  assert.match(source, />\s*BM\s*</);
-  assert.match(source, /<Link/);
-  assert.match(source, /<button/);
-  for (const button of source.matchAll(/<button\b[^]*?<\/button>/g)) {
+  assert.match(selection, /GATEWAY_DIVISIONS/);
+  assert.match(selection, /getGatewayDestination/);
+  assert.match(selection, /destination\.headline/);
+  assert.match(selection, /<button/);
+  assert.doesNotMatch(selection, /<Link/);
+  assert.doesNotMatch(selection, /supportingCopy|helps businesses|Apps, experiments/);
+  for (const button of selection.matchAll(/<button\b[^]*?<\/button>/g)) {
     assert.doesNotMatch(button[0], /<Link/);
   }
-  for (const link of source.matchAll(/<Link\b[^]*?<\/Link>/g)) {
+
+  assert.match(briefing, /getGatewayDestination/);
+  assert.match(briefing, /destination\.description/);
+  assert.match(briefing, /role="region"/);
+  assert.match(briefing, /aria-live="polite"/);
+  assert.match(briefing, /GO BACK/);
+  assert.match(briefing, /CONTINUE →/);
+  assert.match(briefing, /<Link/);
+  assert.match(briefing, /destination\.href/);
+  assert.doesNotMatch(briefing, /helps businesses|Apps, experiments/);
+  for (const link of briefing.matchAll(/<Link\b[^]*?<\/Link>/g)) {
     assert.doesNotMatch(link[0], /<button/);
   }
   assert.doesNotMatch(
@@ -48,13 +49,13 @@ test("selection overlay contains approved short copy and both real CTAs", async 
   );
 });
 
-test("enhanced selection exposes one semantic BM parent intro without duplicating visible art", async () => {
+test("enhanced selection exposes one quiet canonical master-brand intro", async () => {
   const source = await read("../components/gateway/SelectionOverlay.tsx");
   const css = await read("../app/gateway-prototype/gateway.css");
 
   assert.equal(source.match(/<h1\b/g)?.length, 1);
   assert.match(source, /<h1>\s*BM\s*<\/h1>/);
-  assert.match(source, /TWO WORLDS\. ONE SYSTEM\./);
+  assert.match(source, /Creative × Technology × Products\./);
   assert.match(source, /className="gateway-selection__intro"/);
   assert.match(source, /className="gateway-core-mark" aria-hidden="true"/);
   assert.match(
