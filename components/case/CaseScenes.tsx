@@ -22,15 +22,17 @@ function CaseMedia({
   alt,
   className = "",
   sizes,
+  loading = "lazy",
 }: {
   src: string;
   alt: string;
   className?: string;
   sizes: string;
+  loading?: "eager" | "lazy";
 }) {
   return (
     <figure className={`case-media ${className}`}>
-      <Image src={src} alt={alt} fill sizes={sizes} />
+      <Image src={src} alt={alt} fill sizes={sizes} loading={loading} />
     </figure>
   );
 }
@@ -65,6 +67,9 @@ function IdeaScene({
               alt={asset.alt}
               className={`case-idea__asset case-idea__asset--${index + 1}`}
               sizes="(max-width: 767px) 88vw, 52vw"
+              loading={
+                asset.src === caseStudy.heroAsset.src ? "eager" : "lazy"
+              }
             />
           ))}
         </div>
@@ -173,6 +178,9 @@ function FeatureScene({
               alt={asset.alt}
               className={`case-feature__asset case-feature__asset--${index + 1}`}
               sizes={section.id === "responsive" ? "(max-width: 767px) 70vw, 24vw" : "(max-width: 767px) 92vw, 58vw"}
+              loading={
+                asset.src === caseStudy.heroAsset.src ? "eager" : "lazy"
+              }
             />
           ))}
         </div>

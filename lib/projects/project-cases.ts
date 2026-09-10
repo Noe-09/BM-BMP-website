@@ -53,7 +53,7 @@ const projectCases: Record<ProjectCaseSlug, ProjectCaseNarrative> = {
       "Fabriclism begins with how you want to be seen.",
     ],
     seoDescription:
-      "A BM Visuals concept case study for Fabriclism, a Personal Uniform fashion-commerce experience combining state-driven storytelling, editorial interaction and functional shopping.",
+      "A BMP concept case study for Fabriclism, a Personal Uniform fashion-commerce experience combining state-driven storytelling, editorial interaction and functional shopping.",
     heroAsset: {
       src: "/projects/fabriclism/campaign.webp",
       alt: "Fabriclism F/W 026 Personal Uniform campaign with oversized typography and editorial fashion imagery",
@@ -173,7 +173,7 @@ const projectCases: Record<ProjectCaseSlug, ProjectCaseNarrative> = {
       "A skincare experience balancing clinical clarity with the softness of a daily ritual.",
     thesis: ["Clinical clarity.", "Ritual softness."],
     seoDescription:
-      "A BM Visuals concept case study for Aurelia Skin, a warm skincare commerce experience shaped by light, serum and ritual.",
+      "A BMP concept case study for Aurelia Skin, a warm skincare commerce experience shaped by light, serum and ritual.",
     heroAsset: {
       src: "/projects/aurelia/hero.png",
       alt: "Aurelia Skin opening with a translucent portrait and serum product",
@@ -249,7 +249,7 @@ const projectCases: Record<ProjectCaseSlug, ProjectCaseNarrative> = {
       "An editorial hospitality and commerce concept shaped around coffee ritual, atmosphere and slow digital interaction.",
     thesis: ["A place is more", "than a menu.", "It is a rhythm."],
     seoDescription:
-      "A BM Visuals hospitality concept case study exploring coffee ritual, editorial commerce, atmosphere and slow digital interaction.",
+      "A BMP hospitality concept case study exploring coffee ritual, editorial commerce, atmosphere and slow digital interaction.",
     heroAsset: {
       src: "/projects/haven/hero.webp",
       alt: "HAVEN live opening with A Pause in the City over coffee ritual imagery",
@@ -353,7 +353,7 @@ const projectCases: Record<ProjectCaseSlug, ProjectCaseNarrative> = {
       "An experimental digital exhibition where optical objects are catalogued as living specimens.",
     thesis: ["The object precedes", "the wearer."],
     seoDescription:
-      "A BM Visuals experimental concept case study for ÆTHER, a technical digital exhibition and eyewear laboratory.",
+      "A BMP experimental concept case study for ÆTHER, a technical digital exhibition and eyewear laboratory.",
     heroAsset: {
       src: "/projects/aether/hero.webp",
       alt: "ÆTHER laboratory opening with oversized identity and an optical specimen",

@@ -13,19 +13,19 @@ test("capability controls retain native button semantics inside a real list", as
   assert.doesNotMatch(source, /role="listitem"/);
 });
 
-test("public studio descriptors consistently identify BM Visuals as a division of BM", async () => {
+test("public routes consistently identify BMP as the canonical master brand", async () => {
   const files = await Promise.all(
     [
       "../app/layout.tsx",
       "../app/page.tsx",
       "../app/contact/page.tsx",
-      "../components/home/HeroSequence.tsx",
-      "../components/case/ProjectCasePage.tsx",
+      "../components/site/SiteHeader.tsx",
+      "../components/site/SiteFooter.tsx",
     ].map((path) => readFile(new URL(path, import.meta.url), "utf8")),
   );
 
   for (const source of files) {
-    assert.match(source, /DIGITAL EXPERIENCE DIVISION OF BM/i);
+    assert.match(source, /BMP|SiteHeader|SiteFooter/);
     assert.doesNotMatch(source, /Independent digital studio/i);
   }
 });
