@@ -13,12 +13,31 @@ const HeroCanvas = dynamic(
   { ssr: false },
 );
 
-export function HeroSequence() {
+type HeroSequenceProps = {
+  headline: string;
+  supportingCopy: string;
+  action: {
+    label: string;
+    href: string;
+  };
+};
+
+export function HeroSequence({
+  headline,
+  supportingCopy,
+  action,
+}: HeroSequenceProps) {
   const heroRef = useRef<HTMLElement>(null);
   const manifestoRef = useRef<HTMLElement>(null);
   const frameRef = useRef<number | null>(null);
   const profile = useInteractionProfile();
   const [canvasReady, setCanvasReady] = useState(false);
+  const headlineWords = headline.trim().split(/\s+/);
+  const headlineLines = [
+    headlineWords.slice(0, 2).join(" "),
+    headlineWords.slice(2, -1).join(" "),
+    headlineWords.at(-1) ?? "",
+  ];
 
   const handleCanvasReady = useCallback(() => setCanvasReady(true), []);
   const handleCanvasUnavailable = useCallback(() => setCanvasReady(false), []);
@@ -126,6 +145,7 @@ export function HeroSequence() {
   return (
     <div
       className="flagship-sequence"
+      data-bm-visual-section="hero"
       data-motion-ready={profile.ready && !profile.reducedMotion ? "true" : undefined}
     >
       <section
@@ -140,7 +160,7 @@ export function HeroSequence() {
           <div className="flagship-hero__field" aria-hidden="true">
             <span className="flagship-hero__axis flagship-hero__axis--x" />
             <span className="flagship-hero__axis flagship-hero__axis--y" />
-            <span className="flagship-hero__coordinate">BM Visuals / Digital experience</span>
+            <span className="flagship-hero__coordinate">BMP / BM Visual</span>
           </div>
 
           <div
@@ -165,32 +185,31 @@ export function HeroSequence() {
 
           <Container className="flagship-hero__content">
             <div className="flagship-hero__topline">
-              <span>Digital experience division of BM</span>
-              <span>Vietnam / Worldwide</span>
+              <span>Creative and visual division of BMP</span>
+              <span>Brand / Presence / Motion</span>
             </div>
 
             <h1 id="flagship-hero-title" className="flagship-hero__title">
+              <span className="bm-visually-hidden">{headline}</span>
               <span className="flagship-hero__line flagship-hero__line--one">
-                <span>We create</span>
+                <span aria-hidden="true">{headlineLines[0]}</span>
               </span>
               <span className="flagship-hero__line flagship-hero__line--two">
-                <span>Digital identities</span>
+                <span aria-hidden="true">{headlineLines[1]}</span>
               </span>
               <span className="flagship-hero__line flagship-hero__line--three">
-                <span>People remember.</span>
+                <span aria-hidden="true">{headlineLines[2]}</span>
               </span>
             </h1>
 
             <div className="flagship-hero__footer bm-grid">
-              <p className="flagship-hero__copy">
-                Websites, digital experiences and creative systems built around ambitious brands.
-              </p>
+              <p className="flagship-hero__copy">{supportingCopy}</p>
               <div className="flagship-hero__actions">
                 <a href="#work" className="flagship-link" data-cursor="view">
                   View Selected Work <span aria-hidden>↓</span>
                 </a>
-                <Link href="/contact" className="flagship-link" data-cursor="view">
-                  Start a Project <span aria-hidden>↗</span>
+                <Link href={action.href} className="flagship-link" data-cursor="view">
+                  {action.label} <span aria-hidden>↗</span>
                 </Link>
               </div>
             </div>
@@ -224,14 +243,14 @@ export function HeroSequence() {
               <span>digital spaces.</span>
             </span>
             <span className="flagship-manifesto__mask flagship-manifesto__mask--accent">
-              <span>We build experiences</span>
+              <span>We build visual systems</span>
             </span>
             <span className="flagship-manifesto__mask">
-              <span>people remember.</span>
+              <span>people notice.</span>
             </span>
           </h2>
           <p className="flagship-manifesto__note">
-            Art direction, interaction and creative development—composed as one experience.
+            Art direction, content systems and lightweight motion—composed as one clearer presence.
           </p>
         </Container>
       </section>

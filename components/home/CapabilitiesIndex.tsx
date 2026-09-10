@@ -4,25 +4,35 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { Container } from "@/components/ui/Container";
-import { CAPABILITIES } from "@/lib/home/ending";
+import { getVisualCapabilities } from "@/lib/home/ending";
 import { useInteractionProfile } from "@/lib/motion/useInteractionProfile";
 
-export function CapabilitiesIndex() {
+type CapabilitiesIndexProps = {
+  groups: readonly string[];
+};
+
+export function CapabilitiesIndex({ groups }: CapabilitiesIndexProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const profile = useInteractionProfile();
-  const active = CAPABILITIES[activeIndex];
+  const capabilities = getVisualCapabilities(groups);
+  const active = capabilities[activeIndex];
 
   return (
-    <section className="capabilities-index bm-rule" data-scene-theme="paper" aria-labelledby="capabilities-title">
+    <section
+      className="capabilities-index bm-rule"
+      data-bm-visual-section="capabilities"
+      data-scene-theme="paper"
+      aria-labelledby="capabilities-title"
+    >
       <Container>
         <div className="ending-heading">
           <p className="section-label">Capabilities / 06</p>
-          <h2 id="capabilities-title">One system. Six ways in.</h2>
+          <h2 id="capabilities-title">Six ways to sharpen your visual presence.</h2>
         </div>
 
         <div className="capabilities-index__layout">
           <ul className="capabilities-index__list" aria-label="Studio capabilities">
-            {CAPABILITIES.map((capability, index) => (
+            {capabilities.map((capability, index) => (
               <li key={capability.id}>
                 <button
                   type="button"
@@ -49,7 +59,7 @@ export function CapabilitiesIndex() {
                 fill
                 sizes="(max-width: 767px) 92vw, (max-width: 1199px) 42vw, 38vw"
               />
-              <span className="capabilities-proof__project">Proof / {active.proof.project}</span>
+              <span className="capabilities-proof__project">Project view / {active.proof.project}</span>
             </div>
             <figcaption>{active.detail}</figcaption>
           </figure>

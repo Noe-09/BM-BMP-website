@@ -39,7 +39,15 @@ before(async () => {
   const requestedUrl = `http://127.0.0.1:${port}`;
   server = spawn(
     process.execPath,
-    [nextBin.pathname, "dev", "--hostname", "127.0.0.1", "--port", String(port)],
+    [
+      nextBin.pathname,
+      "dev",
+      "--webpack",
+      "--hostname",
+      "127.0.0.1",
+      "--port",
+      String(port),
+    ],
     {
       cwd: new URL("..", import.meta.url),
       env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },

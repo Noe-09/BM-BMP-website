@@ -37,11 +37,23 @@ async function waitForServer(url) {
 before(async () => {
   const port = await reservePort();
   const requestedUrl = `http://127.0.0.1:${port}`;
-  server = spawn(process.execPath, [nextBin.pathname, "dev", "--hostname", "127.0.0.1", "--port", String(port)], {
-    cwd: new URL("..", import.meta.url),
-    env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
-    stdio: ["ignore", "pipe", "pipe"],
-  });
+  server = spawn(
+    process.execPath,
+    [
+      nextBin.pathname,
+      "dev",
+      "--webpack",
+      "--hostname",
+      "127.0.0.1",
+      "--port",
+      String(port),
+    ],
+    {
+      cwd: new URL("..", import.meta.url),
+      env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
+      stdio: ["ignore", "pipe", "pipe"],
+    },
+  );
   let startupOutput = "";
   const startup = new Promise((resolve, reject) => {
     let settled = false;

@@ -6,7 +6,14 @@ import { useEffect, useRef, type PointerEvent } from "react";
 import { Container } from "@/components/ui/Container";
 import { useInteractionProfile } from "@/lib/motion/useInteractionProfile";
 
-export function ClosingScene() {
+type ClosingSceneProps = {
+  action: {
+    label: string;
+    href: string;
+  };
+};
+
+export function ClosingScene({ action }: ClosingSceneProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const profile = useInteractionProfile();
 
@@ -56,6 +63,7 @@ export function ClosingScene() {
     <section
       ref={sectionRef}
       className="closing-scene bm-rule"
+      data-bm-visual-section="closing"
       data-scene-theme="closing"
       aria-labelledby="closing-title"
       onPointerMove={handlePointerMove}
@@ -64,10 +72,10 @@ export function ClosingScene() {
         <i /><i /><i /><i />
       </div>
       <Container className="closing-scene__inner">
-        <p className="section-label">Start a Project / BM Visuals</p>
-        <h2 id="closing-title"><span>Have something</span><span>worth building?</span></h2>
-        <Link href="/contact" className="closing-scene__link" data-cursor="explore" data-cursor-label="Start →">
-          <span>Let&apos;s make it hard to forget.</span>
+        <p className="section-label">BM Visual / Next step</p>
+        <h2 id="closing-title"><span>Make the brand</span><span>worth noticing.</span></h2>
+        <Link href={action.href} className="closing-scene__link" data-cursor="explore" data-cursor-label="Start →">
+          <span>{action.label}</span>
           <i aria-hidden>↗</i>
         </Link>
       </Container>

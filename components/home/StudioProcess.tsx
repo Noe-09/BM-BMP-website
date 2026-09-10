@@ -53,20 +53,21 @@ export function StudioProcess() {
       ref={sectionRef}
       id="studio"
       className="studio-process bm-rule"
+      data-bm-visual-section="studio"
       data-scene-theme="studio"
       aria-labelledby="studio-title"
     >
       <Container>
         <div className="studio-process__intro">
-          <p className="section-label">BM Visuals / Studio</p>
+          <p className="section-label">BM Visual / Studio</p>
           <div>
-            <h2 id="studio-title">A digital experience<br /><span>division of BM.</span></h2>
+            <h2 id="studio-title">The visual division<br /><span>of BMP.</span></h2>
             <p className="studio-process__across">We work across</p>
             <ul className="studio-disciplines" aria-label="Studio disciplines">
-              <li>Design</li>
-              <li>Interaction</li>
-              <li>Commerce</li>
-              <li>Creative development</li>
+              <li>Identity</li>
+              <li>Web presentation</li>
+              <li>Content systems</li>
+              <li>Motion assets</li>
             </ul>
           </div>
         </div>

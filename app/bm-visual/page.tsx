@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
 
-import { ServiceIndex } from "@/components/services/ServiceIndex";
-import { PageHero } from "@/components/site/PageHero";
-import { SiteFooter } from "@/components/site/SiteFooter";
-import { SiteHeader } from "@/components/site/SiteHeader";
+import { CapabilitiesIndex } from "@/components/home/CapabilitiesIndex";
+import { ClosingScene } from "@/components/home/ClosingScene";
+import { HeroSequence } from "@/components/home/HeroSequence";
+import { StudioProcess } from "@/components/home/StudioProcess";
+import { BMVisualFooter } from "@/components/site/BMVisualFooter";
+import { BMVisualHeader } from "@/components/site/BMVisualHeader";
+import { SelectedWork } from "@/components/work/SelectedWork";
 import { SERVICES } from "@/content/services";
+import "../ending.css";
+import "../home.css";
 
 export const metadata: Metadata = {
   title: "BM Visual",
@@ -12,27 +17,26 @@ export const metadata: Metadata = {
 };
 
 export default function BMVisualPage() {
+  const action = {
+    label: SERVICES.visual.action.label.value,
+    href: SERVICES.visual.action.href.value,
+  };
+
   return (
-    <div className="bmp-page bmp-page--visual">
-      <SiteHeader />
-      <main>
-        <PageHero
-          eyebrow={SERVICES.visual.name.value}
+    <div className="bm-visual-page">
+      <BMVisualHeader />
+      <main className="home-page bm-visual-flagship">
+        <HeroSequence
           headline={SERVICES.visual.headline.value}
-          intro={SERVICES.visual.supportingCopy.value}
-          tone="visual"
+          supportingCopy={SERVICES.visual.supportingCopy.value}
+          action={action}
         />
-        <ServiceIndex
-          name={SERVICES.visual.name.value}
-          groups={SERVICES.visual.groups.value}
-          action={{
-            label: SERVICES.visual.action.label.value,
-            href: SERVICES.visual.action.href.value,
-          }}
-          tone="visual"
-        />
+        <SelectedWork />
+        <CapabilitiesIndex groups={SERVICES.visual.groups.value} />
+        <StudioProcess />
+        <ClosingScene action={action} />
       </main>
-      <SiteFooter />
+      <BMVisualFooter />
     </div>
   );
 }
