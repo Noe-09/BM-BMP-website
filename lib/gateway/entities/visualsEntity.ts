@@ -17,11 +17,12 @@ import {
   previewVertexShader,
   visualsFragmentShader,
   visualsVertexShader,
-} from "./visualsShader";
+} from "./visualsShader.ts";
+import type { EntityInteraction } from "../briefing.ts";
 
 export type EntityUpdateParams = {
   progress: number;
-  selectionBias: number;
+  interaction: EntityInteraction;
   pointerX: number;
   pointerY: number;
   reducedMotion: boolean;
@@ -74,6 +75,7 @@ export class VisualsEntity {
         uniforms: {
           uTime: { value: 0 },
           uHover: { value: 0 },
+          uSelected: { value: 0 },
           uProgress: { value: 0 },
         },
         side: DoubleSide,
@@ -105,20 +107,23 @@ export class VisualsEntity {
         fragmentShader: /* glsl */ `
           uniform float uTime;
           uniform float uHover;
+          uniform float uSelected;
           varying vec3 vNormal;
           varying vec3 vViewPosition;
           void main() {
             vec3 N = normalize(vNormal);
             vec3 V = normalize(vViewPosition);
             float NdotV = max(dot(N, V), 0.0);
-            float glow = pow(1.0 - NdotV, 2.0) * (0.35 + uHover * 0.5);
+            float authority = max(uHover * 0.72, uSelected);
+            float glow = pow(1.0 - NdotV, 2.0) * (0.28 + authority * 0.48);
             vec3 color = mix(vec3(0.85, 0.80, 0.96), vec3(0.98, 0.78, 0.70), sin(uTime * 0.5) * 0.5 + 0.5);
-            gl_FragColor = vec4(color, glow * smoothstep(0.02, 0.5, uHover));
+            gl_FragColor = vec4(color, glow * (0.08 + authority * 0.72));
           }
         `,
         uniforms: {
           uTime: { value: 0 },
           uHover: { value: 0 },
+          uSelected: { value: 0 },
         },
         transparent: true,
         depthWrite: false,
@@ -185,6 +190,7 @@ export class VisualsEntity {
           uniforms: {
             uTexture: { value: texture },
             uHover: { value: 0 },
+            uPreviewVisibility: { value: 0.08 },
             uTime: { value: 0 },
             uTint: { value: item.tint },
           },
@@ -203,29 +209,39 @@ export class VisualsEntity {
   }
 
   tick(deltaSeconds: number, params: EntityUpdateParams, totalTime: number) {
-    const isHovered = Math.max(0, -params.selectionBias);
-    const otherHovered = Math.max(0, params.selectionBias);
+    const interaction = params.interaction;
+    const authorityTarget = Math.max(
+      interaction.hoverWeight * 0.72,
+      interaction.selectedWeight,
+    );
+    const recede = interaction.recedeWeight;
 
     // Smooth hover damping
     const hoverDamp = params.reducedMotion ? 12 : 4.5;
     this.hoverCurrent +=
-      (isHovered - this.hoverCurrent) *
+      (authorityTarget - this.hoverCurrent) *
       Math.min(1, deltaSeconds * hoverDamp);
 
     // Update shell shader uniforms
     const u = this.shellMaterial.uniforms;
     u.uTime.value = totalTime;
     u.uHover.value = this.hoverCurrent;
+    u.uSelected.value = interaction.selectedWeight;
     u.uProgress.value = params.progress;
 
     // Update core atmosphere shader uniforms
     (this.innerAtmosphereMesh.material as ShaderMaterial).uniforms.uTime.value = totalTime;
     (this.innerAtmosphereMesh.material as ShaderMaterial).uniforms.uHover.value = this.hoverCurrent;
+    (this.innerAtmosphereMesh.material as ShaderMaterial).uniforms.uSelected.value = interaction.selectedWeight;
 
     // Update preview fragments uniforms
     this.previewMaterials.forEach((mat) => {
       mat.uniforms.uTime.value = totalTime;
       mat.uniforms.uHover.value = this.hoverCurrent;
+      mat.uniforms.uPreviewVisibility.value = Math.min(
+        1,
+        0.08 + interaction.hoverWeight * 0.74 + interaction.selectedWeight * 0.92,
+      );
     });
 
     if (params.reducedMotion) {
@@ -241,7 +257,7 @@ export class VisualsEntity {
     const smoothEmergence = emergence * emergence * (3 - 2 * emergence);
 
     const targetScale =
-      smoothEmergence * (1.0 + this.hoverCurrent * 0.12 - otherHovered * 0.12);
+      smoothEmergence * (1.0 + this.hoverCurrent * 0.1 - recede * 0.12);
     this.group.scale.setScalar(Math.max(0.0001, targetScale));
 
     // SHELL FRACTURE / SEPARATION KINEMATICS

@@ -7,6 +7,7 @@ import {
   CreatorEntity,
   deriveCreatorAssemblyFrame,
 } from "../lib/gateway/entities/creatorEntity.ts";
+import { deriveDestinationComposition } from "../lib/gateway/entities/destinationEntitySystem.ts";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 
@@ -90,4 +91,39 @@ test("scene owns a neutral three-entity system without a binary alias", async ()
   await assert.rejects(
     access(new URL("../lib/gateway/entities/dualEntitySystem.ts", import.meta.url)),
   );
+});
+
+test("every entity consumes explicit destination interaction weights", async () => {
+  const [system, visuals, technical] = await Promise.all([
+    read("../lib/gateway/entities/destinationEntitySystem.ts"),
+    read("../lib/gateway/entities/visualsEntity.ts"),
+    read("../lib/gateway/entities/technicalEntity.ts"),
+  ]);
+
+  for (const source of [system, visuals, technical]) {
+    assert.doesNotMatch(source, /selectionBias/);
+    assert.match(source, /interaction/);
+  }
+  assert.match(visuals, /uSelected/);
+  assert.match(visuals, /uPreviewVisibility/);
+  assert.match(technical, /uSelected/);
+});
+
+test("selected composition gives each world equal authority and recedes its peers", () => {
+  for (const selectedDivision of ["visuals", "technical", "creator"]) {
+    const selected = deriveDestinationComposition(
+      selectedDivision,
+      { hoverWeight: 0, selectedWeight: 1, recedeWeight: 0, focusWeight: 1 },
+    );
+    const receded = deriveDestinationComposition(
+      selectedDivision,
+      { hoverWeight: 0, selectedWeight: 0, recedeWeight: 1, focusWeight: 0 },
+    );
+
+    assert.ok(Math.abs(selected.x - -2.7) < 1e-9);
+    assert.equal(selected.zOffset, 2.2);
+    assert.equal(selected.scale, 1.3);
+    assert.equal(receded.zOffset, -4.5);
+    assert.equal(receded.scale, 0.76);
+  }
 });

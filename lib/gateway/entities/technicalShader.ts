@@ -1,6 +1,7 @@
 export const technicalVertexShader = /* glsl */ `
 uniform float uTime;
 uniform float uHover;
+uniform float uSelected;
 
 varying vec3 vNormal;
 varying vec3 vViewPosition;
@@ -26,6 +27,7 @@ void main() {
 export const technicalFragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uHover;
+uniform float uSelected;
 uniform float uProgress;
 
 varying vec3 vNormal;
@@ -82,7 +84,8 @@ void main() {
 
   vec3 cyanIntelligence = vec3(0.62, 0.86, 0.96);
   vec3 silverWhite = vec3(0.94, 0.97, 1.0);
-  vec3 datumColor = mix(cyanIntelligence, silverWhite, 0.45) * structuralDatum * (0.32 + uHover * 0.58);
+  float authority = max(uHover, uSelected);
+  vec3 datumColor = mix(cyanIntelligence, silverWhite, 0.45) * structuralDatum * (0.32 + authority * 0.58);
 
   // 4. PRECISION ANISOTROPIC SPECULAR
   float anisoSpec = pow(NdotH, 56.0) * 0.95;
@@ -105,6 +108,7 @@ void main() {
 export const technicalLogicPlaneVertexShader = /* glsl */ `
 uniform float uTime;
 uniform float uHover;
+uniform float uSelected;
 
 varying vec2 vUv;
 varying vec3 vViewPosition;
@@ -122,6 +126,7 @@ void main() {
 export const technicalLogicPlaneFragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uHover;
+uniform float uSelected;
 uniform float uLayerIndex;
 
 varying vec2 vUv;
@@ -154,7 +159,8 @@ void main() {
   vec3 color = mix(baseGlass, cyanData, activeTrace * 0.85 + border * 0.5);
   color += whiteGlint * (activeTrace * busWave * 0.6);
 
-  float alpha = (0.15 + activeTrace * 0.65 + border * 0.5) * smoothstep(0.05, 0.75, uHover) * 0.88;
+  float visibility = 0.06 + max(uHover * 0.82, uSelected) * 0.94;
+  float alpha = (0.15 + activeTrace * 0.65 + border * 0.5) * visibility * 0.88;
 
   if (alpha < 0.01) discard;
 

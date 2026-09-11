@@ -77,8 +77,21 @@ export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneContr
         const frame = deriveJourneyFrame(pose.reducedMotion ? 1 : pose.travelProgress);
         const breakthrough = deriveBreakthroughFrame(frame.progress);
         // No second damping layer: the controller's displayed progress IS this frame.
-        camera.position.set(pose.cameraX + frame.driftX, frame.driftY, pose.cameraZ);
-        camera.rotation.set(0, pose.cameraYaw, 0);
+        camera.position.set(
+          pose.cameraX + frame.driftX,
+          pose.cameraY + frame.driftY,
+          pose.cameraZ,
+        );
+        if (camera.fov !== pose.cameraFov) {
+          camera.fov = pose.cameraFov;
+          camera.updateProjectionMatrix();
+        }
+        if (pose.briefingFrame.focus > 0) {
+          camera.lookAt(pose.cameraTargetX, pose.cameraY, pose.cameraZ - 12);
+          camera.rotation.y += pose.cameraYaw;
+        } else {
+          camera.rotation.set(0, pose.cameraYaw, 0);
+        }
         background.copy(bright).lerp(spectralDepth, breakthrough.blackout);
         background.lerp(arrivalDepth, breakthrough.release);
         world.update(frame, pose.cameraZ, background);

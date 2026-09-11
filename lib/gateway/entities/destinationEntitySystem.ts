@@ -6,6 +6,8 @@ import {
 } from "three";
 
 import type { DestinationInteraction } from "../briefing.ts";
+import type { EntityInteraction } from "../briefing.ts";
+import type { GatewayDivision } from "../state.ts";
 import { CreatorEntity } from "./creatorEntity.ts";
 import { TechnicalEntity } from "./technicalEntity.ts";
 import { VisualsEntity, type EntityUpdateParams } from "./visualsEntity.ts";
@@ -16,6 +18,26 @@ export type DestinationEntitySystemParams = {
   reducedMotion: boolean;
   eventDarkness: number;
 };
+
+const ENTITY_BASE = {
+  visuals: { x: -3.6, z: -26 },
+  creator: { x: 0, z: -27.1 },
+  technical: { x: 3.6, z: -26 },
+} satisfies Record<GatewayDivision, { x: number; z: number }>;
+
+export function deriveDestinationComposition(
+  division: GatewayDivision,
+  interaction: EntityInteraction,
+) {
+  const base = ENTITY_BASE[division];
+  return {
+    x: base.x + (-2.7 - base.x) * interaction.focusWeight,
+    zOffset:
+      interaction.selectedWeight * 2.2 - interaction.recedeWeight * 4.5,
+    scale:
+      1 + interaction.selectedWeight * 0.3 - interaction.recedeWeight * 0.24,
+  };
+}
 
 export class DestinationEntitySystem {
   readonly group = new Group();
@@ -60,27 +82,24 @@ export class DestinationEntitySystem {
       (this.pointerTarget.y - this.pointerCurrent.y) *
       Math.min(1, deltaSeconds * pointerDamp);
 
-    // Visuals and Technical still consume their proven emergence/hover kinematics.
-    // The signed adapter is local to those entities and is removed in the next
-    // explicit-interaction pass; the public scene contract is already neutral.
-    const visualsAuthority = Math.max(
-      params.interactions.visuals.hoverWeight,
-      params.interactions.visuals.selectedWeight,
-    );
-    const technicalAuthority = Math.max(
-      params.interactions.technical.hoverWeight,
-      params.interactions.technical.selectedWeight,
-    );
-    const updateParams: EntityUpdateParams = {
+    const entityParams = (interaction: EntityInteraction): EntityUpdateParams => ({
       progress: params.progress,
-      selectionBias: technicalAuthority - visualsAuthority,
+      interaction,
       pointerX: this.pointerCurrent.x,
       pointerY: this.pointerCurrent.y,
       reducedMotion: params.reducedMotion,
-    };
+    });
 
-    this.visuals.tick(deltaSeconds, updateParams, totalTime);
-    this.technical.tick(deltaSeconds, updateParams, totalTime);
+    this.visuals.tick(
+      deltaSeconds,
+      entityParams(params.interactions.visuals),
+      totalTime,
+    );
+    this.technical.tick(
+      deltaSeconds,
+      entityParams(params.interactions.technical),
+      totalTime,
+    );
     this.creator.tick(
       deltaSeconds,
       {
@@ -92,6 +111,21 @@ export class DestinationEntitySystem {
       },
       totalTime,
     );
+
+    const entities = {
+      visuals: this.visuals.group,
+      creator: this.creator.group,
+      technical: this.technical.group,
+    } satisfies Record<GatewayDivision, Group>;
+    for (const division of Object.keys(entities) as GatewayDivision[]) {
+      const composition = deriveDestinationComposition(
+        division,
+        params.interactions[division],
+      );
+      entities[division].position.x = composition.x;
+      entities[division].position.z = ENTITY_BASE[division].z + composition.zOffset;
+      entities[division].scale.multiplyScalar(composition.scale);
+    }
 
     if (!params.reducedMotion) {
       this.group.position.x = this.pointerCurrent.x * 0.4;

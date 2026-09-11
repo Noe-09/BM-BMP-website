@@ -225,7 +225,12 @@ export class CreatorEntity {
       material.uniforms.uReveal.value = frame.authority;
       material.uniforms.uSelected.value = params.interaction.selectedWeight;
     }
-    this.coreMesh.scale.setScalar(1 + frame.corePulse * 0.035);
+    const corePulse = 1 + frame.corePulse * 0.035;
+    this.coreMesh.scale.set(
+      0.82 * corePulse,
+      1.18 * corePulse,
+      0.74 * corePulse,
+    );
   }
 
   dispose() {
