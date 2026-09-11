@@ -1,8 +1,8 @@
 # BM Gateway — Three Worlds Selection & Cinematic Briefing Design
 
-Date: 2026-09-10  
-Status: Approved for implementation  
-Branch: `feat/bm-gateway-three-worlds`  
+Date: 2026-09-10
+Status: Approved for implementation
+Branch: `feat/bm-gateway-three-worlds`
 Base: `da4fc5d6fedc3acc88680a8b4f099c86673aee24` (`origin/main`, including merged PR #21)
 
 ## 1. Purpose

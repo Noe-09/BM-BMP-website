@@ -96,7 +96,7 @@ assert.equal(state.selectedDivision, null);
 
 - [ ] **Step 2: Run focused tests and verify red**
 
-Run: `node --test tests/gateway-destinations.test.mjs tests/gateway-state.test.mjs`  
+Run: `node --test tests/gateway-destinations.test.mjs tests/gateway-state.test.mjs`
 Expected: FAIL because destination exports, Creator, and semantic briefing events do not exist.
 
 - [ ] **Step 3: Implement the canonical adapter and reducer**
@@ -144,7 +144,7 @@ Implement reducer guards so `SELECT` is accepted only from `split`/`preview`, `B
 
 - [ ] **Step 4: Run focused tests and verify green**
 
-Run: `node --test tests/gateway-destinations.test.mjs tests/gateway-state.test.mjs`  
+Run: `node --test tests/gateway-destinations.test.mjs tests/gateway-state.test.mjs`
 Expected: PASS.
 
 - [ ] **Step 5: Commit the milestone**
@@ -209,7 +209,7 @@ Also add boundary/continuity assertions at progress `0`, `0.2`, `0.48`, `0.56`, 
 
 - [ ] **Step 2: Run focused tests and verify red**
 
-Run: `node --test tests/gateway-briefing.test.mjs tests/gateway-choreography.test.mjs`  
+Run: `node --test tests/gateway-briefing.test.mjs tests/gateway-choreography.test.mjs`
 Expected: FAIL because the briefing module and new pose inputs do not exist.
 
 - [ ] **Step 3: Implement pure briefing math and update the pose contract**
@@ -247,7 +247,7 @@ Use clamped smooth-range helpers for the five authored reveal windows. Keep exis
 
 - [ ] **Step 4: Run focused and journey regression tests**
 
-Run: `node --test tests/gateway-briefing.test.mjs tests/gateway-choreography.test.mjs tests/gateway-journey.test.mjs tests/gateway-breakthrough.test.mjs`  
+Run: `node --test tests/gateway-briefing.test.mjs tests/gateway-choreography.test.mjs tests/gateway-journey.test.mjs tests/gateway-breakthrough.test.mjs`
 Expected: PASS, including unchanged journey reverse reconstruction.
 
 - [ ] **Step 5: Commit the milestone**
@@ -297,7 +297,7 @@ Add checks that the overlay imports the shared destination adapter and does not 
 
 - [ ] **Step 2: Run markup tests and verify red**
 
-Run: `node --test tests/gateway-markup.test.mjs tests/gateway-presentation.test.mjs`  
+Run: `node --test tests/gateway-markup.test.mjs tests/gateway-presentation.test.mjs`
 Expected: FAIL on legacy labels, two-choice fallback, missing Creator, and missing briefing component.
 
 - [ ] **Step 3: Implement selection, briefing, and fallback components**
@@ -321,7 +321,7 @@ Render selection controls from `GATEWAY_DIVISIONS`. Fine-pointer click selects i
 
 - [ ] **Step 4: Run focused tests and verify green**
 
-Run: `node --test tests/gateway-markup.test.mjs tests/gateway-presentation.test.mjs tests/gateway-destinations.test.mjs`  
+Run: `node --test tests/gateway-markup.test.mjs tests/gateway-presentation.test.mjs tests/gateway-destinations.test.mjs`
 Expected: PASS.
 
 - [ ] **Step 5: Commit the milestone**
@@ -367,7 +367,7 @@ Extend navigation tests so Creator participates in coarse preview checks and so 
 
 - [ ] **Step 2: Run focused tests and verify red**
 
-Run: `node --test tests/gateway-navigation.test.mjs tests/gateway-state.test.mjs tests/gateway-markup.test.mjs tests/gateway-presentation.test.mjs`  
+Run: `node --test tests/gateway-navigation.test.mjs tests/gateway-state.test.mjs tests/gateway-markup.test.mjs tests/gateway-presentation.test.mjs`
 Expected: FAIL because the orchestrator still commits directly and lacks the briefing lifecycle.
 
 - [ ] **Step 3: Integrate one briefing controller into the existing RAF loop**
@@ -389,7 +389,7 @@ Build the existing `GatewayNavigationIntent` from the Continue anchor. For an or
 
 - [ ] **Step 5: Run focused tests and verify green**
 
-Run: `node --test tests/gateway-navigation.test.mjs tests/gateway-state.test.mjs tests/gateway-markup.test.mjs tests/gateway-presentation.test.mjs`  
+Run: `node --test tests/gateway-navigation.test.mjs tests/gateway-state.test.mjs tests/gateway-markup.test.mjs tests/gateway-presentation.test.mjs`
 Expected: PASS.
 
 - [ ] **Step 6: Commit the milestone**
@@ -437,7 +437,7 @@ Add source-level resource checks for explicit geometry/material arrays and dispo
 
 - [ ] **Step 2: Run focused tests and verify red**
 
-Run: `node --test tests/gateway-entities.test.mjs tests/gateway-environment.test.mjs`  
+Run: `node --test tests/gateway-entities.test.mjs tests/gateway-environment.test.mjs`
 Expected: FAIL because Creator and the neutral entity system do not exist.
 
 - [ ] **Step 3: Implement the Construct / Seed entity**
@@ -462,7 +462,7 @@ Instantiate Visual, Creator, Technical in `DestinationEntitySystem`, place Creat
 
 - [ ] **Step 5: Run focused and scene regression tests**
 
-Run: `node --test tests/gateway-entities.test.mjs tests/gateway-environment.test.mjs tests/gateway-journey.test.mjs tests/gateway-breakthrough.test.mjs`  
+Run: `node --test tests/gateway-entities.test.mjs tests/gateway-environment.test.mjs tests/gateway-journey.test.mjs tests/gateway-breakthrough.test.mjs`
 Expected: PASS.
 
 - [ ] **Step 6: Commit the milestone**
@@ -505,7 +505,7 @@ Add choreography tests asserting each selected division gets the same left-autho
 
 - [ ] **Step 2: Run focused tests and verify red**
 
-Run: `node --test tests/gateway-entities.test.mjs tests/gateway-choreography.test.mjs`  
+Run: `node --test tests/gateway-entities.test.mjs tests/gateway-choreography.test.mjs`
 Expected: FAIL on scalar entity inputs and missing selected preview uniforms.
 
 - [ ] **Step 3: Adapt BM Visual without rebuilding it**
@@ -522,7 +522,7 @@ At full briefing focus, move the chosen entity toward left-side authority, enlar
 
 - [ ] **Step 6: Run focused and full Gateway math tests**
 
-Run: `node --test tests/gateway-entities.test.mjs tests/gateway-choreography.test.mjs tests/gateway-environment.test.mjs tests/gateway-journey.test.mjs tests/gateway-breakthrough.test.mjs`  
+Run: `node --test tests/gateway-entities.test.mjs tests/gateway-choreography.test.mjs tests/gateway-environment.test.mjs tests/gateway-journey.test.mjs tests/gateway-breakthrough.test.mjs`
 Expected: PASS.
 
 - [ ] **Step 7: Commit the milestone**
@@ -553,7 +553,7 @@ Assert three division selectors, briefing-region styles, decision hidden/visible
 
 - [ ] **Step 2: Run markup tests and verify red**
 
-Run: `node --test tests/gateway-markup.test.mjs`  
+Run: `node --test tests/gateway-markup.test.mjs`
 Expected: FAIL because current CSS assumes two left/right divisions and legacy copy.
 
 - [ ] **Step 3: Rebuild only the destination-layer CSS**
@@ -564,7 +564,7 @@ At max-width 1023px, reduce label size and spatial offsets while keeping all thr
 
 - [ ] **Step 4: Run markup tests and full static checks**
 
-Run: `node --test tests/gateway-markup.test.mjs tests/gateway-presentation.test.mjs`  
+Run: `node --test tests/gateway-markup.test.mjs tests/gateway-presentation.test.mjs`
 Expected: PASS.
 
 - [ ] **Step 5: Commit the milestone**
@@ -601,7 +601,7 @@ Expected: all commands exit 0; existing journey/reverse tests remain green.
 
 - [ ] **Step 2: Start the production-like local build and verify browser health**
 
-Run: `npm run dev` (use Webpack only if the isolated dependency layout requires it).  
+Run: `npm run dev` (use Webpack only if the isolated dependency layout requires it).
 Verify `/gateway-prototype` loads, has meaningful content, has no framework error overlay, and produces no WebGL/runtime console errors.
 
 - [ ] **Step 3: Review every approved visual state**
