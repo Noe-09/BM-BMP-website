@@ -100,6 +100,32 @@ test("gateway presentation assigns visible layer ownership by lifecycle phase", 
       },
     },
     {
+      name: "briefing keeps the enhanced chamber and semantic overlay active",
+      input: { phase: "briefing", enhancementStarted: true, sceneReady: true, selectionOverlayPresent: true },
+      want: {
+        enhancementActive: true,
+        enhancementHealthy: true,
+        fallbackActive: false,
+        showLoader: false,
+        showSelection: true,
+        showTravelCue: false,
+        layerOwner: "enhancement",
+      },
+    },
+    {
+      name: "decision keeps the enhanced chamber and semantic overlay active",
+      input: { phase: "decision", enhancementStarted: true, sceneReady: true, selectionOverlayPresent: true },
+      want: {
+        enhancementActive: true,
+        enhancementHealthy: true,
+        fallbackActive: false,
+        showLoader: false,
+        showSelection: true,
+        showTravelCue: false,
+        layerOwner: "enhancement",
+      },
+    },
+    {
       name: "failed enhancement fallback only",
       input: { phase: "fallback", enhancementStarted: true, sceneReady: true, selectionOverlayPresent: true },
       want: {

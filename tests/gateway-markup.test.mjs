@@ -100,6 +100,15 @@ test("gateway canvas is decorative and scene stays dependency-light", async () =
   assert.doesNotMatch(scene, /TextureLoader|GLTFLoader/);
 });
 
+test("development scene review can inspect all three destination states", async () => {
+  const source = await read("../components/gateway/GatewaySceneReview.tsx");
+
+  assert.match(source, /GatewayDivision/);
+  assert.match(source, /deriveDestinationInteraction/);
+  assert.match(source, /Creator/);
+  assert.match(source, /briefingProgress/);
+});
+
 test("loader uses BM counter language without percent", async () => {
   const source = await read("../components/gateway/LoaderOverlay.tsx");
 
@@ -151,6 +160,14 @@ test("orchestrator integrates semantic selection and preserves native activation
   const source = await read("../components/gateway/GatewayPrototype.tsx");
 
   assert.match(source, /SelectionOverlay/);
+  assert.match(source, /BriefingOverlay/);
+  assert.match(source, /briefingProgress/);
+  assert.match(source, /createBriefingTimeline/);
+  assert.match(source, /BRIEFING_COMPLETE/);
+  assert.match(source, /GO_BACK_COMPLETE/);
+  assert.match(source, /previouslySelectedControlRef/);
+  assert.match(source, /briefingHeadingRef/);
+  assert.match(source, /state\.selectedDivision/);
   assert.match(source, /event\.detail/);
   assert.match(source, /committedGuardRef/);
   assert.match(source, /shouldEnhanceGatewayNavigation/);
@@ -158,6 +175,7 @@ test("orchestrator integrates semantic selection and preserves native activation
   assert.match(source, /router\.push\(href\)/);
   assert.match(source, /window\.location\.assign\(href\)/);
   assert.match(source, /navigationFallbackMs/);
+  assert.match(source, /event\.key === "Escape"/);
   assert.match(source, /hidden=\{!presentation\.fallbackActive\}/);
   assert.match(source, /aria-hidden=\{!presentation\.fallbackActive\}/);
 });

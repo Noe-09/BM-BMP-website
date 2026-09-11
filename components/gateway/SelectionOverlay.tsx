@@ -6,6 +6,7 @@ import {
   GATEWAY_DIVISIONS,
   getGatewayDestination,
 } from "@/lib/gateway/destinations";
+import { shouldPreviewGatewaySelection } from "@/lib/gateway/navigation";
 import type {
   GatewayDivision,
   GatewayState,
@@ -46,7 +47,13 @@ export function SelectionOverlay({
   };
 
   const handleActivation = (division: GatewayDivision) => {
-    if (coarsePointer && previewDivision !== division) {
+    if (
+      shouldPreviewGatewaySelection({
+        coarsePointer,
+        division,
+        previewDivision,
+      })
+    ) {
       onPreview(division);
       return;
     }

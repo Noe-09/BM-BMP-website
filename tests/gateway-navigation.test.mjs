@@ -5,6 +5,7 @@ import {
   getGatewayExpectedPathname,
   shouldEnhanceGatewayNavigation,
   shouldMarkGatewaySession,
+  shouldPreviewGatewaySelection,
   shouldRequireGatewayPreview,
   shouldUseGatewayLocationFallback,
 } from "../lib/gateway/navigation.ts";
@@ -73,6 +74,41 @@ test("coarse ordinary pointer activation requires its division preview first", (
       coarsePointer: true,
       division: "visuals",
       selectedDivision: "visuals",
+    }),
+    false,
+  );
+});
+
+test("coarse Creator selection previews once before deliberate selection", () => {
+  assert.equal(
+    shouldPreviewGatewaySelection({
+      coarsePointer: true,
+      division: "creator",
+      previewDivision: null,
+    }),
+    true,
+  );
+  assert.equal(
+    shouldPreviewGatewaySelection({
+      coarsePointer: true,
+      division: "creator",
+      previewDivision: "technical",
+    }),
+    true,
+  );
+  assert.equal(
+    shouldPreviewGatewaySelection({
+      coarsePointer: true,
+      division: "creator",
+      previewDivision: "creator",
+    }),
+    false,
+  );
+  assert.equal(
+    shouldPreviewGatewaySelection({
+      coarsePointer: false,
+      division: "creator",
+      previewDivision: null,
     }),
     false,
   );

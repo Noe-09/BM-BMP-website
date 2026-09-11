@@ -26,7 +26,7 @@ const createDestination = (
   publicLabel,
   headline: capability.headline.value,
   description: capability.supportingCopy.value,
-  href: capability.href.value,
+  href: capability.href.value as GatewayDestination["href"],
 });
 
 export const GATEWAY_DESTINATIONS = {
