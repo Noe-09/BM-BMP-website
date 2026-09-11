@@ -156,12 +156,12 @@ export class CreatorEntity {
 
     const moduleGeometry = this.ownGeometry(new TetrahedronGeometry(0.32, 0));
     MODULE_BASES.forEach((position, index) => {
-      const module = new Mesh(moduleGeometry, this.moduleMaterial);
-      module.name = `creator module ${index}`;
-      module.position.set(position[0], position[1], position[2]);
-      module.scale.set(1 + index * 0.07, 0.72 + index * 0.04, 0.8);
-      this.moduleMeshes.push(module);
-      this.group.add(module);
+      const piece = new Mesh(moduleGeometry, this.moduleMaterial);
+      piece.name = `creator module ${index}`;
+      piece.position.set(position[0], position[1], position[2]);
+      piece.scale.set(1 + index * 0.07, 0.72 + index * 0.04, 0.8);
+      this.moduleMeshes.push(piece);
+      this.group.add(piece);
     });
 
     this.group.position.set(0, 0.08, -27.1);
@@ -200,16 +200,16 @@ export class CreatorEntity {
       shell.position.y = (index - 1) * frame.shellGap * 0.26;
     });
 
-    this.moduleMeshes.forEach((module, index) => {
+    this.moduleMeshes.forEach((piece, index) => {
       const base = MODULE_BASES[index];
       const moduleFrame = frame.modules[index];
       const dockDirection = index % 2 === 0 ? -1 : 1;
-      module.position.set(
+      piece.position.set(
         base[0] + moduleFrame.orbitX + dockDirection * moduleFrame.dock,
         base[1] + moduleFrame.orbitY - moduleFrame.dock * 0.35,
         base[2] + moduleFrame.dock * (index % 2 === 0 ? 0.5 : -0.45),
       );
-      module.rotation.set(
+      piece.rotation.set(
         moduleFrame.rotation * 0.6,
         moduleFrame.rotation,
         moduleFrame.rotation * 0.35,
