@@ -6,7 +6,10 @@ import {
   GATEWAY_DIVISIONS,
   getGatewayDestination,
 } from "@/lib/gateway/destinations";
-import { shouldPreviewGatewaySelection } from "@/lib/gateway/navigation";
+import {
+  shouldPreviewGatewayFocus,
+  shouldPreviewGatewaySelection,
+} from "@/lib/gateway/navigation";
 import type {
   GatewayDivision,
   GatewayState,
@@ -98,12 +101,19 @@ export function SelectionOverlay({
               aria-pressed={previewed}
               className="gateway-selection__preview"
               data-cursor="gateway"
-              data-cursor-label={
-                previewed ? `SELECT ${destination.publicLabel}` : `PREVIEW ${destination.publicLabel}`
-              }
+              data-cursor-label={previewed ? "SELECT" : "PREVIEW"}
               onBlur={onClearPreview}
               onClick={() => handleActivation(division)}
-              onFocus={() => onPreview(division)}
+              onFocus={(event) => {
+                if (
+                  shouldPreviewGatewayFocus({
+                    coarsePointer,
+                    focusVisible: event.currentTarget.matches(":focus-visible"),
+                  })
+                ) {
+                  onPreview(division);
+                }
+              }}
               ref={(node) => registerDestinationControl(division, node)}
               type="button"
             >

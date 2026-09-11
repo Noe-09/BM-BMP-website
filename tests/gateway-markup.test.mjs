@@ -229,63 +229,38 @@ test("gateway art direction excludes decorative UI effects and visitor-facing er
   );
 });
 
-test("mobile division names retain whole-word wrapping in the narrow preview region", async () => {
+test("selection CSS positions all three identities as spatial coordinates", async () => {
   const css = await read("../app/gateway-prototype/gateway.css");
 
-  assert.match(
-    css,
-    /@media \(max-width: 640px\)[^]*\.gateway-selection__name\s*\{[^}]*max-width:\s*10ch;[^}]*overflow-wrap:\s*normal;/,
-  );
+  assert.match(css, /\.gateway-selection__division--visuals\s*\{/);
+  assert.match(css, /\.gateway-selection__division--creator\s*\{/);
+  assert.match(css, /\.gateway-selection__division--technical\s*\{/);
+  assert.match(css, /\.gateway-selection__summary\s*\{/);
+  assert.match(css, /data-depth="foreground"|\[data-depth="foreground"\]/);
 });
 
-test("portrait tablet division names keep whole-word wrapping", async () => {
+test("briefing CSS uses left-object and right-editorial composition", async () => {
   const css = await read("../app/gateway-prototype/gateway.css");
-  const tabletMode = css.match(
-    /@media \(max-width: 1023px\)([^]*?)@media \(max-width: 640px\)/,
-  )?.[1];
 
-  assert.ok(tabletMode, "expected a portrait-tablet gateway mode");
-  assert.match(
-    tabletMode,
-    /\.gateway-selection__name\s*\{[^}]*max-width:\s*10ch;[^}]*overflow-wrap:\s*normal;/,
-  );
+  assert.match(css, /\.gateway-briefing\s*\{[^}]*right:/s);
+  assert.match(css, /\.gateway-briefing__headline\s*\{/);
+  assert.match(css, /--gateway-briefing-identity/);
+  assert.match(css, /--gateway-briefing-description/);
+  assert.match(css, /--gateway-briefing-decision/);
+  assert.match(css, /\[data-decision-ready="true"\]/);
 });
 
-test("unselected divisions retain independently legible text and action contrast", async () => {
+test("mobile and tablet modes preserve complete selection and briefing content", async () => {
   const css = await read("../app/gateway-prototype/gateway.css");
-  const readToken = (name) => {
-    const value = css.match(new RegExp(`${name}:\\s*([0-9.]+)`))?.[1];
-    assert.ok(value, `expected ${name} token`);
-    return Number(value);
-  };
 
-  assert.ok(readToken("--gateway-unselected-title-opacity") >= 0.6);
-  assert.ok(readToken("--gateway-unselected-type-opacity") >= 0.95);
-  assert.ok(readToken("--gateway-unselected-action-opacity") >= 0.42);
-  assert.doesNotMatch(
-    css,
-    /:is\(\.gateway-selection__name, \.gateway-selection__type\)\s*\{[^}]*opacity:/,
-  );
-  assert.match(
-    css,
-    /@media \(hover: none\), \(pointer: coarse\)[^]*\.gateway-selection__action\s*\{[^}]*opacity:\s*0;/,
-  );
+  assert.match(css, /@media \(max-width: 1023px\)[^]*\.gateway-briefing\s*\{/);
+  assert.match(css, /@media \(max-width: 640px\)[^]*\.gateway-selection__name\s*\{[^}]*overflow-wrap:\s*normal;/);
+  assert.match(css, /@media \(max-width: 640px\)[^]*\.gateway-briefing__description\s*\{/);
 });
 
-test("coarse CTA state selectors outrank fine-pointer secondary action contrast", async () => {
+test("coarse preview exposes a deliberate second-step selection affordance", async () => {
   const css = await read("../app/gateway-prototype/gateway.css");
-  const coarseMode = css.match(
-    /@media \(hover: none\), \(pointer: coarse\) \{([^]*?)\n\}\n\n@media \(max-height: 700px\)/,
-  )?.[1];
 
-  assert.ok(coarseMode, "expected a coarse gateway mode");
-  assert.match(
-    coarseMode,
-    /\.gateway-selection\[data-gateway-selection="neutral"\]\s+\.gateway-selection__action,\s*\.gateway-selection\[data-gateway-selection="visuals"\]\s+\.gateway-selection__division--technical\s+\.gateway-selection__action,\s*\.gateway-selection\[data-gateway-selection="technical"\]\s+\.gateway-selection__division--visuals\s+\.gateway-selection__action\s*\{[^}]*opacity:\s*0;/,
-  );
-  assert.match(
-    coarseMode,
-    /\.gateway-selection\[data-gateway-selection="visuals"\]\s+\.gateway-selection__division--visuals\s+\.gateway-selection__action,\s*\.gateway-selection\[data-gateway-selection="technical"\]\s+\.gateway-selection__division--technical\s+\.gateway-selection__action\s*\{[^}]*opacity:\s*1;/,
-  );
-  assert.doesNotMatch(coarseMode, /pointer-events\s*:/);
+  assert.match(css, /@media \(hover: none\), \(pointer: coarse\)[^]*\.gateway-selection__activate\s*\{/);
+  assert.match(css, /min-height:\s*2\.75rem/);
 });

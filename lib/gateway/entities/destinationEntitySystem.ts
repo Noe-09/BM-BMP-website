@@ -25,17 +25,26 @@ const ENTITY_BASE = {
   technical: { x: 3.6, z: -26 },
 } satisfies Record<GatewayDivision, { x: number; z: number }>;
 
+const RECEDE_X = {
+  visuals: -6,
+  creator: 9.5,
+  technical: 7,
+} satisfies Record<GatewayDivision, number>;
+
 export function deriveDestinationComposition(
   division: GatewayDivision,
   interaction: EntityInteraction,
 ) {
   const base = ENTITY_BASE[division];
   return {
-    x: base.x + (-2.7 - base.x) * interaction.focusWeight,
+    x:
+      base.x +
+      (-2.7 - base.x) * interaction.focusWeight +
+      RECEDE_X[division] * interaction.recedeWeight,
     zOffset:
-      interaction.selectedWeight * 2.2 - interaction.recedeWeight * 4.5,
+      interaction.selectedWeight * 0.8 - interaction.recedeWeight * 12,
     scale:
-      1 + interaction.selectedWeight * 0.3 - interaction.recedeWeight * 0.24,
+      1 + interaction.selectedWeight * 0.12 - interaction.recedeWeight * 0.66,
   };
 }
 

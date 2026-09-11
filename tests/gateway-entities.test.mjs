@@ -121,9 +121,11 @@ test("selected composition gives each world equal authority and recedes its peer
     );
 
     assert.ok(Math.abs(selected.x - -2.7) < 1e-9);
-    assert.equal(selected.zOffset, 2.2);
-    assert.equal(selected.scale, 1.3);
-    assert.equal(receded.zOffset, -4.5);
-    assert.equal(receded.scale, 0.76);
+    assert.equal(selected.zOffset, 0.8);
+    assert.equal(selected.scale, 1.12);
+    assert.equal(receded.zOffset, -12);
+    assert.ok(Math.abs(receded.scale - 0.34) < 1e-9);
+    if (selectedDivision === "visuals") assert.ok(receded.x < -9);
+    else assert.ok(receded.x > 9);
   }
 });

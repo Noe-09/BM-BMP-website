@@ -30,6 +30,17 @@ export type GatewaySelectionPreview = {
   previewDivision: GatewayDivision | null;
 };
 
+export type GatewayFocusPreview = {
+  coarsePointer: boolean;
+  focusVisible: boolean;
+};
+
+export function shouldPreviewGatewayFocus(
+  context: GatewayFocusPreview,
+): boolean {
+  return !context.coarsePointer || context.focusVisible;
+}
+
 export function shouldPreviewGatewaySelection(
   context: GatewaySelectionPreview,
 ): boolean {

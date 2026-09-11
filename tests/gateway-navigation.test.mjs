@@ -5,6 +5,7 @@ import {
   getGatewayExpectedPathname,
   shouldEnhanceGatewayNavigation,
   shouldMarkGatewaySession,
+  shouldPreviewGatewayFocus,
   shouldPreviewGatewaySelection,
   shouldRequireGatewayPreview,
   shouldUseGatewayLocationFallback,
@@ -111,6 +112,21 @@ test("coarse Creator selection previews once before deliberate selection", () =>
       previewDivision: null,
     }),
     false,
+  );
+});
+
+test("coarse pointer focus previews only when focus is visibly keyboard-driven", () => {
+  assert.equal(
+    shouldPreviewGatewayFocus({ coarsePointer: true, focusVisible: false }),
+    false,
+  );
+  assert.equal(
+    shouldPreviewGatewayFocus({ coarsePointer: true, focusVisible: true }),
+    true,
+  );
+  assert.equal(
+    shouldPreviewGatewayFocus({ coarsePointer: false, focusVisible: false }),
+    true,
   );
 });
 
