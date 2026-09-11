@@ -3,8 +3,8 @@ import { GatewayPrototype } from "@/components/gateway/GatewayPrototype";
 import "./gateway.css";
 
 export const metadata: Metadata = {
-  title: "BM Gateway Prototype",
-  description: "Prototype gateway between BM Visuals and BMP Technical.",
+  title: "BM Gateway — Three Worlds",
+  description: "Choose between BM Visual, BM Tech, and BMP Creator.",
   robots: { index: false, follow: false },
 };
 

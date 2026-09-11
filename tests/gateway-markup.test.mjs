@@ -137,6 +137,8 @@ test("gateway route renders the shared client orchestrator from a server compone
   const source = await read("../app/gateway-prototype/page.tsx");
 
   assert.match(source, /GatewayPrototype/);
+  assert.match(source, /BM Visual, BM Tech, and BMP Creator/);
+  assert.doesNotMatch(source, /BM Visuals|BMP Technical/);
   assert.doesNotMatch(source, /[\"']use client[\"']/);
 });
 
