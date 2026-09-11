@@ -6,7 +6,7 @@ import type { GatewayPose } from "./choreography";
 import { deriveJourneyFrame } from "./journey/chapterState";
 import { deriveHeroFraming } from "./journey/framing";
 import { SpectralEnvironment } from "./environment/spectralEnvironment";
-import { DualEntitySystem } from "./entities/dualEntitySystem";
+import { DestinationEntitySystem } from "./entities/destinationEntitySystem";
 import { deriveBreakthroughFrame } from "./environment/breakthroughState";
 
 export type GatewaySceneController = {
@@ -21,7 +21,7 @@ export type GatewaySceneController = {
 export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneController {
   let renderer: WebGLRenderer | undefined;
   let environment: SpectralEnvironment | undefined;
-  let entities: DualEntitySystem | undefined;
+  let entities: DestinationEntitySystem | undefined;
   let refraction: WebGLRenderTarget | undefined;
   let disposed = false;
   const dispose = () => {
@@ -46,7 +46,7 @@ export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneContr
     const world = new SpectralEnvironment();
     environment = world;
     scene.add(world.group);
-    const heroes = new DualEntitySystem();
+    const heroes = new DestinationEntitySystem();
     entities = heroes;
     scene.add(heroes.group);
     const ambient = new HemisphereLight(0xf6f5fc, 0x8ba9af, 1.05);
@@ -55,6 +55,7 @@ export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneContr
     scene.add(ambient, key);
     const pointer = new Vector2();
     let pose: GatewayPose | null = null;
+    let entityTime = 0;
 
     return {
       setTarget(frame) { pose = frame; },
@@ -72,6 +73,7 @@ export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneContr
       },
       tick(deltaSeconds) {
         if (disposed || !pose) return false;
+        if (!pose.reducedMotion) entityTime += deltaSeconds;
         const frame = deriveJourneyFrame(pose.reducedMotion ? 1 : pose.travelProgress);
         const breakthrough = deriveBreakthroughFrame(frame.progress);
         // No second damping layer: the controller's displayed progress IS this frame.
@@ -90,10 +92,10 @@ export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneContr
         heroes.tick(deltaSeconds, {
           // Reuse existing emergence kinematics without editing entity geometry or shaders.
           progress: pose.reducedMotion ? 1 : .72 + frame.emergence * .23,
-          selectionBias: pose.selectionBias,
+          interactions: pose.interactions,
           reducedMotion: pose.reducedMotion,
           eventDarkness: frame.darkness,
-        }, frame.progress * 22);
+        }, entityTime);
         canvas.dataset.journeyChapter = frame.chapter;
         return frame.progress > 0 && frame.progress < 1;
       },
