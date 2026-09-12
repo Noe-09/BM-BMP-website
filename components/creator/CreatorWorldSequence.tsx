@@ -2,6 +2,9 @@ import Link from "next/link";
 
 import type { CreatorWorld } from "@/content/creator";
 import { CreatorThreshold } from "./CreatorThreshold";
+import { SlyourWorld } from "./worlds/SlyourWorld";
+import { WeinsWorld } from "./worlds/WeinsWorld";
+import { XideWorld } from "./worlds/XideWorld";
 
 type CreatorWorldSequenceProps = {
   worlds: readonly CreatorWorld[];
@@ -42,6 +45,19 @@ function FoundationWorld({ world }: { world: CreatorWorld }) {
   );
 }
 
+function WorldChapter({ world }: { world: CreatorWorld }) {
+  switch (world.slug) {
+    case "weins":
+      return <WeinsWorld world={world} />;
+    case "slyour":
+      return <SlyourWorld world={world} />;
+    case "the-xide":
+      return <XideWorld world={world} />;
+    default:
+      return <FoundationWorld world={world} />;
+  }
+}
+
 export function CreatorWorldSequence({ worlds }: CreatorWorldSequenceProps) {
   const firstUnrevealed = worlds.findIndex(({ wing }) => wing === "unrevealed");
 
@@ -50,7 +66,7 @@ export function CreatorWorldSequence({ worlds }: CreatorWorldSequenceProps) {
       {worlds.map((world, index) => (
         <div className="creator-world-sequence__chapter" key={world.slug}>
           {index === firstUnrevealed ? <CreatorThreshold /> : null}
-          <FoundationWorld world={world} />
+          <WorldChapter world={world} />
         </div>
       ))}
     </div>
