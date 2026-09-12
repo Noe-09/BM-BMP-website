@@ -69,3 +69,36 @@ test("Creator media uses optimized images with a neutral failure state", async (
   assert.match(source, /onError/);
   assert.match(source, /Media unavailable/);
 });
+
+test("sealed worlds disclose status without leaking media or navigation", async () => {
+  const variants = new Map([
+    ["PawsonaWorld", "cluster"],
+    ["RelationshipWorld", "timeline"],
+    ["MinerWorld", "strata"],
+  ]);
+
+  for (const [name, variant] of variants) {
+    const source = await readFile(
+      new URL(`../components/creator/worlds/${name}.tsx`, import.meta.url),
+      "utf8",
+    );
+
+    assert.match(source, /CreatorWorld/);
+    assert.match(source, /CreatorVeil/);
+    assert.match(source, new RegExp(`variant="${variant}"`));
+    assert.match(source, /world\.statusLabel/);
+    assert.match(source, /world\.developmentNote/);
+    assert.doesNotMatch(source, /next\/image|next\/link|CreatorMedia|<a\b/);
+  }
+});
+
+test("Creator Veil keeps every atmospheric layer decorative", async () => {
+  const source = await readFile(
+    new URL("../components/creator/veil/CreatorVeil.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /cluster.*timeline.*strata/s);
+  assert.ok((source.match(/aria-hidden="true"/g) ?? []).length >= 3);
+  assert.doesNotMatch(source, /Image|canvas|WebGL|iframe/);
+});
