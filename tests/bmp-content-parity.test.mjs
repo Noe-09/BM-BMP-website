@@ -32,7 +32,11 @@ test("locked canonical content remains exact at the public boundary", () => {
   assert.equal(SERVICES.visual.groups.value.length, 6);
   assert.equal(SERVICES.tech.groups.value.length, 6);
   assert.ok(ABOUT.team.value.startsWith("BMP is a lean studio"));
-  assert.equal(CREATOR.products.length, 0);
+  assert.equal(CREATOR.products.length, 6);
+  assert.deepEqual(
+    CREATOR.products.map(({ revealState }) => revealState),
+    ["open", "open", "preview", "sealed", "sealed", "sealed"],
+  );
   assert.equal(CONTACT.submission.status, "MISSING_CONTENT");
   assert.deepEqual(WORK.categories.value, [
     "Brand & Visual",

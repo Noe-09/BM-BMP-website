@@ -78,7 +78,11 @@ test("About, Creator, Contact, navigation, and Work expose only approved public 
     ABOUT.team.value,
     "BMP is a lean studio built around hands-on execution. We keep the team structure focused and bring the work back to the people actually designing, building, testing, and shipping it.",
   );
-  assert.deepEqual(CREATOR.products, []);
+  assert.equal(CREATOR.products.length, 6);
+  assert.deepEqual(
+    CREATOR.products.map(({ name }) => name),
+    ["WEINS", "SLYOUR", "THE XIDE", "PAWSONA", "RELATIONSHIP", "MINER"],
+  );
   assert.equal(CONTACT.submission.status, "MISSING_CONTENT");
   assert.ok(
     CONTACT.fields.every(
