@@ -72,6 +72,10 @@ test("briefing reveal stages are bounded and decision waits for completion", () 
 });
 
 test("briefing timeline runs forward and reverses", () => {
+  assert.deepEqual(BRIEFING_TIMING, {
+    fullMotionMs: 5000,
+    reducedMotionMs: 220,
+  });
   let timeline = createBriefingTimeline();
   timeline = seekBriefingTimeline(
     timeline,
