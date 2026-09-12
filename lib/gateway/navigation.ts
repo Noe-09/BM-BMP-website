@@ -24,6 +24,31 @@ export type GatewayPreviewRequirement = {
   selectedDivision: GatewayDivision | null;
 };
 
+export type GatewaySelectionPreview = {
+  coarsePointer: boolean;
+  division: GatewayDivision;
+  previewDivision: GatewayDivision | null;
+};
+
+export type GatewayFocusPreview = {
+  coarsePointer: boolean;
+  focusVisible: boolean;
+};
+
+export function shouldPreviewGatewayFocus(
+  context: GatewayFocusPreview,
+): boolean {
+  return !context.coarsePointer || context.focusVisible;
+}
+
+export function shouldPreviewGatewaySelection(
+  context: GatewaySelectionPreview,
+): boolean {
+  return (
+    context.coarsePointer && context.previewDivision !== context.division
+  );
+}
+
 export function shouldEnhanceGatewayNavigation(
   intent: GatewayNavigationIntent,
 ): boolean {

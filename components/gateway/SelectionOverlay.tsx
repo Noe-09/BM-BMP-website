@@ -1,8 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import type { CSSProperties, KeyboardEvent, MouseEvent } from "react";
+import type { KeyboardEvent } from "react";
 
+import {
+  GATEWAY_DIVISIONS,
+  getGatewayDestination,
+} from "@/lib/gateway/destinations";
+import {
+  shouldPreviewGatewayFocus,
+  shouldPreviewGatewaySelection,
+} from "@/lib/gateway/navigation";
 import type {
   GatewayDivision,
   GatewayState,
@@ -10,52 +17,30 @@ import type {
 
 type SelectionOverlayProps = {
   state: GatewayState;
-  leftPercent: number;
-  rightPercent: number;
   enhancementReady: boolean;
   reducedMotion: boolean;
   coarsePointer: boolean;
   onPreview(division: GatewayDivision): void;
   onClearPreview(): void;
-  onCommit(
+  onSelect(division: GatewayDivision): void;
+  registerDestinationControl(
     division: GatewayDivision,
-    href: string,
-    event: MouseEvent<HTMLAnchorElement>,
+    node: HTMLButtonElement | null,
   ): void;
 };
 
-type GatewaySelectionStyle = CSSProperties & {
-  "--gateway-left": string;
-  "--gateway-right": string;
-};
-
-const divisionContent = {
-  visuals: {
-    name: "BM VISUALS",
-    type: "Creative / Digital Experience",
-  },
-  technical: {
-    name: "BMP TECHNICAL",
-    type: "Technology / AI Systems",
-  },
-} as const;
-
 export function SelectionOverlay({
   state,
-  leftPercent,
-  rightPercent,
   enhancementReady,
   reducedMotion,
   coarsePointer,
   onPreview,
   onClearPreview,
-  onCommit,
+  onSelect,
+  registerDestinationControl,
 }: SelectionOverlayProps) {
-  const selection = state.committed ?? state.preview ?? "neutral";
-  const style: GatewaySelectionStyle = {
-    "--gateway-left": `${leftPercent}%`,
-    "--gateway-right": `${rightPercent}%`,
-  };
+  const previewDivision = state.previewDivision;
+  const selection = previewDivision ?? "neutral";
 
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (event.key === "Escape" && state.phase === "preview") {
@@ -64,121 +49,90 @@ export function SelectionOverlay({
     }
   };
 
-  const renderHeading = (division: GatewayDivision) => {
-    const content = divisionContent[division];
-    if (coarsePointer) {
-      return (
-        <button
-          className="gateway-selection__preview"
-          type="button"
-          aria-pressed={selection === division}
-          onClick={() => onPreview(division)}
-        >
-          <span className="gateway-selection__name">{content.name}</span>
-          <span className="gateway-selection__type">{content.type}</span>
-        </button>
-      );
+  const handleActivation = (division: GatewayDivision) => {
+    if (
+      shouldPreviewGatewaySelection({
+        coarsePointer,
+        division,
+        previewDivision,
+      })
+    ) {
+      onPreview(division);
+      return;
     }
-
-    return (
-      <div className="gateway-selection__heading">
-        <h2 className="gateway-selection__name">{content.name}</h2>
-        <p className="gateway-selection__type">{content.type}</p>
-      </div>
-    );
+    onSelect(division);
   };
 
   return (
     <section
       className="gateway-selection"
-      aria-label="Choose a BM division"
+      aria-label="Choose a BMP division"
       data-gateway-selection={selection}
       data-coarse-pointer={coarsePointer ? "true" : "false"}
       data-enhancement-ready={enhancementReady ? "true" : "false"}
       data-reduced-motion={reducedMotion ? "true" : "false"}
-      style={style}
       onKeyDown={handleKeyDown}
       onPointerLeave={onClearPreview}
     >
       <header className="gateway-selection__intro">
         <h1>BM</h1>
-        <p>TWO WORLDS. ONE SYSTEM.</p>
+        <p>Creative × Technology × Products.</p>
       </header>
-      
-      {/* BM System Anchor / Origin of Reorganization */}
+
       <div className="gateway-core-mark" aria-hidden="true">
         BM
       </div>
 
-      {/* Attractor 1: BM VISUALS (Lower-Left Spatial Coordinate) */}
-      <section
-        className="gateway-selection__division gateway-selection__division--visuals"
-        aria-label="BM Visuals"
-        data-depth={selection === "visuals" ? "foreground" : selection === "technical" ? "deep" : "mid"}
-        onPointerEnter={() => {
-          if (!coarsePointer) onPreview("visuals");
-        }}
-        onFocus={() => onPreview("visuals")}
-      >
-        {renderHeading("visuals")}
-        <p className="gateway-selection__copy">
-          <span className="gateway-selection__line gateway-selection__line--one">
-            Digital identities
-          </span>
-          <span className="gateway-selection__line gateway-selection__line--two">
-            with motion, story and distinction.
-          </span>
-        </p>
-        <Link
-          href="/"
-          className="gateway-selection__action"
-          data-cursor="gateway"
-          data-cursor-label="ENTER VISUALS ↗"
-          onFocus={() => onPreview("visuals")}
-          onBlur={onClearPreview}
-          onClick={(event) => onCommit("visuals", "/", event)}
-        >
-          ENTER VISUALS ↗
-        </Link>
-      </section>
-
-      {/* Attractor 2: BMP TECHNICAL (Upper-Right Spatial Coordinate) */}
-      <section
-        className="gateway-selection__division gateway-selection__division--technical"
-        aria-label="BMP Technical"
-        data-depth={selection === "technical" ? "foreground" : selection === "visuals" ? "deep" : "mid"}
-        onPointerEnter={() => {
-          if (!coarsePointer) onPreview("technical");
-        }}
-        onFocus={() => onPreview("technical")}
-      >
-        {renderHeading("technical")}
-        <p className="gateway-selection__copy">
-          <span className="gateway-selection__line gateway-selection__line--one">
-            AI systems, product logic
-          </span>
-          <span className="gateway-selection__line gateway-selection__line--two">
-            and technical execution.
-          </span>
-        </p>
-        <Link
-          href="/gateway-prototype/technical"
-          className="gateway-selection__action"
-          data-cursor="gateway"
-          data-cursor-label="ENTER TECHNICAL ↗"
-          onFocus={() => onPreview("technical")}
-          onBlur={onClearPreview}
-          onClick={(event) =>
-            onCommit(
-              "technical",
-              "/gateway-prototype/technical",
-              event,
-            )
-          }
-        >
-          ENTER TECHNICAL ↗
-        </Link>
-      </section>
+      {GATEWAY_DIVISIONS.map((division) => {
+        const destination = getGatewayDestination(division);
+        const previewed = previewDivision === division;
+        return (
+          <section
+            className={`gateway-selection__division gateway-selection__division--${division}`}
+            aria-label={destination.name}
+            data-depth={previewed ? "foreground" : previewDivision ? "deep" : "mid"}
+            key={division}
+            onPointerEnter={() => {
+              if (!coarsePointer) onPreview(division);
+            }}
+          >
+            <button
+              aria-describedby={`gateway-${division}-summary`}
+              aria-pressed={previewed}
+              className="gateway-selection__preview"
+              data-cursor="gateway"
+              data-cursor-label={previewed ? "SELECT" : "PREVIEW"}
+              onBlur={onClearPreview}
+              onClick={() => handleActivation(division)}
+              onFocus={(event) => {
+                if (
+                  shouldPreviewGatewayFocus({
+                    coarsePointer,
+                    focusVisible: event.currentTarget.matches(":focus-visible"),
+                  })
+                ) {
+                  onPreview(division);
+                }
+              }}
+              ref={(node) => registerDestinationControl(division, node)}
+              type="button"
+            >
+              <span className="gateway-selection__name">
+                {destination.publicLabel}
+              </span>
+              <span
+                className="gateway-selection__summary"
+                id={`gateway-${division}-summary`}
+              >
+                {previewed ? destination.headline : null}
+              </span>
+              {coarsePointer && previewed ? (
+                <span className="gateway-selection__activate">SELECT →</span>
+              ) : null}
+            </button>
+          </section>
+        );
+      })}
     </section>
   );
 }

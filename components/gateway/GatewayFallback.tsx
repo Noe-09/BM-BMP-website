@@ -1,11 +1,15 @@
 import Link from "next/link";
 import type { MouseEvent } from "react";
 
+import {
+  GATEWAY_DIVISIONS,
+  getGatewayDestination,
+} from "@/lib/gateway/destinations";
 import type { GatewayDivision } from "@/lib/gateway/state";
 
 type GatewayFallbackProps = {
   enhanced?: boolean;
-  onCommit?(
+  onNavigate?(
     division: GatewayDivision,
     href: string,
     event: MouseEvent<HTMLAnchorElement>,
@@ -14,7 +18,7 @@ type GatewayFallbackProps = {
 
 export function GatewayFallback({
   enhanced = false,
-  onCommit,
+  onNavigate,
 }: GatewayFallbackProps) {
   return (
     <main
@@ -22,46 +26,29 @@ export function GatewayFallback({
     >
       <div className="gateway-fallback__inner">
         <p className="gateway-fallback__mark">BM</p>
-        <h1>TWO WORLDS. ONE SYSTEM.</h1>
-        <nav className="gateway-fallback__divisions" aria-label="BM divisions">
-          <Link
-            href="/"
-            className="gateway-fallback__division"
-            onClick={(event) => onCommit?.("visuals", "/", event)}
-          >
-            <span className="gateway-fallback__division-name">BM VISUALS</span>
-            <span className="gateway-fallback__division-type">
-              Creative / Digital Experience
-            </span>
-            <span className="gateway-fallback__division-copy">
-              Digital identities
-              <br />
-              with motion, story and distinction.
-            </span>
-            <span className="gateway-fallback__action">ENTER VISUALS →</span>
-          </Link>
-          <Link
-            href="/gateway-prototype/technical"
-            className="gateway-fallback__division"
-            onClick={(event) =>
-              onCommit?.(
-                "technical",
-                "/gateway-prototype/technical",
-                event,
-              )
-            }
-          >
-            <span className="gateway-fallback__division-name">BMP TECHNICAL</span>
-            <span className="gateway-fallback__division-type">
-              Technology / AI Systems
-            </span>
-            <span className="gateway-fallback__division-copy">
-              AI systems, product logic
-              <br />
-              and technical execution.
-            </span>
-            <span className="gateway-fallback__action">ENTER TECHNICAL →</span>
-          </Link>
+        <h1>Creative × Technology × Products.</h1>
+        <nav className="gateway-fallback__divisions" aria-label="BMP divisions">
+          {GATEWAY_DIVISIONS.map((division) => {
+            const destination = getGatewayDestination(division);
+            return (
+              <Link
+                href={destination.href}
+                className="gateway-fallback__division"
+                key={division}
+                onClick={(event) =>
+                  onNavigate?.(division, destination.href, event)
+                }
+              >
+                <span className="gateway-fallback__division-name">
+                  {destination.publicLabel}
+                </span>
+                <span className="gateway-fallback__division-copy">
+                  {destination.headline}
+                </span>
+                <span className="gateway-fallback__action">ENTER →</span>
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </main>

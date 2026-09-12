@@ -13,8 +13,8 @@ import {
   technicalLogicPlaneFragmentShader,
   technicalLogicPlaneVertexShader,
   technicalVertexShader,
-} from "./technicalShader";
-import type { EntityUpdateParams } from "./visualsEntity";
+} from "./technicalShader.ts";
+import type { EntityUpdateParams } from "./visualsEntity.ts";
 
 export class TechnicalEntity {
   readonly group: Group;
@@ -59,6 +59,7 @@ export class TechnicalEntity {
         uniforms: {
           uTime: { value: 0 },
           uHover: { value: 0 },
+          uSelected: { value: 0 },
           uProgress: { value: 0 },
         },
       }),
@@ -83,6 +84,7 @@ export class TechnicalEntity {
         uniforms: {
           uTime: { value: 0 },
           uHover: { value: 0 },
+          uSelected: { value: 0 },
           uProgress: { value: 0 },
         },
       }),
@@ -122,6 +124,7 @@ export class TechnicalEntity {
           uniforms: {
             uTime: { value: 0 },
             uHover: { value: 0 },
+            uSelected: { value: 0 },
             uLayerIndex: { value: index },
           },
           transparent: true,
@@ -139,30 +142,36 @@ export class TechnicalEntity {
   }
 
   tick(deltaSeconds: number, params: EntityUpdateParams, totalTime: number) {
-    const isHovered = Math.max(0, params.selectionBias);
-    const otherHovered = Math.max(0, -params.selectionBias);
+    const interaction = params.interaction;
+    const authorityTarget = Math.max(
+      interaction.hoverWeight * 0.76,
+      interaction.selectedWeight,
+    );
 
     // Smooth hover damping
     const hoverDamp = params.reducedMotion ? 12 : 5.0;
     this.hoverCurrent +=
-      (isHovered - this.hoverCurrent) *
+      (authorityTarget - this.hoverCurrent) *
       Math.min(1, deltaSeconds * hoverDamp);
 
     // Update casing and core uniforms
     const cu = this.casingMaterial.uniforms;
     cu.uTime.value = totalTime;
     cu.uHover.value = this.hoverCurrent;
+    cu.uSelected.value = interaction.selectedWeight;
     cu.uProgress.value = params.progress;
 
     const ru = this.coreMaterial.uniforms;
     ru.uTime.value = totalTime;
     ru.uHover.value = this.hoverCurrent;
+    ru.uSelected.value = interaction.selectedWeight;
     ru.uProgress.value = params.progress;
 
     // Update logic plane uniforms
     this.logicMaterials.forEach((mat) => {
       mat.uniforms.uTime.value = totalTime;
       mat.uniforms.uHover.value = this.hoverCurrent;
+      mat.uniforms.uSelected.value = interaction.selectedWeight;
     });
 
     if (params.reducedMotion) {
@@ -178,7 +187,8 @@ export class TechnicalEntity {
     const smoothEmergence = emergence * emergence * (3 - 2 * emergence);
 
     const targetScale =
-      smoothEmergence * (1.0 + this.hoverCurrent * 0.12 - otherHovered * 0.12);
+      smoothEmergence *
+      (1.0 + this.hoverCurrent * 0.1 - interaction.recedeWeight * 0.12);
     this.group.scale.setScalar(Math.max(0.0001, targetScale));
 
     // MODULAR CASING SEPARATION KINEMATICS

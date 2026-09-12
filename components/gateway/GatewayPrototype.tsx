@@ -13,6 +13,13 @@ import type { CSSProperties, MouseEvent } from "react";
 
 import { useInteractionProfile } from "@/lib/motion/useInteractionProfile";
 import { damp } from "@/lib/motion/physics";
+import {
+  BRIEFING_TIMING,
+  createBriefingTimeline,
+  deriveDestinationInteraction,
+  seekBriefingTimeline,
+  stepBriefingTimeline,
+} from "@/lib/gateway/briefing";
 import { deriveGatewayPose } from "@/lib/gateway/choreography";
 import { createJourney, impulseJourney, seekJourney, stepJourney } from "@/lib/gateway/journey/controller";
 import {
@@ -20,7 +27,6 @@ import {
   getGatewayExpectedPathname,
   shouldEnhanceGatewayNavigation,
   shouldMarkGatewaySession,
-  shouldRequireGatewayPreview,
   shouldUseGatewayLocationFallback,
   type GatewayNavigationIntent,
 } from "@/lib/gateway/navigation";
@@ -34,11 +40,11 @@ import {
 import {
   createGatewayState,
   gatewayReducer,
-  getSelectionBias,
   type GatewayDivision,
   type GatewayPhase,
 } from "@/lib/gateway/state";
 import { GatewayFallback } from "./GatewayFallback";
+import { BriefingOverlay } from "./BriefingOverlay";
 import { LoaderOverlay } from "./LoaderOverlay";
 import { SelectionOverlay } from "./SelectionOverlay";
 import { TunnelCanvas } from "./TunnelCanvas";
@@ -51,6 +57,7 @@ type SkipTarget = {
 
 type GatewayPageStyle = CSSProperties & {
   "--gateway-loader-progress": number;
+  "--gateway-briefing-progress": number;
 };
 
 const isAnimatedPhase = (phase: GatewayPhase) =>
@@ -60,6 +67,7 @@ const isAnimatedPhase = (phase: GatewayPhase) =>
   phase === "user-travel" ||
   phase === "split" ||
   phase === "preview" ||
+  phase === "briefing" ||
   phase === "commit";
 
 const isJourneyPhase = (phase: GatewayPhase) =>
@@ -78,12 +86,14 @@ export function GatewayPrototype() {
   const [fontsReady, setFontsReady] = useState(false);
   const [displayedProgress, setDisplayedProgress] = useState(0);
   const [travelProgress, setTravelProgress] = useState(0);
+  const [briefingProgress, setBriefingProgress] = useState(0);
   const [exitProgress, setExitProgress] = useState(0);
   const [canSkip, setCanSkip] = useState(false);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(true);
   const phaseRef = useRef<GatewayPhase>(state.phase);
+  const briefingDirectionRef = useRef(state.briefingDirection);
   const returningRef = useRef(state.returning);
   const reducedMotionRef = useRef(profile.reducedMotion);
   const sceneReadyRef = useRef(false);
@@ -95,6 +105,7 @@ export function GatewayPrototype() {
   const exitCompleteRef = useRef(false);
   const exitStartedAtRef = useRef<number | null>(null);
   const journeyRef = useRef(createJourney());
+  const briefingRef = useRef(createBriefingTimeline());
   const dragYRef = useRef<number | null>(null);
   const dragPointerIdRef = useRef<number | null>(null);
   const skipTargetRef = useRef<SkipTarget | null>(null);
@@ -104,6 +115,12 @@ export function GatewayPrototype() {
   const commitHrefRef = useRef<string | null>(null);
   const expectedPathnameRef = useRef<string | null>(null);
   const safetyTimeoutRef = useRef<number | null>(null);
+  const destinationControlsRef = useRef<
+    Partial<Record<GatewayDivision, HTMLButtonElement | null>>
+  >({});
+  const previouslySelectedControlRef = useRef<GatewayDivision | null>(null);
+  const briefingHeadingRef = useRef<HTMLHeadingElement>(null);
+  const restoreSelectionFocusRef = useRef(false);
 
   const loaderMode: LoaderMode =
     state.returning || profile.reducedMotion ? "short" : "first";
@@ -114,29 +131,47 @@ export function GatewayPrototype() {
     sceneReady,
     selectionOverlayPresent: true,
   });
-  const selectionBias = getSelectionBias(state);
-  const selection = state.committed ?? state.preview ?? "neutral";
-  const committed = state.committed;
+  const selection =
+    state.selectedDivision ?? state.previewDivision ?? "neutral";
+  const interactions = useMemo(
+    () =>
+      deriveDestinationInteraction({
+        previewDivision:
+          travelProgress >= 0.985 ? state.previewDivision : null,
+        selectedDivision:
+          travelProgress >= 0.985 ? state.selectedDivision : null,
+        briefingProgress,
+      }),
+    [
+      briefingProgress,
+      state.previewDivision,
+      state.selectedDivision,
+      travelProgress,
+    ],
+  );
   const pageStyle: GatewayPageStyle = {
     "--gateway-loader-progress": displayedProgress,
+    "--gateway-briefing-progress": briefingProgress,
   };
 
   const pose = useMemo(
     () =>
       deriveGatewayPose({
         travelProgress,
-        selectionBias: travelProgress >= .985 ? selectionBias : 0,
+        briefingProgress,
+        interactions,
         exitProgress,
-        committed,
+        selectedDivision: state.selectedDivision,
         reducedMotion: profile.reducedMotion,
         coarsePointer: profile.pointer === "coarse",
       }),
     [
-      committed,
+      briefingProgress,
       exitProgress,
+      interactions,
       profile.pointer,
       profile.reducedMotion,
-      selectionBias,
+      state.selectedDivision,
       travelProgress,
     ],
   );
@@ -198,10 +233,35 @@ export function GatewayPrototype() {
 
   useEffect(() => {
     phaseRef.current = state.phase;
+    briefingDirectionRef.current = state.briefingDirection;
     returningRef.current = state.returning;
     reducedMotionRef.current = profile.reducedMotion;
     requestFrameRef.current();
-  }, [profile.pointer, profile.reducedMotion, state.phase, state.returning]);
+  }, [
+    profile.pointer,
+    profile.reducedMotion,
+    state.briefingDirection,
+    state.phase,
+    state.returning,
+  ]);
+
+  useEffect(() => {
+    if (
+      state.phase === "briefing" &&
+      state.briefingDirection === "forward"
+    ) {
+      briefingHeadingRef.current?.focus({ preventScroll: true });
+    }
+  }, [state.briefingDirection, state.phase]);
+
+  useEffect(() => {
+    if (state.phase !== "split" || !restoreSelectionFocusRef.current) return;
+    restoreSelectionFocusRef.current = false;
+    const division = previouslySelectedControlRef.current;
+    if (division) {
+      destinationControlsRef.current[division]?.focus({ preventScroll: true });
+    }
+  }, [state.phase]);
 
   useEffect(() => {
     let returning = false;
@@ -366,6 +426,22 @@ export function GatewayPrototype() {
         } else if (phase === "user-travel" && next === 1) {
           dispatch({ type: "TRAVEL_COMPLETE" });
         }
+      } else if (phase === "briefing") {
+        const before = briefingRef.current.progress;
+        briefingRef.current = stepBriefingTimeline(briefingRef.current, time);
+        const next = briefingRef.current.progress;
+        if (next !== before) setBriefingProgress(next);
+        if (
+          next === 1 &&
+          briefingDirectionRef.current === "forward"
+        ) {
+          dispatch({ type: "BRIEFING_COMPLETE" });
+        } else if (
+          next === 0 &&
+          briefingDirectionRef.current === "reverse"
+        ) {
+          dispatch({ type: "GO_BACK_COMPLETE" });
+        }
       } else if (phase === "commit") {
         if (exitStartedAtRef.current === null) {
           exitStartedAtRef.current = time;
@@ -423,24 +499,89 @@ export function GatewayPrototype() {
     dispatch({ type: "CLEAR_PREVIEW" });
   }, []);
 
+  const registerDestinationControl = useCallback(
+    (division: GatewayDivision, node: HTMLButtonElement | null) => {
+      destinationControlsRef.current[division] = node;
+    },
+    [],
+  );
+
+  const handleSelect = useCallback((division: GatewayDivision) => {
+    if (
+      committedGuardRef.current ||
+      journeyRef.current.renderProgress < 0.985 ||
+      (phaseRef.current !== "split" && phaseRef.current !== "preview")
+    ) {
+      return;
+    }
+    previouslySelectedControlRef.current = division;
+    restoreSelectionFocusRef.current = false;
+    briefingRef.current = seekBriefingTimeline(
+      briefingRef.current,
+      1,
+      performance.now(),
+      reducedMotionRef.current
+        ? BRIEFING_TIMING.reducedMotionMs
+        : BRIEFING_TIMING.fullMotionMs,
+    );
+    setBriefingProgress(briefingRef.current.progress);
+    dispatch({ type: "SELECT", division });
+    requestFrameRef.current();
+  }, []);
+
+  const handleGoBack = useCallback(() => {
+    if (
+      phaseRef.current !== "briefing" &&
+      phaseRef.current !== "decision"
+    ) {
+      return;
+    }
+    const duration = reducedMotionRef.current
+      ? BRIEFING_TIMING.reducedMotionMs
+      : Math.max(
+          1,
+          BRIEFING_TIMING.fullMotionMs * briefingRef.current.progress,
+        );
+    restoreSelectionFocusRef.current = true;
+    briefingRef.current = seekBriefingTimeline(
+      briefingRef.current,
+      0,
+      performance.now(),
+      duration,
+    );
+    dispatch({ type: "GO_BACK" });
+    requestFrameRef.current();
+  }, []);
+
   useEffect(() => {
-    if (state.phase !== "preview") return;
+    if (
+      state.phase !== "preview" &&
+      state.phase !== "briefing" &&
+      state.phase !== "decision"
+    ) {
+      return;
+    }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") handleClearPreview();
+      if (event.key === "Escape") {
+        if (state.phase === "preview") handleClearPreview();
+        else handleGoBack();
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleClearPreview, state.phase]);
+  }, [handleClearPreview, handleGoBack, state.phase]);
 
-  const handleCommit = useCallback(
-    (
-      division: GatewayDivision,
-      href: string,
-      event: MouseEvent<HTMLAnchorElement>,
-    ) => {
+  const handleContinue = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>) => {
+      const division = state.selectedDivision;
+      if (!division || state.phase !== "decision") {
+        event.preventDefault();
+        return;
+      }
       const anchor = event.currentTarget;
+      const href = anchor.getAttribute("href") ?? anchor.href;
       const intent: GatewayNavigationIntent = {
         button: event.button,
         detail: event.detail,
@@ -455,19 +596,8 @@ export function GatewayPrototype() {
         enhancementReady: presentation.showSelection,
       };
 
-      if (
-        shouldRequireGatewayPreview(intent, {
-          coarsePointer: profile.pointer === "coarse",
-          division,
-          selectedDivision: state.committed ?? state.preview,
-        })
-      ) {
-        event.preventDefault();
-        handlePreview(division);
-        return;
-      }
-
       if (shouldMarkGatewaySession(intent)) {
+        dispatch({ type: "COMMIT", division });
         writeSessionSeen();
         return;
       }
@@ -489,14 +619,40 @@ export function GatewayPrototype() {
       writeSessionSeen();
     },
     [
-      handlePreview,
       presentation.showSelection,
-      profile.pointer,
       profile.reducedMotion,
-      state.committed,
-      state.preview,
+      state.phase,
+      state.selectedDivision,
       writeSessionSeen,
     ],
+  );
+
+  const handleFallbackNavigate = useCallback(
+    (
+      _division: GatewayDivision,
+      _href: string,
+      event: MouseEvent<HTMLAnchorElement>,
+    ) => {
+      const anchor = event.currentTarget;
+      if (
+        shouldMarkGatewaySession({
+          button: event.button,
+          detail: event.detail,
+          defaultPrevented: event.defaultPrevented,
+          metaKey: event.metaKey,
+          ctrlKey: event.ctrlKey,
+          shiftKey: event.shiftKey,
+          altKey: event.altKey,
+          target: anchor.target || undefined,
+          download: anchor.hasAttribute("download"),
+          reducedMotion: profile.reducedMotion,
+          enhancementReady: false,
+        })
+      ) {
+        writeSessionSeen();
+      }
+    },
+    [profile.reducedMotion, writeSessionSeen],
   );
 
   const handleSkip = useCallback(() => {
@@ -611,6 +767,7 @@ export function GatewayPrototype() {
       }
       data-gateway-phase={state.phase}
       data-gateway-visual-progress={travelProgress.toFixed(5)}
+      data-gateway-briefing-progress={briefingProgress.toFixed(5)}
       data-gateway-selection={selection}
       data-scene-ready={sceneReady ? "true" : "false"}
       data-fonts-ready={fontsReady ? "true" : "false"}
@@ -645,17 +802,28 @@ export function GatewayPrototype() {
           ) : null}
           {presentation.showSelection ? (
             <div hidden={travelProgress < .985} inert={travelProgress < .985}>
-              <SelectionOverlay
-                state={state}
-                leftPercent={pose.leftPercent}
-                rightPercent={pose.rightPercent}
-                enhancementReady={presentation.enhancementHealthy}
-                reducedMotion={profile.reducedMotion}
-                coarsePointer={profile.pointer === "coarse"}
-                onPreview={handlePreview}
-                onClearPreview={handleClearPreview}
-                onCommit={handleCommit}
-              />
+              {state.phase === "split" || state.phase === "preview" ? (
+                <SelectionOverlay
+                  state={state}
+                  enhancementReady={presentation.enhancementHealthy}
+                  reducedMotion={profile.reducedMotion}
+                  coarsePointer={profile.pointer === "coarse"}
+                  onPreview={handlePreview}
+                  onClearPreview={handleClearPreview}
+                  onSelect={handleSelect}
+                  registerDestinationControl={registerDestinationControl}
+                />
+              ) : null}
+              {state.selectedDivision ? (
+                <BriefingOverlay
+                  division={state.selectedDivision}
+                  phase={state.phase}
+                  frame={pose.briefingFrame}
+                  headingRef={briefingHeadingRef}
+                  onGoBack={handleGoBack}
+                  onContinue={handleContinue}
+                />
+              ) : null}
             </div>
           ) : null}
         </div>
@@ -666,7 +834,7 @@ export function GatewayPrototype() {
       >
         <GatewayFallback
           enhanced={presentation.enhancementHealthy}
-          onCommit={handleCommit}
+          onNavigate={handleFallbackNavigate}
         />
       </div>
     </div>
