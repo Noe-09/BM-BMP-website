@@ -212,17 +212,34 @@ test("About publishes the canonical story, process, and team position", async ()
   for (const value of exactCopy) assert.ok(html.includes(value), value);
 });
 
-test("Creator stays honest when no product record is verified", async () => {
+test("Creator renders the approved six-world exhibition arc", async () => {
   const html = await getPage("/creator");
-  assert.ok(html.includes("We build our own things too."));
-  assert.ok(
-    html.includes(
-      "BMP Creator is where we develop our own apps, web products, experiments, and digital tools. It is both a product portfolio and a public record of how we turn ideas into working experiences.",
-    ),
-  );
-  assert.ok(html.includes("See what we are building"));
-  assert.match(html, /data-creator-products="0"/);
-  assert.doesNotMatch(html, /Client Work|Owned Product/);
+  assert.equal(html.match(/<h1\b/g)?.length, 1);
+  assert.ok(html.includes("THINGS"));
+  assert.ok(html.includes("WE DECIDED"));
+  assert.ok(html.includes("SHOULD EXIST."));
+  assert.match(html, /data-creator-products="6"/);
+  assert.match(html, /data-creator-threshold="unrevealed"/);
+  assert.ok(html.includes("THE UNREVEALED"));
+  assert.ok(html.includes("Still being made inside BMP."));
+
+  const expectedOrder = [
+    "weins",
+    "slyour",
+    "the-xide",
+    "pawsona",
+    "relationship",
+    "miner",
+  ];
+  let cursor = -1;
+  for (const slug of expectedOrder) {
+    const position = html.indexOf(`data-creator-world="${slug}"`, cursor + 1);
+    assert.ok(position > cursor, `${slug} should follow the prior world`);
+    cursor = position;
+  }
+
+  assert.match(html, /data-creator-index="worlds"/);
+  assert.match(html, /data-creator-colophon="08"/);
 });
 
 test("Contact publishes canonical fields through a functional submission boundary", async () => {
