@@ -14,6 +14,18 @@
   border-color: var(--creator-line);
 }
 
+.creator-page .bmp-header__mark,
+.creator-page .bmp-header__nav a,
+.creator-page .bmp-footer a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.creator-page .bmp-header__mark {
+  min-width: 44px;
+}
+
 .creator-shell {
   width: min(100%, 1600px);
   margin-inline: auto;
@@ -1320,6 +1332,10 @@
 
   .creator-threshold__counter {
     flex-direction: row;
+  }
+
+  .creator-threshold h2 {
+    font-size: clamp(3.25rem, 16vw, 5rem);
   }
 
   .creator-index__header h2,

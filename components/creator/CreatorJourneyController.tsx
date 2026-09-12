@@ -28,8 +28,10 @@ export function CreatorJourneyController({
       const now = performance.now();
       const first = worlds[0];
       const last = worlds[worlds.length - 1];
-      const start = first.offsetTop;
-      const end = last.offsetTop + last.offsetHeight;
+      const firstBounds = first.getBoundingClientRect();
+      const lastBounds = last.getBoundingClientRect();
+      const start = firstBounds.top + window.scrollY;
+      const end = lastBounds.bottom + window.scrollY;
       const marker = window.scrollY + window.innerHeight * 0.5;
       const progress = end > start ? (marker - start) / (end - start) : 0;
       const state = getCreatorJourneyState({
@@ -40,7 +42,8 @@ export function CreatorJourneyController({
         reducedMotion: motionQuery.matches,
       });
 
-      root.dataset.activeWorld = state.activeWorld ?? "arrival";
+      root.dataset.activeWorld =
+        marker < start ? "arrival" : (state.activeWorld ?? "arrival");
       root.dataset.direction = String(state.direction);
       root.dataset.reducedMotion = String(state.reducedMotion);
       root.style.setProperty(

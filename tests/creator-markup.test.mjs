@@ -29,6 +29,8 @@ test("Creator keeps browser interaction inside one narrow controller", async () 
   assert.match(source, /passive: true/);
   assert.match(source, /requestAnimationFrame/);
   assert.match(source, /prefers-reduced-motion/);
+  assert.match(source, /getBoundingClientRect/);
+  assert.match(source, /marker < start/);
   assert.doesNotMatch(source, /wheel|scrollTo|scrollIntoView/);
 });
 
@@ -101,4 +103,29 @@ test("Creator Veil keeps every atmospheric layer decorative", async () => {
   assert.match(source, /cluster.*timeline.*strata/s);
   assert.ok((source.match(/aria-hidden="true"/g) ?? []).length >= 3);
   assert.doesNotMatch(source, /Image|canvas|WebGL|iframe/);
+});
+
+test("Creator degrades motion safely and cleans up every global listener", async () => {
+  const [controller, css, sequence] = await Promise.all([
+    readFile(
+      new URL(
+        "../components/creator/CreatorJourneyController.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(new URL("../app/creator/creator.css", import.meta.url), "utf8"),
+    readFile(
+      new URL("../components/creator/CreatorWorldSequence.tsx", import.meta.url),
+      "utf8",
+    ),
+  ]);
+
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(css, /overflow-x: clip/);
+  assert.match(css, /\.creator-page \.bmp-header__mark,[\s\S]*min-height: 44px/);
+  assert.match(css, /\.creator-threshold h2 \{\n    font-size: clamp\(3/);
+  assert.match(controller, /cancelAnimationFrame/);
+  assert.ok((controller.match(/removeEventListener/g) ?? []).length >= 3);
+  assert.doesNotMatch(`${controller}\n${sequence}`, /three|WebGL|canvas/i);
 });
