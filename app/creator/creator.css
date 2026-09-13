@@ -3,6 +3,7 @@
   --creator-paper: #f0ede6;
   --creator-muted: rgba(240, 237, 230, 0.58);
   --creator-line: rgba(240, 237, 230, 0.2);
+  --creator-header-height: 64px;
   min-height: 100svh;
   overflow-x: clip;
   color: var(--creator-paper);
@@ -10,8 +11,11 @@
 }
 
 .creator-page .bmp-header {
-  background: rgba(8, 8, 8, 0.9);
+  position: relative;
+  z-index: 80;
+  background: rgba(8, 8, 8, 0.88);
   border-color: var(--creator-line);
+  backdrop-filter: blur(14px);
 }
 
 .creator-page .bmp-header__mark,
@@ -33,10 +37,12 @@
 }
 
 .creator-kicker,
-.creator-world__header,
-.creator-world__title > p,
 .creator-index__motifs,
-.creator-index__state {
+.creator-index__state,
+.weins-portal__identity p,
+.slyour-portal__identity p,
+.xide-portal__identity p,
+.creator-sealed-portal__state {
   font-size: clamp(0.62rem, 0.7vw, 0.72rem);
   line-height: 1.35;
   letter-spacing: 0.14em;
@@ -45,20 +51,56 @@
 
 .creator-arrival {
   position: relative;
-  min-height: calc(100svh - 64px);
+  min-height: 132svh;
+  overflow: clip;
+  background: #080808;
+}
+
+.creator-arrival__intrusion {
+  position: sticky;
+  top: var(--creator-header-height);
+  height: calc(100svh - var(--creator-header-height));
+  margin-bottom: calc((100svh - var(--creator-header-height)) * -1);
   overflow: hidden;
-  background:
-    radial-gradient(circle at 72% 36%, rgba(255, 255, 255, 0.09), transparent 25%),
-    #080808;
+  pointer-events: none;
+}
+
+.creator-arrival__intrusion .creator-media {
+  position: absolute;
+  top: 5%;
+  right: -7vw;
+  width: min(61vw, 68rem);
+  height: 105%;
+  clip-path: polygon(19% 0, 100% 0, 100% 100%, 0 86%);
+  filter: grayscale(1) contrast(1.05);
+  opacity: 0.54;
+  transform: scale(1.08);
+  transform-origin: center right;
+}
+
+.creator-arrival__intrusion .creator-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #080808 0, rgba(8, 8, 8, 0.8) 20%, transparent 62%);
+}
+
+.creator-arrival__intrusion .creator-media__frame {
+  height: 100%;
+}
+
+.creator-arrival__intrusion figcaption {
+  display: none;
 }
 
 .creator-arrival__inner {
-  position: relative;
-  z-index: 1;
-  min-height: calc(100svh - 64px);
+  position: sticky;
+  top: var(--creator-header-height);
+  z-index: 2;
+  height: calc(100svh - var(--creator-header-height));
   display: grid;
   grid-template-rows: auto 1fr auto;
-  padding-block: clamp(1.5rem, 4vh, 3rem);
+  padding-block: clamp(1.25rem, 3vh, 2.5rem);
 }
 
 .creator-arrival .creator-kicker {
@@ -71,163 +113,81 @@
   align-self: center;
   display: flex;
   flex-direction: column;
-  font-size: clamp(3.7rem, 10.6vw, 10.8rem);
+  max-width: 10ch;
+  font-size: clamp(3.6rem, 9.4vw, 9.6rem);
   font-weight: 680;
-  line-height: 0.78;
+  line-height: 0.8;
   letter-spacing: -0.075em;
+  text-wrap: balance;
 }
 
 .creator-arrival h1 span:nth-child(2) {
-  margin-left: 11vw;
+  margin-left: 8vw;
 }
 
 .creator-arrival h1 span:nth-child(3) {
-  align-self: flex-end;
+  margin-left: 2vw;
 }
 
 .creator-arrival__footer {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: flex;
+  justify-content: space-between;
   gap: 2rem;
   align-items: end;
-  border-top: 1px solid var(--creator-line);
-  padding-top: 1.25rem;
-}
-
-.creator-arrival__footer p {
-  max-width: 32rem;
   color: var(--creator-muted);
 }
 
 .creator-arrival__footer a,
-.creator-world__footer a,
-.creator-colophon nav a {
+.creator-colophon nav a,
+.weins-portal__action,
+.slyour-portal__identity a,
+.xide-portal__identity > a {
   min-height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
+  color: currentColor;
   border-bottom: 1px solid currentColor;
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-.creator-arrival__orbit {
-  position: absolute;
-  top: 50%;
-  left: 72%;
-  width: min(46vw, 42rem);
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-
-.creator-arrival__orbit span {
-  position: absolute;
-  inset: 0;
-  border: 1px solid rgba(240, 237, 230, 0.12);
-  border-radius: 50%;
-}
-
-.creator-arrival__orbit span:nth-child(2) {
-  inset: 18%;
-}
-
-.creator-arrival__orbit span:nth-child(3) {
-  inset: 44%;
-  background: var(--creator-paper);
-  box-shadow: 0 0 7rem rgba(240, 237, 230, 0.2);
-}
-
-.creator-world-sequence__chapter {
+.creator-portal-sequence {
   position: relative;
+  isolation: isolate;
+  background: #080808;
+}
+
+.creator-portal-chapter {
+  --portal-progress: 0.5;
+  --portal-presence: 1;
+  position: relative;
+  min-height: 205svh;
+  margin-top: -1px;
+}
+
+.creator-portal-chapter--slyour {
+  min-height: 220svh;
+}
+
+.creator-portal-chapter--the-xide {
+  min-height: 230svh;
+}
+
+.creator-portal-chapter--pawsona,
+.creator-portal-chapter--relationship,
+.creator-portal-chapter--miner {
+  min-height: 175svh;
 }
 
 .creator-world {
-  position: relative;
-  min-height: 112svh;
-  overflow: hidden;
-  border-top: 1px solid currentColor;
-}
-
-.creator-world__inner {
-  min-height: 112svh;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  padding-block: clamp(1.5rem, 3vw, 3rem);
-}
-
-.creator-world__header {
-  display: grid;
-  grid-template-columns: 7rem 7rem minmax(0, 1fr);
-  gap: 1rem;
-  color: currentColor;
-}
-
-.creator-world__header p:last-child {
-  max-width: 28rem;
-  justify-self: end;
-  text-align: right;
-  opacity: 0.62;
-}
-
-.creator-world__title {
-  align-self: center;
-}
-
-.creator-world__title > p {
-  margin-bottom: 1.1rem;
-  opacity: 0.56;
-}
-
-.creator-world h2 {
-  font-size: clamp(4.2rem, 15vw, 16rem);
-  font-weight: 720;
-  line-height: 0.76;
-  letter-spacing: -0.08em;
-}
-
-.creator-world__footer {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.5fr);
-  gap: 2rem;
-  align-items: end;
-  border-top: 1px solid currentColor;
-  padding-top: 1.25rem;
-}
-
-.creator-world__footer > p:first-child {
-  max-width: 38rem;
-  font-size: clamp(1.2rem, 2.3vw, 2.5rem);
-  line-height: 1.05;
-  letter-spacing: -0.035em;
-}
-
-.creator-world__footer > p:last-child {
-  justify-self: end;
-  color: currentColor;
-  opacity: 0.58;
-}
-
-.creator-world[data-creator-world="weins"] {
-  color: #18181b;
-  background: #e4e4e7;
-}
-
-.creator-world[data-creator-world="slyour"] {
-  color: #111;
-  background: #f2efe8;
-}
-
-.creator-world[data-creator-world="the-xide"] {
-  color: #ece7de;
-  background: #1c1917;
-}
-
-.creator-world[data-reveal-state="sealed"] {
-  color: #d7d3ca;
-  background: #090909;
+  position: sticky;
+  top: var(--creator-header-height);
+  min-height: calc(100svh - var(--creator-header-height));
+  height: calc(100svh - var(--creator-header-height));
+  overflow: clip;
 }
 
 .creator-media {
@@ -287,252 +247,553 @@
   opacity: 0.5;
 }
 
-.creator-world__inner--weins,
-.creator-world__inner--slyour,
-.creator-world__inner--xide {
-  min-height: 142svh;
+/* Portal 01: mass resolves from an oversized crop, then compresses into a slab. */
+.creator-world--weins {
+  color: #111113;
+  background:
+    linear-gradient(90deg, rgba(17, 17, 19, 0.06) 1px, transparent 1px) 0 0 / 12.5vw 100%,
+    #d8d7d3;
 }
 
-.weins-composition,
-.slyour-composition,
-.xide-composition {
+.weins-portal {
   position: relative;
-  min-height: clamp(45rem, 92svh, 70rem);
-  margin-block: clamp(2rem, 5vw, 5rem);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
-.weins-composition__plane {
+.weins-portal__visual {
   position: absolute;
-  inset: 8% 29% 9% 6%;
-  border: 1px solid rgba(24, 24, 27, 0.3);
-  background: rgba(250, 250, 250, 0.24);
-  clip-path: polygon(0 0, 80% 0, 100% 100%, 13% 100%);
-  transform: translateX(calc((var(--world-progress, 0.5) - 0.5) * -3rem));
+  inset: -16% -12% -18% 13%;
+  z-index: 1;
+  clip-path: inset(
+    calc(var(--portal-progress, 0.35) * 7%)
+    calc(var(--portal-progress, 0.35) * 30%)
+    calc(var(--portal-progress, 0.35) * 7%)
+    calc(var(--portal-progress, 0.35) * 4%)
+  );
+  transform: scale(calc(1.42 - (var(--portal-progress, 0.35) * 0.46)));
+  transform-origin: center 42%;
+  will-change: transform, clip-path;
 }
 
-.weins-composition__title {
-  position: absolute;
-  z-index: 3;
-  top: 12%;
-  left: 0;
+.weins-portal__visual .creator-media,
+.weins-portal__visual .creator-media__frame {
+  width: 100%;
+  height: 100%;
 }
 
-.weins-composition__title h2 {
-  font-size: clamp(5.2rem, 17vw, 17rem);
-}
-
-.weins-composition__hero {
-  position: absolute;
-  inset: 3% 4% 11% 31%;
-  clip-path: polygon(8% 0, 100% 0, 91% 100%, 0 89%);
-  transform: translateY(calc((var(--world-progress, 0.5) - 0.5) * 2.5rem));
-}
-
-.weins-composition__hero .creator-media__frame,
-.slyour-composition__campaign .creator-media__frame,
-.xide-composition__atmosphere .creator-media__frame {
-  height: calc(100% - 2rem);
-}
-
-.weins-composition__material {
-  position: absolute;
-  z-index: 4;
-  right: 0;
-  bottom: 2%;
-  width: 27%;
-  height: 32%;
-  transform: translateY(calc((var(--world-progress, 0.5) - 0.5) * -3rem));
-}
-
-.weins-composition__silhouette {
-  position: absolute;
-  z-index: 4;
-  bottom: 1%;
-  left: 8%;
-  width: 20%;
-  height: 37%;
+.weins-portal__visual img {
+  object-position: 56% center;
   filter: grayscale(1) contrast(1.08);
-  transform: translateX(calc((var(--world-progress, 0.5) - 0.5) * 2rem));
 }
 
-.slyour-composition__title {
+.weins-portal__visual figcaption,
+.weins-portal__silhouette figcaption {
+  display: none;
+}
+
+.weins-portal__slab {
   position: absolute;
+  inset: 0 0 0 auto;
+  z-index: 2;
+  width: calc(4vw + var(--portal-progress, 0.35) * 21vw);
+  background: #b9b9b6;
+  transform: translateX(calc((1 - var(--portal-progress, 0.35)) * 24vw));
+  box-shadow: -2rem 0 6rem rgba(17, 17, 19, 0.12);
+}
+
+.weins-portal__silhouette {
+  position: absolute;
+  right: clamp(1rem, 4vw, 4rem);
+  bottom: 6vh;
+  z-index: 4;
+  width: clamp(8rem, 18vw, 18rem);
+  height: clamp(15rem, 42vh, 30rem);
+  clip-path: inset(calc((1 - var(--portal-presence, 1)) * 48%) 0 0);
+  opacity: calc(var(--portal-presence, 1) * 0.92);
+  filter: grayscale(1) contrast(1.12);
+  transform: translateY(calc((1 - var(--portal-presence, 1)) * 14vh));
+}
+
+.weins-portal__silhouette .creator-media__frame {
+  height: 100%;
+}
+
+.weins-portal__identity {
+  position: relative;
   z-index: 5;
-  right: 0;
-  bottom: 7%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 6rem 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding-block: clamp(1.25rem, 3vh, 2.5rem);
+}
+
+.weins-portal__identity > div {
+  align-self: center;
+}
+
+.weins-portal__identity h2 {
+  margin-left: -0.06em;
+  color: #f3f0e9;
+  font-size: clamp(6rem, 18vw, 19rem);
+  font-weight: 720;
+  line-height: 0.68;
+  letter-spacing: -0.09em;
+  mix-blend-mode: difference;
+  transform: translateX(calc((var(--portal-progress, 0.35) - 0.48) * -18vw));
+}
+
+.weins-portal__identity > div p {
+  margin-top: 1.4rem;
+  color: rgba(17, 17, 19, 0.68);
+}
+
+.weins-portal__index {
+  align-self: start;
+}
+
+.weins-portal__action {
+  align-self: end;
+  margin-bottom: 0.25rem;
+}
+
+/* Portal 02: a crimson editorial wall breaches WEINS' closing slab. */
+.creator-world--slyour {
+  color: #1a1110;
+  background: #ede6d8;
+}
+
+.slyour-portal {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    linear-gradient(115deg, transparent 0 56%, rgba(74, 68, 36, 0.12) 56.1% 57%, transparent 57.1%),
+    #ede6d8;
+}
+
+.slyour-portal__editorial-wall {
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 1;
+  width: 58vw;
+  overflow: hidden;
+  padding-inline: 1.5vw;
+  color: rgba(246, 229, 219, 0.22);
+  background: #b51d2b;
+  font-size: clamp(6rem, 15vw, 15rem);
+  font-weight: 720;
+  line-height: 0.72;
+  letter-spacing: -0.08em;
+  word-break: break-all;
+  transform: translateX(calc(38vw - (var(--portal-progress, 0.45) * 58vw)));
+  will-change: transform;
+}
+
+.slyour-portal__campaign {
+  position: absolute;
+  top: -8vh;
+  left: calc(-17vw + (var(--portal-progress, 0.45) * 22vw));
+  z-index: 2;
+  width: min(76vw, 78rem);
+  height: 91vh;
+  transform: rotate(calc(-5deg + (var(--portal-progress, 0.45) * 7deg)))
+    scale(calc(1.13 - (var(--portal-progress, 0.45) * 0.12)));
+  transform-origin: 45% 58%;
+  will-change: transform;
+}
+
+.slyour-portal__campaign .creator-media__frame {
+  height: 100%;
+  clip-path: polygon(0 7%, 94% 0, 100% 88%, 7% 100%);
+}
+
+.slyour-portal__campaign img {
+  object-position: center 42%;
+}
+
+.slyour-portal__campaign figcaption,
+.slyour-portal__object figcaption {
+  display: none;
+}
+
+.slyour-portal__object {
+  position: absolute;
+  right: 7vw;
+  bottom: -5vh;
+  z-index: 4;
+  width: clamp(12rem, 27vw, 28rem);
+  height: clamp(18rem, 62vh, 41rem);
+  filter: saturate(1.08) contrast(1.03);
+  transform: translate3d(
+      0,
+      calc((0.5 - var(--portal-presence, 1)) * 24vh),
+      0
+    )
+    rotate(-2deg)
+    scale(calc(0.9 + (var(--portal-presence, 1) * 0.1)));
+}
+
+.slyour-portal__object .creator-media__frame {
+  height: 100%;
+  clip-path: polygon(8% 0, 100% 6%, 91% 100%, 0 92%);
+}
+
+.slyour-portal__identity {
+  position: relative;
+  z-index: 6;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  grid-template-rows: 1fr auto;
+  gap: 1rem;
+  align-items: end;
+  padding-block: clamp(1.25rem, 3vh, 2.5rem);
+  pointer-events: none;
+}
+
+.slyour-portal__identity > p {
+  align-self: start;
+}
+
+.slyour-portal__identity > div {
+  justify-self: end;
+  max-width: 32rem;
   text-align: right;
 }
 
-.slyour-composition__title h2 {
-  color: #bd1e2d;
-  font-size: clamp(5rem, 16vw, 16rem);
+.slyour-portal__identity h2 {
+  color: #f5eee2;
+  font-size: clamp(4.8rem, 12vw, 12rem);
+  font-weight: 720;
+  line-height: 0.72;
+  letter-spacing: -0.08em;
+  text-shadow: 0 0.08em 0.7em rgba(39, 9, 12, 0.24);
 }
 
-.slyour-composition__campaign {
-  position: absolute;
-  inset: 0 25% 14% 0;
-  transform: rotate(calc((var(--world-progress, 0.5) - 0.5) * -1.8deg));
+.slyour-portal__identity > div p {
+  margin-top: 1rem;
+  color: #f5eee2;
 }
 
-.slyour-composition__campaign .creator-media__frame {
-  clip-path: inset(calc(var(--world-progress, 0.5) * 2%) 0 0 0 round 0.25rem);
+.slyour-portal__identity a {
+  grid-column: 2;
+  justify-self: end;
+  color: #1a1110;
+  pointer-events: auto;
 }
 
-.slyour-composition__object {
-  position: absolute;
-  z-index: 3;
-  top: 6%;
-  right: 2%;
-  width: 31%;
-  height: 45%;
-  transform: translateY(calc((var(--world-progress, 0.5) - 0.5) * 4rem)) rotate(2deg);
-}
-
-.slyour-composition__material {
-  position: absolute;
-  z-index: 4;
-  bottom: 0;
-  left: 18%;
-  width: 23%;
-  height: 30%;
-  transform: translateX(calc((var(--world-progress, 0.5) - 0.5) * -3rem)) rotate(-3deg);
-}
-
-.slyour-composition__stamp {
-  position: absolute;
-  top: 1rem;
-  left: calc(75% + 1rem);
-  writing-mode: vertical-rl;
-  color: #bd1e2d;
-  font-size: 0.62rem;
-  letter-spacing: 0.18em;
-}
-
+/* Portal 03: one low-light field remains, then its illumination disappears. */
 .creator-world--xide {
+  color: #e8e0d4;
+  background: #080706;
+}
+
+.xide-portal__darkness {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   background:
-    radial-gradient(circle at 55% 42%, rgba(178, 113, 45, 0.12), transparent 25%),
-    #100e0d;
+    radial-gradient(circle at 54% 48%, rgba(166, 103, 45, 0.11), transparent 31%),
+    #080706;
 }
 
-.xide-composition__halo {
+.xide-portal__darkness::after {
+  content: "";
   position: absolute;
-  inset: 11% 24%;
-  border-radius: 50%;
-  background: rgba(202, 133, 62, 0.1);
-  filter: blur(5rem);
-  opacity: calc(0.35 + var(--world-progress, 0.5) * 0.45);
-}
-
-.xide-composition__atmosphere {
-  position: absolute;
-  inset: 5% 16% 12%;
-  opacity: calc(0.68 + var(--world-progress, 0.5) * 0.25);
-}
-
-.xide-composition__atmosphere .creator-media__frame {
-  clip-path: polygon(8% 0, 92% 0, 100% 90%, 72% 100%, 0 88%);
-}
-
-.xide-composition__object {
-  position: absolute;
-  z-index: 4;
-  right: 4%;
-  bottom: 0;
-  width: 26%;
-  height: 39%;
-  transform: translateY(calc((var(--world-progress, 0.5) - 0.5) * -2.5rem));
-}
-
-.xide-composition__strata {
-  position: absolute;
-  z-index: 3;
-  top: 4%;
-  left: 0;
-  width: 30%;
-  height: 30%;
-  transform: translateX(calc((var(--world-progress, 0.5) - 0.5) * 2rem));
-}
-
-.xide-composition__title {
-  position: absolute;
+  inset: 0;
   z-index: 5;
-  bottom: 5%;
-  left: 0;
+  pointer-events: none;
+  background: #050505;
+  opacity: calc(var(--portal-progress, 0.45) * 0.72);
 }
 
-.xide-composition__title h2 {
-  max-width: 5ch;
-  font-size: clamp(5rem, 15vw, 15rem);
-}
-
-.xide-composition__trace {
+.xide-portal__glow {
   position: absolute;
-  z-index: 5;
+  top: 14%;
+  left: 50%;
+  z-index: 1;
+  width: min(54vw, 46rem);
+  height: 68%;
+  background: rgba(196, 125, 57, 0.15);
+  filter: blur(7rem);
+  opacity: var(--portal-presence, 1);
+  transform: translateX(-50%) scale(calc(0.72 + (var(--portal-presence, 1) * 0.28)));
+}
+
+.xide-portal__environment {
+  position: absolute;
   top: 7%;
-  right: 0;
-  list-style: none;
-  border-top: 1px solid rgba(236, 231, 222, 0.35);
+  left: 50%;
+  z-index: 2;
+  width: min(68vw, 72rem);
+  height: 82%;
+  opacity: calc(var(--portal-presence, 1) * 1.15);
+  clip-path: inset(
+    calc((1 - var(--portal-presence, 1)) * 19%)
+    calc((1 - var(--portal-presence, 1)) * 28%)
+  );
+  transform: translateX(-50%) scale(calc(0.87 + (var(--portal-presence, 1) * 0.13)));
+  will-change: opacity, transform, clip-path;
 }
 
-.xide-composition__trace li {
-  min-width: 11rem;
+.xide-portal__environment .creator-media__frame {
+  height: 100%;
+  background: #080706;
+}
+
+.xide-portal__environment img {
+  object-position: center;
+}
+
+.xide-portal__environment figcaption {
+  display: none;
+}
+
+.xide-portal__identity {
+  position: relative;
+  z-index: 7;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 6rem 1fr 10rem;
+  grid-template-rows: 1fr auto;
+  gap: 1rem;
+  align-items: end;
+  padding-block: clamp(1.25rem, 3vh, 2.5rem);
+}
+
+.xide-portal__identity > p {
+  align-self: start;
+}
+
+.xide-portal__identity > div {
+  align-self: center;
+  justify-self: start;
+}
+
+.xide-portal__identity h2 {
+  max-width: 6ch;
+  font-size: clamp(2.8rem, 6.8vw, 7rem);
+  font-weight: 560;
+  line-height: 0.82;
+  letter-spacing: -0.065em;
+}
+
+.xide-portal__identity > div p {
+  margin-top: 1rem;
+  color: rgba(232, 224, 212, 0.58);
+}
+
+.xide-portal__traces {
+  align-self: center;
+  list-style: none;
+}
+
+.xide-portal__traces li {
+  min-height: 4.5rem;
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 0.8rem;
+  align-items: center;
+  color: rgba(232, 224, 212, 0.38);
+  font-size: 0.58rem;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  transform: translateX(calc((var(--portal-progress, 0.45) - 0.5) * var(--trace-offset, 5vw)));
+}
+
+.xide-portal__traces li:nth-child(2) {
+  --trace-offset: -8vw;
+  color: rgba(232, 224, 212, 0.68);
+}
+
+.xide-portal__traces li:nth-child(3) {
+  --trace-offset: 12vw;
+}
+
+.xide-portal__identity > a {
+  grid-column: 3;
+  justify-self: end;
+}
+
+/* The threshold is the last light from XIDE becoming an access boundary. */
+.creator-threshold-chapter {
+  position: relative;
+  min-height: 138svh;
+  margin-top: -1px;
+  background: #050505;
+}
+
+.creator-threshold {
+  position: sticky;
+  top: var(--creator-header-height);
+  min-height: calc(100svh - var(--creator-header-height));
+  height: calc(100svh - var(--creator-header-height));
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(168, 105, 49, 0.055), transparent 31%),
+    #050505;
+}
+
+.creator-threshold__inner {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 0.38fr 1fr;
+  gap: clamp(2rem, 9vw, 10rem);
+  align-items: center;
+}
+
+.creator-threshold__counter {
+  display: grid;
+  gap: 1.3rem;
+  color: rgba(240, 237, 230, 0.3);
+  font-size: 0.68rem;
+  letter-spacing: 0.17em;
+}
+
+.creator-threshold__counter span:first-child {
+  opacity: 0.34;
+}
+
+.creator-threshold__counter span:last-child {
+  color: var(--creator-paper);
+}
+
+.creator-threshold h2 {
+  max-width: 8ch;
+  margin-block: 1rem 1.5rem;
+  font-size: clamp(4rem, 11vw, 11rem);
+  font-weight: 640;
+  line-height: 0.76;
+  letter-spacing: -0.075em;
+}
+
+.creator-threshold h2 + p {
+  color: var(--creator-muted);
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+}
+
+.creator-threshold__line {
+  position: absolute;
+  inset: auto 0 16%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(240, 237, 230, 0.26), transparent);
+}
+
+/* The unrevealed worlds live in darkness; the veil never becomes a card. */
+.creator-world--sealed {
+  color: #d9d4ca;
+  background: #050505;
+}
+
+.creator-sealed-portal {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.creator-sealed-portal__copy {
+  position: relative;
+  z-index: 7;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+  padding-block: clamp(1.25rem, 3vh, 2.5rem);
+  pointer-events: none;
+}
+
+.creator-sealed-portal__state {
   display: flex;
   justify-content: space-between;
-  gap: 2rem;
-  border-bottom: 1px solid rgba(236, 231, 222, 0.2);
-  padding-block: 0.75rem;
+  grid-column: 1 / -1;
+  color: rgba(217, 212, 202, 0.58);
+}
+
+.creator-sealed-portal__identity {
+  grid-column: 2;
+  align-self: center;
+  max-width: 70rem;
+}
+
+.creator-sealed-portal__identity > p:first-child {
+  margin-bottom: 1.2rem;
+  color: rgba(217, 212, 202, 0.4);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.creator-sealed-portal__identity h2 {
+  font-size: clamp(4.5rem, 13vw, 14rem);
+  font-weight: 620;
+  line-height: 0.72;
+  letter-spacing: -0.08em;
+}
+
+.creator-sealed-portal__identity > p:last-child {
+  max-width: 25rem;
+  margin-top: 1.5rem;
+  color: rgba(217, 212, 202, 0.5);
+}
+
+.creator-sealed-portal__signal {
+  grid-column: 2;
+  align-self: end;
+  color: rgba(217, 212, 202, 0.42);
   font-size: 0.62rem;
   letter-spacing: 0.15em;
+  text-transform: uppercase;
 }
 
-.creator-world--sealed {
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-    #090909;
-  background-size: 4rem 4rem;
+.creator-world--relationship .creator-sealed-portal__identity {
+  justify-self: end;
+  text-align: right;
 }
 
-.creator-world__inner--sealed {
-  min-height: 122svh;
+.creator-world--relationship .creator-sealed-portal__identity h2 {
+  font-size: clamp(3.8rem, 10vw, 11rem);
 }
 
-.creator-world__sealed-composition {
-  position: relative;
-  min-height: clamp(38rem, 78svh, 62rem);
-  margin-block: 3rem;
+.creator-world--miner .creator-sealed-portal__copy {
+  grid-template-columns: 1fr 6rem;
 }
 
-.creator-world__sealed-composition > .creator-world__title {
-  position: absolute;
-  z-index: 4;
-  top: 50%;
-  left: 0;
-  max-width: 100%;
-  transform: translateY(-50%);
+.creator-world--miner .creator-sealed-portal__identity,
+.creator-world--miner .creator-sealed-portal__signal {
+  grid-column: 1;
 }
 
-.creator-world--relationship h2 {
-  font-size: clamp(3.8rem, 12vw, 12rem);
+.creator-world--miner .creator-sealed-portal__identity {
+  align-self: start;
+  padding-top: 13vh;
 }
 
 .creator-veil {
   position: absolute;
-  inset: 0 0 0 22%;
+  inset: 0;
+  z-index: 1;
   overflow: hidden;
-  border: 1px solid rgba(215, 211, 202, 0.18);
-  background: rgba(4, 4, 4, 0.78);
+  background: #050505;
+  pointer-events: none;
 }
 
 .creator-veil::after {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 3;
-  pointer-events: none;
+  z-index: 6;
   background:
-    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, 0.025) 3px 4px),
-    radial-gradient(circle at 50% 50%, transparent 0 30%, rgba(0, 0, 0, 0.64) 85%);
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, 0.016) 3px 4px),
+    radial-gradient(circle at 50% 50%, transparent 0 24%, rgba(0, 0, 0, 0.74) 92%);
+  opacity: 0.7;
 }
 
 .creator-veil__layer {
@@ -541,205 +802,181 @@
 }
 
 .creator-veil__layer--back {
-  opacity: 0.28;
-  transform: scale(calc(0.96 + var(--world-progress, 0.5) * 0.04));
+  opacity: 0.36;
+  transform: scale(calc(0.88 + (var(--portal-presence, 1) * 0.16)));
 }
 
 .creator-veil__layer--middle {
-  opacity: 0.52;
-  transform: translateX(calc((var(--world-progress, 0.5) - 0.5) * 2.5rem));
+  opacity: 0.58;
 }
 
 .creator-veil__layer--front {
-  opacity: 0.76;
-  transform: translateY(calc((var(--world-progress, 0.5) - 0.5) * -2rem));
+  z-index: 4;
 }
 
-.creator-veil__artifact,
-.creator-veil__artifact > span {
-  position: absolute;
-  display: block;
-}
-
-.creator-veil__legend {
-  position: absolute;
-  right: 1rem;
-  bottom: 1rem;
-  left: 1rem;
-  z-index: 5;
-  display: flex;
-  justify-content: space-between;
-  color: rgba(215, 211, 202, 0.54);
-  font-size: 0.58rem;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-
+/* Pawsona: warm presences pass at different depths. */
 .creator-veil--cluster {
   background:
-    radial-gradient(circle at 72% 33%, rgba(91, 152, 136, 0.16), transparent 21%),
-    #070909;
+    radial-gradient(circle at 18% 61%, rgba(183, 119, 88, 0.11), transparent 14%),
+    radial-gradient(circle at 72% 35%, rgba(115, 167, 147, 0.1), transparent 17%),
+    #050505;
 }
 
 .creator-veil--cluster .creator-veil__artifact {
-  inset: 12% 9%;
-  border: 1px solid rgba(142, 190, 177, 0.26);
-  border-radius: 50%;
+  position: absolute;
+  inset: 0;
+  display: block;
 }
 
 .creator-veil--cluster .creator-veil__artifact > span {
-  width: clamp(3.5rem, 9vw, 9rem);
-  aspect-ratio: 1;
-  border: 1px solid rgba(142, 190, 177, 0.48);
-  border-radius: 50%;
-  background: rgba(142, 190, 177, 0.04);
+  position: absolute;
+  display: block;
+  width: clamp(7rem, 15vw, 16rem);
+  aspect-ratio: 0.78;
+  border-radius: 48% 52% 44% 56% / 63% 48% 52% 37%;
+  background: rgba(193, 137, 110, 0.14);
+  box-shadow: 0 0 7rem rgba(193, 137, 110, 0.13);
+  filter: blur(1.4rem);
 }
 
 .creator-veil--cluster .creator-veil__artifact > span:nth-child(1) {
-  top: 13%;
+  top: 12%;
   left: 17%;
+  transform: translate3d(calc((var(--portal-progress, 0.5) - 0.5) * 18vw), 0, 0) scale(0.68);
 }
 
 .creator-veil--cluster .creator-veil__artifact > span:nth-child(2) {
-  top: 37%;
-  right: 16%;
-  width: clamp(5rem, 13vw, 13rem);
+  top: 28%;
+  right: 12%;
+  width: clamp(10rem, 22vw, 23rem);
+  background: rgba(100, 156, 137, 0.12);
+  transform: translate3d(calc((0.5 - var(--portal-progress, 0.5)) * 12vw), 5vh, 0);
 }
 
 .creator-veil--cluster .creator-veil__artifact > span:nth-child(3) {
-  bottom: 9%;
-  left: 38%;
-  width: clamp(2.5rem, 6vw, 6rem);
+  bottom: 4%;
+  left: 42%;
+  width: clamp(5rem, 10vw, 10rem);
+  background: rgba(205, 168, 107, 0.12);
+  transform: translateY(calc((var(--portal-progress, 0.5) - 0.5) * -18vh));
 }
 
+.creator-veil--cluster .creator-veil__layer--front {
+  background:
+    linear-gradient(100deg, #050505 0 13%, transparent 27% 71%, #050505 92%),
+    linear-gradient(0deg, rgba(5, 5, 5, 0.88), transparent 34% 68%, rgba(5, 5, 5, 0.76));
+}
+
+/* Relationship: paired trajectories almost resolve, then drift apart. */
 .creator-veil--timeline {
   background:
-    linear-gradient(90deg, transparent, rgba(108, 128, 168, 0.1), transparent),
-    #08090b;
+    radial-gradient(ellipse at 60% 48%, rgba(91, 110, 147, 0.11), transparent 38%),
+    #050505;
 }
 
 .creator-veil--timeline .creator-veil__artifact {
-  top: 18%;
-  right: 9%;
-  bottom: 18%;
-  left: 9%;
-  border-top: 1px solid rgba(148, 163, 194, 0.28);
-  border-bottom: 1px solid rgba(148, 163, 194, 0.2);
+  position: absolute;
+  inset: 13% 7%;
+  display: block;
 }
 
-.creator-veil--timeline .creator-veil__artifact::before {
+.creator-veil--timeline .creator-veil__artifact::before,
+.creator-veil--timeline .creator-veil__artifact::after {
   content: "";
   position: absolute;
-  top: 50%;
-  right: 0;
-  left: 0;
+  top: 42%;
+  right: 3%;
+  left: 3%;
   height: 1px;
-  background: rgba(148, 163, 194, 0.52);
+  background: linear-gradient(90deg, transparent, rgba(153, 171, 207, 0.52), transparent);
+  transform: rotate(-9deg) translateY(calc((var(--portal-progress, 0.5) - 0.5) * 9vh));
+}
+
+.creator-veil--timeline .creator-veil__artifact::after {
+  top: 58%;
+  opacity: 0.48;
+  transform: rotate(7deg) translateY(calc((0.5 - var(--portal-progress, 0.5)) * 11vh));
 }
 
 .creator-veil--timeline .creator-veil__artifact > span {
-  top: calc(50% - 0.45rem);
-  width: 0.9rem;
-  aspect-ratio: 1;
-  border: 1px solid rgba(174, 188, 217, 0.72);
-  border-radius: 50%;
-  background: #08090b;
+  position: absolute;
+  display: block;
+  width: 1px;
+  height: clamp(3rem, 13vh, 8rem);
+  background: linear-gradient(transparent, rgba(177, 191, 220, 0.52), transparent);
 }
 
 .creator-veil--timeline .creator-veil__artifact > span:nth-child(1) {
-  left: 9%;
+  top: 19%;
+  left: 18%;
 }
 
 .creator-veil--timeline .creator-veil__artifact > span:nth-child(2) {
-  left: 48%;
+  top: 37%;
+  left: 53%;
 }
 
 .creator-veil--timeline .creator-veil__artifact > span:nth-child(3) {
-  right: 7%;
+  right: 16%;
+  bottom: 14%;
 }
 
-.creator-veil--strata {
+.creator-veil--timeline .creator-veil__layer--front {
   background:
-    radial-gradient(ellipse at 60% 100%, rgba(146, 95, 43, 0.17), transparent 42%),
-    #090806;
+    linear-gradient(90deg, #050505 0 8%, transparent 28% 72%, #050505 94%),
+    linear-gradient(0deg, #050505, transparent 28% 72%, #050505);
+}
+
+/* Miner: the field tilts downward and signals recede into pressure. */
+.creator-veil--strata {
+  perspective: 60rem;
+  background:
+    radial-gradient(ellipse at 50% 108%, rgba(151, 100, 52, 0.16), transparent 43%),
+    #050505;
 }
 
 .creator-veil--strata .creator-veil__artifact {
-  inset: 8% 11%;
-  transform: perspective(40rem) rotateX(61deg);
+  position: absolute;
+  inset: -8% 6%;
+  display: block;
+  transform: rotateX(63deg) translateY(calc((var(--portal-progress, 0.5) - 0.5) * 34vh));
   transform-origin: center bottom;
 }
 
 .creator-veil--strata .creator-veil__artifact > span {
+  position: absolute;
   right: 0;
   left: 0;
-  height: 22%;
-  border: 1px solid rgba(187, 137, 79, 0.38);
-  background: rgba(187, 137, 79, 0.035);
-  clip-path: polygon(8% 0, 100% 13%, 92% 100%, 0 84%);
+  display: block;
+  height: 29%;
+  background:
+    linear-gradient(110deg, transparent, rgba(164, 112, 60, 0.13), transparent),
+    rgba(82, 58, 36, 0.05);
+  clip-path: polygon(0 14%, 74% 0, 100% 19%, 88% 83%, 27% 100%, 4% 79%);
+  box-shadow: inset 0 1px rgba(192, 143, 91, 0.24);
 }
 
 .creator-veil--strata .creator-veil__artifact > span:nth-child(1) {
-  bottom: 8%;
+  top: 2%;
+  opacity: 0.34;
 }
 
 .creator-veil--strata .creator-veil__artifact > span:nth-child(2) {
-  bottom: 35%;
+  top: 34%;
+  opacity: 0.58;
 }
 
 .creator-veil--strata .creator-veil__artifact > span:nth-child(3) {
-  bottom: 62%;
+  top: 67%;
 }
 
-.creator-threshold {
-  position: relative;
-  min-height: 92svh;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 30%, rgba(217, 119, 6, 0.08), transparent 32%),
-    #070706;
-}
-
-.creator-threshold__inner {
-  min-height: 92svh;
-  display: grid;
-  grid-template-columns: 0.5fr 1.5fr;
-  gap: clamp(2rem, 8vw, 9rem);
-  align-items: center;
-}
-
-.creator-threshold__counter {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  color: var(--creator-muted);
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-}
-
-.creator-threshold h2 {
-  max-width: 9ch;
-  margin-block: 1rem 1.5rem;
-  font-size: clamp(4rem, 11vw, 11rem);
-  font-weight: 670;
-  line-height: 0.78;
-  letter-spacing: -0.075em;
-}
-
-.creator-threshold h2 + p {
-  color: var(--creator-muted);
-  font-size: clamp(1.1rem, 1.7vw, 1.45rem);
-}
-
-.creator-threshold__line {
-  position: absolute;
-  inset: auto 0 18%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(240, 237, 230, 0.42), transparent);
-  transform: scaleX(calc(0.15 + var(--world-progress, 0) * 0.85));
+.creator-veil--strata .creator-veil__layer--front {
+  background: linear-gradient(0deg, rgba(5, 5, 5, 0.2), transparent 25%, rgba(5, 5, 5, 0.88));
 }
 
 .creator-index {
+  position: relative;
+  z-index: 12;
   padding-block: clamp(6rem, 12vw, 13rem);
   color: #111;
   background: #ece8df;
@@ -807,6 +1044,8 @@
 }
 
 .creator-colophon {
+  position: relative;
+  z-index: 12;
   min-height: 92svh;
   background: #0a0a09;
 }
@@ -850,6 +1089,371 @@
   justify-content: flex-end;
   gap: 2rem;
   margin-top: 3rem;
+}
+
+@media (max-width: 900px) {
+  .creator-portal-chapter {
+    min-height: 182svh;
+  }
+
+  .creator-portal-chapter--slyour,
+  .creator-portal-chapter--the-xide {
+    min-height: 195svh;
+  }
+
+  .weins-portal__identity {
+    grid-template-columns: 4rem 1fr auto;
+  }
+
+  .slyour-portal__campaign {
+    width: 82vw;
+  }
+
+  .slyour-portal__object {
+    right: 3vw;
+  }
+
+  .xide-portal__identity {
+    grid-template-columns: 4rem 1fr 8rem;
+  }
+
+  .creator-index__list li > a,
+  .creator-index__list li > div {
+    grid-template-columns: 3rem minmax(8rem, 1fr) 6rem 1.5rem;
+  }
+
+  .creator-index__motifs {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .creator-page {
+    --creator-header-height: 58px;
+  }
+
+  .creator-arrival {
+    min-height: 112svh;
+  }
+
+  .creator-arrival__intrusion .creator-media {
+    top: 20%;
+    right: -28vw;
+    width: 105vw;
+    height: 82%;
+    opacity: 0.46;
+  }
+
+  .creator-arrival__inner {
+    height: calc(100svh - var(--creator-header-height));
+  }
+
+  .creator-arrival h1 {
+    max-width: 8ch;
+    font-size: clamp(3.4rem, 16.4vw, 5.7rem);
+    line-height: 0.82;
+  }
+
+  .creator-arrival h1 span:nth-child(2),
+  .creator-arrival h1 span:nth-child(3) {
+    margin-left: 0;
+  }
+
+  .creator-arrival__footer {
+    align-items: center;
+  }
+
+  .creator-arrival__footer p {
+    max-width: 12rem;
+  }
+
+  .creator-portal-chapter,
+  .creator-portal-chapter--slyour,
+  .creator-portal-chapter--the-xide,
+  .creator-portal-chapter--pawsona,
+  .creator-portal-chapter--relationship,
+  .creator-portal-chapter--miner {
+    min-height: 145svh;
+  }
+
+  .creator-world {
+    top: var(--creator-header-height);
+    min-height: calc(100svh - var(--creator-header-height));
+    height: calc(100svh - var(--creator-header-height));
+  }
+
+  .weins-portal__visual {
+    inset: -5% -44% -7% -18%;
+    clip-path: inset(
+      calc(var(--portal-progress, 0.35) * 5%)
+      calc(var(--portal-progress, 0.35) * 23%)
+      calc(var(--portal-progress, 0.35) * 5%)
+      calc(var(--portal-progress, 0.35) * 8%)
+    );
+    transform: scale(calc(1.24 - (var(--portal-progress, 0.35) * 0.25)));
+  }
+
+  .weins-portal__slab {
+    width: calc(7vw + var(--portal-progress, 0.35) * 28vw);
+  }
+
+  .weins-portal__silhouette {
+    right: -1rem;
+    bottom: 3vh;
+    width: 34vw;
+    height: 31vh;
+  }
+
+  .weins-portal__identity {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .weins-portal__identity > div {
+    grid-column: 1 / -1;
+  }
+
+  .weins-portal__identity h2 {
+    font-size: clamp(5.6rem, 27vw, 8.2rem);
+    transform: translateX(calc((var(--portal-progress, 0.35) - 0.48) * -11vw));
+  }
+
+  .weins-portal__action {
+    grid-column: 2;
+  }
+
+  .slyour-portal__editorial-wall {
+    width: 86vw;
+    font-size: clamp(5rem, 27vw, 9rem);
+    transform: translateX(calc(48vw - (var(--portal-progress, 0.45) * 76vw)));
+  }
+
+  .slyour-portal__campaign {
+    top: 7vh;
+    left: calc(-41vw + (var(--portal-progress, 0.45) * 30vw));
+    width: 116vw;
+    height: 70vh;
+  }
+
+  .slyour-portal__object {
+    right: -8vw;
+    bottom: 4vh;
+    width: 48vw;
+    height: 34vh;
+  }
+
+  .slyour-portal__identity {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .slyour-portal__identity > div {
+    grid-column: 1;
+    align-self: end;
+    justify-self: start;
+    text-align: left;
+  }
+
+  .slyour-portal__identity h2 {
+    font-size: clamp(4.8rem, 24vw, 7.4rem);
+  }
+
+  .slyour-portal__identity a {
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  .xide-portal__environment {
+    top: 14%;
+    width: 96vw;
+    height: 67%;
+  }
+
+  .xide-portal__identity {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .xide-portal__identity > div {
+    grid-column: 1 / -1;
+    align-self: start;
+    margin-top: 12vh;
+  }
+
+  .xide-portal__identity h2 {
+    font-size: clamp(2.9rem, 15vw, 4.6rem);
+  }
+
+  .xide-portal__traces {
+    position: absolute;
+    right: 1rem;
+    bottom: 17vh;
+    left: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .xide-portal__traces li {
+    min-height: 3rem;
+    display: block;
+    text-align: center;
+  }
+
+  .xide-portal__traces li span {
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  .xide-portal__identity > a {
+    grid-column: 2;
+  }
+
+  .creator-threshold-chapter {
+    min-height: 112svh;
+  }
+
+  .creator-threshold__inner {
+    grid-template-columns: 1fr;
+    align-content: center;
+  }
+
+  .creator-threshold__counter {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .creator-threshold h2 {
+    font-size: clamp(3.2rem, 15.5vw, 5rem);
+  }
+
+  .creator-sealed-portal__copy {
+    grid-template-columns: 1fr;
+  }
+
+  .creator-sealed-portal__identity,
+  .creator-sealed-portal__signal,
+  .creator-world--miner .creator-sealed-portal__identity,
+  .creator-world--miner .creator-sealed-portal__signal {
+    grid-column: 1;
+  }
+
+  .creator-sealed-portal__identity {
+    align-self: center;
+  }
+
+  .creator-sealed-portal__identity h2 {
+    font-size: clamp(3.7rem, 20vw, 6.2rem);
+  }
+
+  .creator-world--relationship .creator-sealed-portal__identity h2 {
+    font-size: clamp(3rem, 14vw, 4.7rem);
+  }
+
+  .creator-world--miner .creator-sealed-portal__copy {
+    grid-template-columns: 1fr;
+  }
+
+  .creator-world--miner .creator-sealed-portal__identity {
+    align-self: center;
+    padding-top: 0;
+  }
+
+  .creator-index__header {
+    grid-template-columns: 1fr;
+  }
+
+  .creator-index__header h2,
+  .creator-index__header > p:last-child {
+    grid-column: 1;
+  }
+
+  .creator-index__list li > a,
+  .creator-index__list li > div {
+    min-height: 7.5rem;
+    grid-template-columns: 2.2rem 1fr auto;
+    gap: 0.7rem;
+  }
+
+  .creator-index__motifs {
+    grid-column: 2 / -1;
+    display: block;
+    font-size: 0.56rem;
+  }
+
+  .creator-index__state {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .creator-index__list li > a > span:last-child {
+    display: none;
+  }
+
+  .creator-colophon__statement {
+    grid-template-columns: 1fr;
+  }
+
+  .creator-colophon__statement p,
+  .creator-colophon__statement p:last-child {
+    padding: 0.8rem 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--creator-line);
+  }
+
+  .creator-colophon nav {
+    display: grid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .creator-experience *,
+  .creator-experience *::before,
+  .creator-experience *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .creator-portal-chapter,
+  .creator-portal-chapter--slyour,
+  .creator-portal-chapter--the-xide,
+  .creator-portal-chapter--pawsona,
+  .creator-portal-chapter--relationship,
+  .creator-portal-chapter--miner {
+    min-height: 100svh;
+  }
+
+  .weins-portal__visual {
+    clip-path: inset(8% 16% 8% 6%);
+    transform: scale(1);
+  }
+
+  .weins-portal__slab {
+    transform: none;
+  }
+
+  .weins-portal__silhouette,
+  .xide-portal__environment,
+  .xide-portal__glow {
+    opacity: 1;
+    transform: none;
+  }
+
+  .xide-portal__environment {
+    transform: translateX(-50%);
+  }
+
+  .slyour-portal__editorial-wall,
+  .slyour-portal__campaign,
+  .slyour-portal__object,
+  .weins-portal__identity h2,
+  .xide-portal__traces li,
+  .creator-veil__layer,
+  .creator-veil__artifact,
+  .creator-veil__artifact > span {
+    transform: none;
+  }
 }
 
 .creator-detail {

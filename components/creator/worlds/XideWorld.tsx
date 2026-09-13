@@ -13,45 +13,29 @@ export function XideWorld({ world }: { world: CreatorWorld }) {
       data-creator-stage={`${world.index}-${world.slug}`}
       aria-labelledby={`creator-world-title-${world.slug}`}
     >
-      <div className="creator-shell creator-world__inner creator-world__inner--xide">
-        <header className="creator-world__header">
+      <div className="xide-portal__darkness">
+        <div className="xide-portal__glow" aria-hidden="true" />
+        <CreatorMedia
+          media={world.media[0]}
+          className="xide-portal__environment"
+          sizes="(max-width: 640px) 92vw, 68vw"
+        />
+        <div className="creator-shell xide-portal__identity">
           <p>{world.index} / 06</p>
-          <p>{world.statusLabel}</p>
-          <p>{world.character}</p>
-        </header>
-        <div className="xide-composition">
-          <div className="xide-composition__halo" aria-hidden="true" />
-          <CreatorMedia
-            media={world.media[0]}
-            className="xide-composition__atmosphere"
-            sizes="(max-width: 640px) 90vw, 64vw"
-          />
-          <CreatorMedia
-            media={world.media[1]}
-            className="xide-composition__object"
-            sizes="(max-width: 640px) 45vw, 24vw"
-          />
-          <CreatorMedia
-            media={world.media[2]}
-            className="xide-composition__strata"
-            sizes="(max-width: 640px) 64vw, 30vw"
-          />
-          <div className="creator-world__title xide-composition__title">
-            <p>{world.motifs.join(" / ")}</p>
+          <div>
             <h2 id={`creator-world-title-${world.slug}`}>{world.name}</h2>
+            <p>{world.motifs.join(" / ")}</p>
           </div>
-          <ol className="xide-composition__trace" aria-label="Scent progression">
+          <ol className="xide-portal__traces" aria-label="Scent progression">
             {world.motifs.map((motif, index) => (
               <li key={motif}>
-                <span>0{index + 1}</span> {motif}
+                <span>0{index + 1}</span>
+                <span>{motif}</span>
               </li>
             ))}
           </ol>
-        </div>
-        <div className="creator-world__footer">
-          <p>{world.thesis}</p>
           <Link href={world.route!}>
-            Enter preview <span aria-hidden="true">↗</span>
+            {world.statusLabel} <span aria-hidden="true">↗</span>
           </Link>
         </div>
       </div>

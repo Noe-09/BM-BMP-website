@@ -11,22 +11,17 @@ export function MinerWorld({ world }: { world: CreatorWorld }) {
       data-creator-stage={`${world.index}-${world.slug}`}
       aria-labelledby={`creator-world-title-${world.slug}`}
     >
-      <div className="creator-shell creator-world__inner creator-world__inner--sealed">
-        <header className="creator-world__header">
-          <p>{world.index} / 06</p>
-          <p>{world.statusLabel}</p>
-          <p>{world.character}</p>
-        </header>
-        <div className="creator-world__sealed-composition">
-          <div className="creator-world__title">
-            <p>{world.motifs.join(" / ")}</p>
+      <div className="creator-sealed-portal creator-sealed-portal--miner">
+        <CreatorVeil world={world} variant="strata" />
+        <div className="creator-shell creator-sealed-portal__copy">
+          <p className="creator-sealed-portal__state">
+            <span>{world.index} / 06</span>
+            <span>{world.statusLabel}</span>
+          </p>
+          <div className="creator-sealed-portal__identity">
             <h2 id={`creator-world-title-${world.slug}`}>{world.name}</h2>
+            <p>{world.developmentNote}</p>
           </div>
-          <CreatorVeil world={world} variant="strata" />
-        </div>
-        <div className="creator-world__footer">
-          <p>{world.thesis}</p>
-          <p>{world.developmentNote}</p>
         </div>
       </div>
     </section>

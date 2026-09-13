@@ -13,10 +13,10 @@ export function CreatorJourneyController({
 }: CreatorJourneyControllerProps) {
   useEffect(() => {
     const root = document.querySelector<HTMLElement>("[data-creator-experience]");
-    const worlds = Array.from(
-      document.querySelectorAll<HTMLElement>("[data-creator-world]"),
+    const chapters = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-creator-chapter]"),
     );
-    if (!root || worlds.length === 0) return;
+    if (!root || chapters.length === 0) return;
 
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
@@ -26,8 +26,8 @@ export function CreatorJourneyController({
     const update = () => {
       frame = 0;
       const now = performance.now();
-      const first = worlds[0];
-      const last = worlds[worlds.length - 1];
+      const first = chapters[0];
+      const last = chapters[chapters.length - 1];
       const firstBounds = first.getBoundingClientRect();
       const lastBounds = last.getBoundingClientRect();
       const start = firstBounds.top + window.scrollY;
@@ -42,15 +42,41 @@ export function CreatorJourneyController({
         reducedMotion: motionQuery.matches,
       });
 
-      root.dataset.activeWorld =
-        marker < start ? "arrival" : (state.activeWorld ?? "arrival");
+      let activeWorld = marker < start ? "arrival" : state.activeWorld;
+      let activePortalProgress = 0;
+
+      for (const chapter of chapters) {
+        const bounds = chapter.getBoundingClientRect();
+        const travel = Math.max(bounds.height + window.innerHeight, 1);
+        const portalProgress = Math.min(
+          1,
+          Math.max(0, (window.innerHeight - bounds.top) / travel),
+        );
+        const presence = Math.max(0, 1 - Math.abs(portalProgress - 0.5) * 2);
+        const portal = chapter.querySelector<HTMLElement>("[data-creator-world]");
+
+        chapter.style.setProperty("--portal-progress", portalProgress.toFixed(4));
+        chapter.style.setProperty("--portal-presence", presence.toFixed(4));
+        portal?.style.setProperty("--portal-progress", portalProgress.toFixed(4));
+        portal?.style.setProperty("--portal-presence", presence.toFixed(4));
+
+        if (
+          bounds.top <= window.innerHeight * 0.56 &&
+          bounds.bottom > window.innerHeight * 0.44
+        ) {
+          activeWorld = chapter.dataset.creatorChapter ?? activeWorld;
+          activePortalProgress = portalProgress;
+        }
+      }
+
+      root.dataset.activeWorld = activeWorld ?? "arrival";
       root.dataset.direction = String(state.direction);
       root.dataset.reducedMotion = String(state.reducedMotion);
       root.style.setProperty(
         "--creator-progress",
         state.globalCreatorProgress.toFixed(4),
       );
-      root.style.setProperty("--world-progress", state.worldProgress.toFixed(4));
+      root.style.setProperty("--world-progress", activePortalProgress.toFixed(4));
       root.style.setProperty("--creator-velocity", state.velocity.toFixed(6));
 
       previousProgress = state.globalCreatorProgress;

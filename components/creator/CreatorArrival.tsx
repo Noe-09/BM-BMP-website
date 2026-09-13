@@ -1,4 +1,5 @@
 import type { CreatorWorld } from "@/content/creator";
+import { CreatorMedia } from "./CreatorMedia";
 
 type CreatorArrivalProps = {
   firstWorld: CreatorWorld;
@@ -7,6 +8,13 @@ type CreatorArrivalProps = {
 export function CreatorArrival({ firstWorld }: CreatorArrivalProps) {
   return (
     <section className="creator-arrival" data-creator-stage="00-arrival">
+      <div className="creator-arrival__intrusion">
+        <CreatorMedia
+          media={firstWorld.media[0]}
+          priority
+          sizes="(max-width: 640px) 84vw, 58vw"
+        />
+      </div>
       <div className="creator-shell creator-arrival__inner">
         <p className="creator-kicker">
           <span>00 — ARRIVAL</span>
@@ -18,19 +26,11 @@ export function CreatorArrival({ firstWorld }: CreatorArrivalProps) {
           <span>SHOULD EXIST.</span>
         </h1>
         <div className="creator-arrival__footer">
-          <p>
-            Authored worlds, products, and experiments made inside BMP.
-            Creator proves imagination.
-          </p>
+          <p>Six authored worlds inside BMP.</p>
           <a href={`#creator-world-${firstWorld.slug}`}>
-            Enter the worlds <span aria-hidden="true">↓</span>
+            Enter <span aria-hidden="true">↓</span>
           </a>
         </div>
-      </div>
-      <div className="creator-arrival__orbit" aria-hidden="true">
-        <span />
-        <span />
-        <span />
       </div>
     </section>
   );

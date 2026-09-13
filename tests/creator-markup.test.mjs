@@ -17,24 +17,33 @@ test("Creator route owns an exhibition composition instead of BM Visual grammar"
 });
 
 test("Creator keeps browser interaction inside one narrow controller", async () => {
-  const source = await readFile(
-    new URL(
-      "../components/creator/CreatorJourneyController.tsx",
-      import.meta.url,
+  const [source, sequence] = await Promise.all([
+    readFile(
+      new URL(
+        "../components/creator/CreatorJourneyController.tsx",
+        import.meta.url,
+      ),
+      "utf8",
     ),
-    "utf8",
-  );
+    readFile(
+      new URL("../components/creator/CreatorWorldSequence.tsx", import.meta.url),
+      "utf8",
+    ),
+  ]);
 
   assert.match(source, /^"use client";/);
   assert.match(source, /passive: true/);
   assert.match(source, /requestAnimationFrame/);
   assert.match(source, /prefers-reduced-motion/);
   assert.match(source, /getBoundingClientRect/);
-  assert.match(source, /marker < start/);
+  assert.match(source, /data-creator-chapter/);
+  assert.match(source, /--portal-progress/);
+  assert.match(sequence, /creator-portal-sequence/);
+  assert.match(sequence, /data-creator-chapter/);
   assert.doesNotMatch(source, /wheel|scrollTo|scrollIntoView/);
 });
 
-test("revealed Creator worlds use authored image compositions", async () => {
+test("revealed Creator worlds use three non-template portal grammars", async () => {
   const components = await Promise.all(
     ["WeinsWorld", "SlyourWorld", "XideWorld"].map(async (name) => ({
       name,
@@ -45,19 +54,35 @@ test("revealed Creator worlds use authored image compositions", async () => {
     })),
   );
 
-  for (const { name, source } of components) {
+  for (const { source } of components) {
     assert.match(source, /CreatorWorld/);
     assert.match(source, /CreatorMedia/);
     assert.doesNotMatch(source, /iframe|dangerouslySetInnerHTML/);
     assert.match(source, /world\.name/);
-    assert.match(source, /world\.thesis/);
-
-    if (name === "WeinsWorld") {
-      assert.match(source, /priority/);
-    } else {
-      assert.doesNotMatch(source, /priority/);
-    }
+    assert.doesNotMatch(source, /creator-world__header|creator-world__footer/);
   }
+
+  const byName = Object.fromEntries(
+    components.map(({ name, source }) => [name, source]),
+  );
+  assert.equal((byName.WeinsWorld.match(/<CreatorMedia/g) ?? []).length, 2);
+  assert.equal((byName.SlyourWorld.match(/<CreatorMedia/g) ?? []).length, 2);
+  assert.equal((byName.XideWorld.match(/<CreatorMedia/g) ?? []).length, 1);
+  assert.match(byName.WeinsWorld, /weins-portal__slab/);
+  assert.match(byName.SlyourWorld, /slyour-portal__editorial-wall/);
+  assert.match(byName.XideWorld, /xide-portal__darkness/);
+});
+
+test("Creator arrival lets the first verified world intrude without an orbit", async () => {
+  const source = await readFile(
+    new URL("../components/creator/CreatorArrival.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /CreatorMedia/);
+  assert.match(source, /firstWorld\.media\[0\]/);
+  assert.match(source, /priority/);
+  assert.doesNotMatch(source, /creator-arrival__orbit/);
 });
 
 test("Creator media uses optimized images with a neutral failure state", async () => {
@@ -70,6 +95,7 @@ test("Creator media uses optimized images with a neutral failure state", async (
   assert.match(source, /sizes/);
   assert.match(source, /onError/);
   assert.match(source, /Media unavailable/);
+  assert.match(source, /loading=\{priority \? "eager" : "lazy"\}/);
 });
 
 test("sealed worlds disclose status without leaking media or navigation", async () => {
@@ -90,6 +116,8 @@ test("sealed worlds disclose status without leaking media or navigation", async 
     assert.match(source, new RegExp(`variant="${variant}"`));
     assert.match(source, /world\.statusLabel/);
     assert.match(source, /world\.developmentNote/);
+    assert.match(source, /creator-sealed-portal/);
+    assert.doesNotMatch(source, /creator-world__header|creator-world__footer/);
     assert.doesNotMatch(source, /next\/image|next\/link|CreatorMedia|<a\b/);
   }
 });
@@ -103,6 +131,23 @@ test("Creator Veil keeps every atmospheric layer decorative", async () => {
   assert.match(source, /cluster.*timeline.*strata/s);
   assert.ok((source.match(/aria-hidden="true"/g) ?? []).length >= 3);
   assert.doesNotMatch(source, /Image|canvas|WebGL|iframe/);
+  assert.doesNotMatch(source, /creator-veil__legend/);
+});
+
+test("Creator overview CSS forms a continuous sticky exhibition", async () => {
+  const css = await readFile(
+    new URL("../app/creator/creator.css", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(css, /\.creator-portal-sequence/);
+  assert.match(css, /\.creator-world \{[\s\S]*position: sticky/);
+  assert.match(css, /--portal-progress/);
+  assert.match(css, /\.weins-portal__visual[\s\S]*scale\(/);
+  assert.match(css, /\.slyour-portal__editorial-wall/);
+  assert.match(css, /\.xide-portal__darkness/);
+  assert.doesNotMatch(css, /\.creator-world \{[\s\S]{0,220}border-top/);
+  assert.doesNotMatch(css, /\.creator-veil \{[\s\S]{0,260}border:/);
 });
 
 test("Creator degrades motion safely and cleans up every global listener", async () => {

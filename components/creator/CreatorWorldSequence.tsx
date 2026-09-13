@@ -32,11 +32,23 @@ export function CreatorWorldSequence({ worlds }: CreatorWorldSequenceProps) {
   const firstUnrevealed = worlds.findIndex(({ wing }) => wing === "unrevealed");
 
   return (
-    <div className="creator-world-sequence" data-creator-stage="01-06-worlds">
+    <div
+      className="creator-world-sequence creator-portal-sequence"
+      data-creator-stage="01-06-worlds"
+    >
       {worlds.map((world, index) => (
-        <div className="creator-world-sequence__chapter" key={world.slug}>
-          {index === firstUnrevealed ? <CreatorThreshold /> : null}
-          <WorldChapter world={world} />
+        <div key={world.slug}>
+          {index === firstUnrevealed ? (
+            <div className="creator-threshold-chapter">
+              <CreatorThreshold />
+            </div>
+          ) : null}
+          <div
+            className={`creator-portal-chapter creator-portal-chapter--${world.slug}`}
+            data-creator-chapter={world.slug}
+          >
+            <WorldChapter world={world} />
+          </div>
         </div>
       ))}
     </div>

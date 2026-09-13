@@ -14,6 +14,7 @@ export function CreatorVeil({ world, variant }: CreatorVeilProps) {
       className={`creator-veil creator-veil--${variant}`}
       data-creator-veil={variant}
       data-world={world.slug}
+      aria-hidden="true"
     >
       <div className="creator-veil__layer creator-veil__layer--back" aria-hidden="true">
         <VeilArtifact kind="mass" />
@@ -24,10 +25,6 @@ export function CreatorVeil({ world, variant }: CreatorVeilProps) {
       <div className="creator-veil__layer creator-veil__layer--front" aria-hidden="true">
         <VeilArtifact kind="signal" />
       </div>
-      <p className="creator-veil__legend">
-        <span>{world.index} / SIGNAL WITHHELD</span>
-        <span>{world.motifs.join(" / ")}</span>
-      </p>
     </div>
   );
 }
