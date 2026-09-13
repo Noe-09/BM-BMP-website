@@ -9,11 +9,11 @@ export function SiteHeader() {
     <header className="bmp-header">
       <Container className="bmp-header__inner">
         <Link
-          href={NAVIGATION.home.href.value}
+          href={NAVIGATION.studio.href.value}
           className="bmp-header__mark"
-          aria-label="BMP home"
+          aria-label="BMP studio"
         >
-          {NAVIGATION.home.label.value}
+          {NAVIGATION.studio.label.value}
         </Link>
         <nav className="bmp-header__nav" aria-label="Primary navigation">
           {NAVIGATION.items.map((item, index) => (

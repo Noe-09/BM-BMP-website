@@ -114,7 +114,7 @@ after(async () => {
 
 test("canonical public routes render through one BMP shell", async () => {
   const routes = [
-    "/",
+    "/studio",
     "/work",
     "/bm-visual",
     "/bm-tech",
@@ -133,11 +133,70 @@ test("canonical public routes render through one BMP shell", async () => {
   }
 });
 
-test("the restrained primary navigation exposes every canonical destination", async () => {
+test("the production root serves the Gateway with indexable BMP metadata", async () => {
   const response = await fetch(baseUrl);
   const html = await response.text();
 
+  assert.equal(response.status, 200);
+  assert.match(html, /class="gateway-page gateway-prototype"/);
+  assert.match(html, /<title>BMP — Creative × Technology × Products<\/title>/);
+  assert.match(
+    html,
+    /<meta name="description" content="BMP is a creative-tech studio turning business problems and ideas into brands, digital systems, and products\."/,
+  );
+  assert.doesNotMatch(html, /noindex|nofollow/);
+  assert.doesNotMatch(html, /<title>BM Gateway — Three Worlds/);
+});
+
+test("Studio preserves the former Home composition with distinct metadata", async () => {
+  const response = await fetch(`${baseUrl}/studio`);
+  const html = await response.text();
+
+  assert.equal(response.status, 200);
+  assert.match(html, /class="bmp-page bmp-home"/);
+  assert.match(
+    html,
+    /<title>BMP Studio — Creative × Technology × Products<\/title>/,
+  );
+  assert.match(
+    html,
+    /<meta name="description" content="BMP is a creative-tech studio turning business problems and ideas into brands, digital systems, and products\."/,
+  );
+  assert.doesNotMatch(html, /noindex|nofollow/);
+});
+
+test("the deprecated prototype redirects to the canonical root", async () => {
+  const response = await fetch(`${baseUrl}/gateway-prototype`, {
+    redirect: "manual",
+  });
+
+  assert.equal(response.status, 307);
+  assert.equal(response.headers.get("location"), "/");
+});
+
+test("all public destinations remain directly accessible", async () => {
+  for (const path of [
+    "/bm-visual",
+    "/bm-tech",
+    "/creator",
+    "/studio",
+    "/work",
+    "/about",
+    "/contact",
+  ]) {
+    const response = await fetch(`${baseUrl}${path}`, { redirect: "manual" });
+    assert.equal(response.status, 200, `${path} should render directly`);
+    assert.equal(response.headers.get("location"), null, `${path} should not redirect`);
+  }
+});
+
+test("the restrained Studio navigation exposes every canonical destination", async () => {
+  const response = await fetch(`${baseUrl}/studio`);
+  const html = await response.text();
+
   for (const href of [
+    "/",
+    "/studio",
     "/work",
     "/bm-visual",
     "/bm-tech",
@@ -152,8 +211,8 @@ test("the restrained primary navigation exposes every canonical destination", as
   assert.doesNotMatch(html, />Solutions</i);
 });
 
-test("the responsive shell uses an intentional compact menu without hiding destinations", async () => {
-  const response = await fetch(baseUrl);
+test("the responsive Studio shell uses an intentional compact menu without hiding destinations", async () => {
+  const response = await fetch(`${baseUrl}/studio`);
   const html = await response.text();
   const css = await readFile(new URL("../app/bmp.css", import.meta.url), "utf8");
   const mobileStart = css.indexOf("@media (max-width: 900px)");

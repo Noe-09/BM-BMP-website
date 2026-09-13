@@ -46,7 +46,7 @@ test("locked canonical content remains exact at the public boundary", () => {
 test("every canonical destination and published status stays explicit", () => {
   assert.deepEqual(
     NAVIGATION.items.map((item) => item.href.value),
-    ["/work", "/bm-visual", "/bm-tech", "/creator", "/about", "/contact"],
+    ["/", "/work", "/bm-visual", "/bm-tech", "/creator", "/about", "/contact"],
   );
 
   const projects = getPublishedWorkProjects(WORK.projects);

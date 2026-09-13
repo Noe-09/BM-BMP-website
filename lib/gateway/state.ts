@@ -26,6 +26,7 @@ export type GatewayEvent =
   | { type: "SESSION_RESOLVED"; returning: boolean }
   | { type: "LOAD_READY" }
   | { type: "BEGIN_ENTRY"; reducedMotion: boolean }
+  | { type: "REPLAY_JOURNEY" }
   | { type: "AUTO_COMPLETE" }
   | { type: "TRAVEL_COMPLETE" }
   | { type: "PREVIEW"; division: GatewayDivision }
@@ -80,6 +81,17 @@ export function gatewayReducer(
         ...state,
         phase: state.returning || event.reducedMotion ? "split" : "auto-entry",
       };
+    case "REPLAY_JOURNEY":
+      return state.returning &&
+        state.phase === "split" &&
+        state.previewDivision === null &&
+        state.selectedDivision === null
+        ? {
+            ...state,
+            phase: "auto-entry",
+            briefingDirection: "idle",
+          }
+        : state;
     case "AUTO_COMPLETE":
       return state.phase === "auto-entry"
         ? { ...state, phase: "user-travel" }

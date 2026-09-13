@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import "../gateway.css";
+import "../../gateway.css";
 
 export const metadata: Metadata = {
   title: "BMP Technical Prototype",
@@ -14,7 +14,7 @@ export default function TechnicalPrototypePage() {
         <p className="gateway-fallback__division-name">BMP TECHNICAL</p>
         <p className="gateway-fallback__division-type">Technology / AI Systems</p>
         <h1>PROTOTYPE DESTINATION</h1>
-        <Link href="/gateway-prototype" className="gateway-fallback__action">
+        <Link href="/" className="gateway-fallback__action">
           BACK TO GATEWAY ←
         </Link>
       </div>

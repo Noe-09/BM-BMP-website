@@ -70,6 +70,70 @@ test("return and reduced-motion entry skip the long camera journey", () => {
   assert.equal(reduced.phase, "split");
 });
 
+test("only a returning neutral chamber can replay the journey", () => {
+  const firstVisit = {
+    ...createGatewayState(false),
+    phase: "split",
+    sessionResolved: true,
+  };
+  assert.equal(
+    gatewayReducer(firstVisit, { type: "REPLAY_JOURNEY" }),
+    firstVisit,
+  );
+
+  const preview = {
+    ...createGatewayState(true),
+    phase: "preview",
+    previewDivision: "visuals",
+    returning: true,
+    sessionResolved: true,
+  };
+  assert.equal(
+    gatewayReducer(preview, { type: "REPLAY_JOURNEY" }),
+    preview,
+  );
+
+  const returning = {
+    ...createGatewayState(true),
+    phase: "split",
+    returning: true,
+    sessionResolved: true,
+  };
+  const replaying = gatewayReducer(returning, { type: "REPLAY_JOURNEY" });
+  assert.deepEqual(replaying, {
+    phase: "auto-entry",
+    previewDivision: null,
+    selectedDivision: null,
+    briefingDirection: "idle",
+    returning: true,
+    sessionResolved: true,
+  });
+});
+
+test("replay follows the existing deterministic journey lifecycle back to Three Worlds", () => {
+  let first = {
+    ...createGatewayState(true),
+    phase: "split",
+    returning: true,
+    sessionResolved: true,
+  };
+  let second = { ...first };
+
+  for (const event of [
+    { type: "REPLAY_JOURNEY" },
+    { type: "AUTO_COMPLETE" },
+    { type: "TRAVEL_COMPLETE" },
+  ]) {
+    first = gatewayReducer(first, event);
+    second = gatewayReducer(second, event);
+  }
+
+  assert.deepEqual(first, second);
+  assert.equal(first.phase, "split");
+  assert.equal(first.returning, true);
+  assert.equal(first.selectedDivision, null);
+});
+
 test("rapid previews include Creator and selection enters briefing", () => {
   let state = { ...createGatewayState(false), phase: "split", sessionResolved: true };
   state = gatewayReducer(state, { type: "PREVIEW", division: "visuals" });

@@ -112,8 +112,8 @@ after(async () => {
   });
 });
 
-test("Home establishes the BMP proposition before any experimental presentation", async () => {
-  const response = await fetch(baseUrl);
+test("Studio preserves the BMP proposition before any experimental presentation", async () => {
+  const response = await fetch(`${baseUrl}/studio`);
   const html = await response.text();
 
   assert.equal(response.status, 200);
@@ -132,8 +132,8 @@ test("Home establishes the BMP proposition before any experimental presentation"
   assert.doesNotMatch(html, /loading[^<]*experience/i);
 });
 
-test("Home presents three canonical capability worlds with exact copy", async () => {
-  const response = await fetch(baseUrl);
+test("Studio preserves three canonical capability worlds with exact copy", async () => {
+  const response = await fetch(`${baseUrl}/studio`);
   const html = await response.text();
 
   const worlds = [
