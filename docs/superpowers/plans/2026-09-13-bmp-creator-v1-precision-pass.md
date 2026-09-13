@@ -159,20 +159,20 @@
 - Consumes: completed Tasks 1–5
 - Produces: verified branch preview and final checkpoint
 
-- [ ] Run all 151+ tests, typecheck, lint, and production build.
-- [ ] Start the local production or development server and perform the required
+- [x] Run all 151+ tests, typecheck, lint, and production build.
+- [x] Start the local production or development server and perform the required
       browser load/error check before further QA.
-- [ ] Inspect `/creator` at 1440, 1024, 768, 390, and 360 CSS pixels, including
+- [x] Inspect `/creator` at 1440, 1024, 768, 390, and 360 CSS pixels, including
       DPR 2 where supported.
-- [ ] Test slow wheel scroll, fast scroll, immediate reverse, stop/settle,
+- [x] Test slow wheel scroll, fast scroll, immediate reverse, stop/settle,
       direct anchors, refresh, keyboard, reduced motion, fallback, and overflow.
-- [ ] Inspect campaign-quality presence frames for WEINS, SLYOUR, and THE XIDE;
+- [x] Inspect campaign-quality presence frames for WEINS, SLYOUR, and THE XIDE;
       tune only evidence-backed Creator defects using test-first fixes.
-- [ ] Verify BM Visual and Gateway have no source diff and visually smoke-test
+- [x] Verify BM Visual and Gateway have no source diff and visually smoke-test
       BM Visual for regression.
-- [ ] Re-run the full automated suite after final tuning.
-- [ ] Push `feat/bmp-creator-v1`, obtain the Vercel branch deployment, and
+- [x] Re-run the full automated suite after final tuning.
+- [x] Push `feat/bmp-creator-v1`, obtain the Vercel branch deployment, and
       verify the preview returns HTTP 200 with the new commit.
-- [ ] Report root causes, controller/CSS/media changes, source and rendered
+- [x] Report root causes, controller/CSS/media changes, source and rendered
       dimensions, quality policy, palette changes, test evidence, commit SHAs,
       preview URL, and remaining perceptual weaknesses.
