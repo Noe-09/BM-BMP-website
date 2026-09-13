@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import {
   dampCreatorVisualProgress,
   getCreatorJourneyState,
+  getCreatorPresenceState,
 } from "@/lib/creator/journey";
 
 type CreatorJourneyControllerProps = {
@@ -63,7 +64,7 @@ export function CreatorJourneyController({
           elapsedMs,
           { reducedMotion: motionQuery.matches },
         );
-        const presence = Math.max(0, 1 - Math.abs(visual.value - 0.5) * 2);
+        const presenceState = getCreatorPresenceState(visual.value);
         const portal = chapter.querySelector<HTMLElement>("[data-creator-world]");
 
         renderedProgress[index] = visual.value;
@@ -73,13 +74,27 @@ export function CreatorJourneyController({
           targetPortalProgress.toFixed(4),
         );
         chapter.style.setProperty("--portal-progress", visual.value.toFixed(4));
-        chapter.style.setProperty("--portal-presence", presence.toFixed(4));
+        chapter.style.setProperty(
+          "--portal-frame-progress",
+          presenceState.frameProgress.toFixed(4),
+        );
+        chapter.style.setProperty(
+          "--portal-presence",
+          presenceState.presence.toFixed(4),
+        );
         portal?.style.setProperty(
           "--portal-target-progress",
           targetPortalProgress.toFixed(4),
         );
         portal?.style.setProperty("--portal-progress", visual.value.toFixed(4));
-        portal?.style.setProperty("--portal-presence", presence.toFixed(4));
+        portal?.style.setProperty(
+          "--portal-frame-progress",
+          presenceState.frameProgress.toFixed(4),
+        );
+        portal?.style.setProperty(
+          "--portal-presence",
+          presenceState.presence.toFixed(4),
+        );
 
         if (
           bounds.top <= window.innerHeight * 0.56 &&

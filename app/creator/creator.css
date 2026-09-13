@@ -161,7 +161,9 @@
 }
 
 .creator-portal-chapter {
+  --portal-target-progress: 0.5;
   --portal-progress: 0.5;
+  --portal-frame-progress: 0.5;
   --portal-presence: 1;
   position: relative;
   min-height: 205svh;
@@ -264,17 +266,12 @@
 
 .weins-portal__visual {
   position: absolute;
-  inset: -16% -12% -18% 13%;
+  inset: -7% 15% -7% 12%;
   z-index: 1;
-  clip-path: inset(
-    calc(var(--portal-progress, 0.35) * 7%)
-    calc(var(--portal-progress, 0.35) * 30%)
-    calc(var(--portal-progress, 0.35) * 7%)
-    calc(var(--portal-progress, 0.35) * 4%)
-  );
-  transform: scale(calc(1.42 - (var(--portal-progress, 0.35) * 0.46)));
+  overflow: hidden;
+  transform: scale(calc(1.11 - (var(--portal-frame-progress, 0.5) * 0.22)));
   transform-origin: center 42%;
-  will-change: transform, clip-path;
+  will-change: transform;
 }
 
 .weins-portal__visual .creator-media,
@@ -285,7 +282,7 @@
 
 .weins-portal__visual img {
   object-position: 56% center;
-  filter: grayscale(1) contrast(1.08);
+  filter: grayscale(0.94) contrast(1.03);
 }
 
 .weins-portal__visual figcaption,
@@ -297,10 +294,13 @@
   position: absolute;
   inset: 0 0 0 auto;
   z-index: 2;
-  width: calc(4vw + var(--portal-progress, 0.35) * 21vw);
+  width: 25vw;
   background: #b9b9b6;
-  transform: translateX(calc((1 - var(--portal-progress, 0.35)) * 24vw));
-  box-shadow: -2rem 0 6rem rgba(17, 17, 19, 0.12);
+  transform: translateX(calc((1 - var(--portal-frame-progress, 0.5)) * 24vw))
+    scaleX(calc(0.16 + (var(--portal-frame-progress, 0.5) * 0.84)));
+  transform-origin: right center;
+  box-shadow: -1.5rem 0 3rem rgba(17, 17, 19, 0.1);
+  will-change: transform;
 }
 
 .weins-portal__silhouette {
@@ -310,9 +310,9 @@
   z-index: 4;
   width: clamp(8rem, 18vw, 18rem);
   height: clamp(15rem, 42vh, 30rem);
-  clip-path: inset(calc((1 - var(--portal-presence, 1)) * 48%) 0 0);
+  overflow: hidden;
   opacity: calc(var(--portal-presence, 1) * 0.92);
-  filter: grayscale(1) contrast(1.12);
+  filter: grayscale(0.92) contrast(1.04);
   transform: translateY(calc((1 - var(--portal-presence, 1)) * 14vh));
 }
 
@@ -342,8 +342,7 @@
   font-weight: 720;
   line-height: 0.68;
   letter-spacing: -0.09em;
-  mix-blend-mode: difference;
-  transform: translateX(calc((var(--portal-progress, 0.35) - 0.48) * -18vw));
+  transform: translateX(calc((var(--portal-frame-progress, 0.5) - 0.48) * -18vw));
 }
 
 .weins-portal__identity > div p {
@@ -390,19 +389,20 @@
   line-height: 0.72;
   letter-spacing: -0.08em;
   word-break: break-all;
-  transform: translateX(calc(38vw - (var(--portal-progress, 0.45) * 58vw)));
+  transform: translateX(calc(38vw - (var(--portal-frame-progress, 0.5) * 58vw)));
   will-change: transform;
 }
 
 .slyour-portal__campaign {
   position: absolute;
-  top: -8vh;
-  left: calc(-17vw + (var(--portal-progress, 0.45) * 22vw));
+  top: -4vh;
+  left: -17vw;
   z-index: 2;
-  width: min(76vw, 78rem);
-  height: 91vh;
-  transform: rotate(calc(-5deg + (var(--portal-progress, 0.45) * 7deg)))
-    scale(calc(1.13 - (var(--portal-progress, 0.45) * 0.12)));
+  width: min(70vw, 70rem);
+  height: 86vh;
+  transform: translate3d(calc(var(--portal-frame-progress, 0.5) * 22vw), 0, 0)
+    rotate(calc(-5deg + (var(--portal-frame-progress, 0.5) * 7deg)))
+    scale(calc(1.08 - (var(--portal-frame-progress, 0.5) * 0.16)));
   transform-origin: 45% 58%;
   will-change: transform;
 }
@@ -510,7 +510,7 @@
   z-index: 5;
   pointer-events: none;
   background: #050505;
-  opacity: calc(var(--portal-progress, 0.45) * 0.72);
+  opacity: calc(var(--portal-frame-progress, 0.5) * 0.38);
 }
 
 .xide-portal__glow {
@@ -521,7 +521,7 @@
   width: min(54vw, 46rem);
   height: 68%;
   background: rgba(196, 125, 57, 0.15);
-  filter: blur(7rem);
+  filter: blur(4.5rem);
   opacity: var(--portal-presence, 1);
   transform: translateX(-50%) scale(calc(0.72 + (var(--portal-presence, 1) * 0.28)));
 }
@@ -531,15 +531,12 @@
   top: 7%;
   left: 50%;
   z-index: 2;
-  width: min(68vw, 72rem);
-  height: 82%;
-  opacity: calc(var(--portal-presence, 1) * 1.15);
-  clip-path: inset(
-    calc((1 - var(--portal-presence, 1)) * 19%)
-    calc((1 - var(--portal-presence, 1)) * 28%)
-  );
-  transform: translateX(-50%) scale(calc(0.87 + (var(--portal-presence, 1) * 0.13)));
-  will-change: opacity, transform, clip-path;
+  width: min(60vw, 68rem);
+  height: 78%;
+  overflow: hidden;
+  opacity: calc(0.32 + (var(--portal-presence, 1) * 0.68));
+  transform: translateX(-50%) scale(calc(0.94 + (var(--portal-presence, 1) * 0.06)));
+  will-change: opacity, transform;
 }
 
 .xide-portal__environment .creator-media__frame {
@@ -604,7 +601,7 @@
   font-size: 0.58rem;
   letter-spacing: 0.17em;
   text-transform: uppercase;
-  transform: translateX(calc((var(--portal-progress, 0.45) - 0.5) * var(--trace-offset, 5vw)));
+  transform: translateX(calc((var(--portal-frame-progress, 0.5) - 0.5) * var(--trace-offset, 5vw)));
 }
 
 .xide-portal__traces li:nth-child(2) {
@@ -1186,18 +1183,12 @@
   }
 
   .weins-portal__visual {
-    inset: -5% -44% -7% -18%;
-    clip-path: inset(
-      calc(var(--portal-progress, 0.35) * 5%)
-      calc(var(--portal-progress, 0.35) * 23%)
-      calc(var(--portal-progress, 0.35) * 5%)
-      calc(var(--portal-progress, 0.35) * 8%)
-    );
-    transform: scale(calc(1.24 - (var(--portal-progress, 0.35) * 0.25)));
+    inset: 4% -5% 4% 10%;
+    transform: scale(calc(1.04 - (var(--portal-frame-progress, 0.5) * 0.08)));
   }
 
   .weins-portal__slab {
-    width: calc(7vw + var(--portal-progress, 0.35) * 28vw);
+    width: 35vw;
   }
 
   .weins-portal__silhouette {
@@ -1218,7 +1209,7 @@
 
   .weins-portal__identity h2 {
     font-size: clamp(5.6rem, 27vw, 8.2rem);
-    transform: translateX(calc((var(--portal-progress, 0.35) - 0.48) * -11vw));
+    transform: translateX(calc((var(--portal-frame-progress, 0.5) - 0.48) * -11vw));
   }
 
   .weins-portal__action {
@@ -1228,14 +1219,17 @@
   .slyour-portal__editorial-wall {
     width: 86vw;
     font-size: clamp(5rem, 27vw, 9rem);
-    transform: translateX(calc(48vw - (var(--portal-progress, 0.45) * 76vw)));
+    transform: translateX(calc(48vw - (var(--portal-frame-progress, 0.5) * 76vw)));
   }
 
   .slyour-portal__campaign {
     top: 7vh;
-    left: calc(-41vw + (var(--portal-progress, 0.45) * 30vw));
-    width: 116vw;
+    left: -28vw;
+    width: 104vw;
     height: 70vh;
+    transform: translate3d(calc(var(--portal-frame-progress, 0.5) * 24vw), 0, 0)
+      rotate(calc(-3deg + (var(--portal-frame-progress, 0.5) * 4deg)))
+      scale(calc(1.04 - (var(--portal-frame-progress, 0.5) * 0.08)));
   }
 
   .slyour-portal__object {
@@ -1428,12 +1422,11 @@
   }
 
   .weins-portal__visual {
-    clip-path: inset(8% 16% 8% 6%);
     transform: scale(1);
   }
 
   .weins-portal__slab {
-    transform: none;
+    transform: translateX(12vw) scaleX(0.58);
   }
 
   .weins-portal__silhouette,
@@ -1448,7 +1441,6 @@
   }
 
   .slyour-portal__editorial-wall,
-  .slyour-portal__campaign,
   .slyour-portal__object,
   .weins-portal__identity h2,
   .xide-portal__traces li,
@@ -1456,6 +1448,10 @@
   .creator-veil__artifact,
   .creator-veil__artifact > span {
     transform: none;
+  }
+
+  .slyour-portal__campaign {
+    transform: translate3d(11vw, 0, 0) rotate(-1.5deg) scale(1);
   }
 }
 

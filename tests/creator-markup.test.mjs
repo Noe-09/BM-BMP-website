@@ -39,6 +39,7 @@ test("Creator keeps browser interaction inside one narrow controller", async () 
   assert.match(source, /data-creator-chapter/);
   assert.match(source, /dampCreatorVisualProgress/);
   assert.match(source, /--portal-target-progress/);
+  assert.match(source, /--portal-frame-progress/);
   assert.match(source, /--portal-progress/);
   assert.match(source, /settled/);
   assert.match(sequence, /creator-portal-sequence/);
@@ -148,7 +149,25 @@ test("Creator overview CSS forms a continuous sticky exhibition", async () => {
   assert.match(css, /\.creator-portal-sequence/);
   assert.match(css, /\.creator-world \{[\s\S]*position: sticky/);
   assert.match(css, /--portal-progress/);
+  assert.match(css, /--portal-frame-progress/);
   assert.match(css, /\.weins-portal__visual[\s\S]*scale\(/);
+  assert.match(css, /\.weins-portal__slab[\s\S]{0,420}scaleX\(/);
+  assert.doesNotMatch(
+    css,
+    /\.weins-portal__slab\s*\{[^}]*width:\s*calc\([^}]*--portal-progress/s,
+  );
+  assert.doesNotMatch(
+    css,
+    /\.slyour-portal__campaign\s*\{[^}]*left:\s*calc\([^}]*--portal-progress/s,
+  );
+  assert.doesNotMatch(
+    css,
+    /\.weins-portal__visual\s*\{[^}]*clip-path:[^}]*--portal-progress/s,
+  );
+  assert.doesNotMatch(
+    css,
+    /\.xide-portal__environment\s*\{[^}]*clip-path:[^}]*--portal-presence/s,
+  );
   assert.match(css, /\.slyour-portal__editorial-wall/);
   assert.match(css, /\.xide-portal__darkness/);
   assert.doesNotMatch(css, /\.creator-world \{[\s\S]{0,220}border-top/);

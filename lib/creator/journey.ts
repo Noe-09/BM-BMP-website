@@ -30,6 +30,11 @@ export type CreatorVisualDampingState = {
   settled: boolean;
 };
 
+export type CreatorPresenceState = {
+  frameProgress: number;
+  presence: number;
+};
+
 const CREATOR_VISUAL_DAMPING = {
   lambda: 18,
   maxLag: 0.1,
@@ -77,6 +82,34 @@ export function dampCreatorVisualProgress(
   }
 
   return { value: clampCreatorProgress(value), settled: false };
+}
+
+export function getCreatorPresenceState(progress: number): CreatorPresenceState {
+  const value = clampCreatorProgress(progress);
+  const approachStart = 0.18;
+  const presenceStart = 0.42;
+  const presenceEnd = 0.58;
+  const departureEnd = 0.82;
+
+  if (value <= approachStart) return { frameProgress: 0, presence: 0 };
+  if (value < presenceStart) {
+    return {
+      frameProgress:
+        ((value - approachStart) / (presenceStart - approachStart)) * 0.5,
+      presence: (value - approachStart) / (presenceStart - approachStart),
+    };
+  }
+  if (value <= presenceEnd) return { frameProgress: 0.5, presence: 1 };
+  if (value < departureEnd) {
+    return {
+      frameProgress:
+        0.5 +
+        ((value - presenceEnd) / (departureEnd - presenceEnd)) * 0.5,
+      presence: (departureEnd - value) / (departureEnd - presenceEnd),
+    };
+  }
+
+  return { frameProgress: 1, presence: 0 };
 }
 
 export function getCreatorWorldProgress(

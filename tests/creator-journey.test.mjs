@@ -6,6 +6,7 @@ import {
   dampCreatorVisualProgress,
   getCreatorDirection,
   getCreatorJourneyState,
+  getCreatorPresenceState,
   getCreatorWorldProgress,
 } from "../lib/creator/journey.ts";
 
@@ -107,6 +108,51 @@ test("Creator visual damping bypasses motion and converges exactly", () => {
     value: 0.4,
     settled: true,
   });
+});
+
+test("Creator presence holds a stable resolved interval", () => {
+  assert.deepEqual(getCreatorPresenceState(0), {
+    frameProgress: 0,
+    presence: 0,
+  });
+  assert.deepEqual(getCreatorPresenceState(0.42), {
+    frameProgress: 0.5,
+    presence: 1,
+  });
+  assert.deepEqual(getCreatorPresenceState(0.5), {
+    frameProgress: 0.5,
+    presence: 1,
+  });
+  assert.deepEqual(getCreatorPresenceState(0.58), {
+    frameProgress: 0.5,
+    presence: 1,
+  });
+  assert.deepEqual(getCreatorPresenceState(1), {
+    frameProgress: 1,
+    presence: 0,
+  });
+});
+
+test("Creator presence approaches and departs continuously", () => {
+  const approach = getCreatorPresenceState(0.3);
+  const departure = getCreatorPresenceState(0.7);
+
+  assert.ok(approach.frameProgress > 0 && approach.frameProgress < 0.5);
+  assert.ok(departure.frameProgress > 0.5 && departure.frameProgress < 1);
+  assert.ok(Math.abs(approach.presence - 0.5) < 0.000001);
+  assert.ok(Math.abs(departure.presence - 0.5) < 0.000001);
+  assert.ok(
+    Math.abs(
+      getCreatorPresenceState(0.180001).frameProgress -
+        getCreatorPresenceState(0.18).frameProgress,
+    ) < 0.00001,
+  );
+  assert.ok(
+    Math.abs(
+      getCreatorPresenceState(0.82).frameProgress -
+        getCreatorPresenceState(0.819999).frameProgress,
+    ) < 0.00001,
+  );
 });
 
 test("Creator journey state derives world, velocity, and reduced motion", () => {

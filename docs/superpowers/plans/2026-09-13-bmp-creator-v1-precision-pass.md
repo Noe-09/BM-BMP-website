@@ -59,21 +59,21 @@
 - Produces: stable approach / presence / departure compositions using transform
   and opacity
 
-- [ ] Add failing behavioral contract assertions that portal CSS does not
+- [x] Add failing behavioral contract assertions that portal CSS does not
       continuously animate WEINS slab width, SLYOUR campaign left, or full-image
       WEINS/XIDE clip paths.
-- [ ] Confirm the focused test fails against the current CSS.
-- [ ] Convert WEINS slab expansion to `scaleX`/translate, keep crop geometry
+- [x] Confirm the focused test fails against the current CSS.
+- [x] Convert WEINS slab expansion to `scaleX`/translate, keep crop geometry
       static, and remove difference blending from the title.
-- [ ] Convert SLYOUR campaign travel from `left` to translate while retaining
+- [x] Convert SLYOUR campaign travel from `left` to translate while retaining
       its static editorial crop.
-- [ ] Replace XIDE's animated image clip with stable overflow geometry and
+- [x] Replace XIDE's animated image clip with stable overflow geometry and
       transform/opacity.
-- [ ] Add bounded presence-plateau variables that stabilize each revealed
+- [x] Add bounded presence-plateau variables that stabilize each revealed
       world's dominant media around chapter midpoint.
-- [ ] Tune mobile and reduced-motion compositions to remain static and sharp.
-- [ ] Run Creator tests and typecheck.
-- [ ] Commit as `perf: resolve creator portal presence geometry`.
+- [x] Tune mobile and reduced-motion compositions to remain static and sharp.
+- [x] Run Creator tests and typecheck.
+- [x] Commit as `perf: resolve creator portal presence geometry`.
 
 ### Task 3: Creator image-delivery policy
 
