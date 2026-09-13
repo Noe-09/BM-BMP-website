@@ -176,6 +176,10 @@ test("Creator overview CSS forms a continuous sticky exhibition", async () => {
   assert.match(css, /--portal-progress/);
   assert.match(css, /--portal-frame-progress/);
   assert.match(css, /\.weins-portal__visual[\s\S]*scale\(/);
+  assert.match(
+    css,
+    /\.weins-portal__visual\s*\{[^}]*height:\s*min\(90%,\s*48rem\)/s,
+  );
   assert.match(css, /\.weins-portal__slab[\s\S]{0,420}scaleX\(/);
   assert.doesNotMatch(
     css,
