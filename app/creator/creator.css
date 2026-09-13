@@ -69,12 +69,12 @@
   position: absolute;
   top: 5%;
   right: -7vw;
-  width: min(61vw, 68rem);
+  width: min(56vw, 62rem);
   height: 105%;
   clip-path: polygon(19% 0, 100% 0, 100% 100%, 0 86%);
   filter: grayscale(1) contrast(1.05);
   opacity: 0.54;
-  transform: scale(1.08);
+  transform: scale(1.02);
   transform-origin: center right;
 }
 
@@ -267,6 +267,7 @@
 .weins-portal__visual {
   position: absolute;
   inset: -7% 15% -7% 12%;
+  width: min(73vw, 68rem);
   z-index: 1;
   overflow: hidden;
   transform: scale(calc(1.11 - (var(--portal-frame-progress, 0.5) * 0.22)));
@@ -1136,9 +1137,10 @@
   .creator-arrival__intrusion .creator-media {
     top: 20%;
     right: -28vw;
-    width: 105vw;
+    width: 100vw;
     height: 82%;
     opacity: 0.46;
+    transform: scale(1.02);
   }
 
   .creator-arrival__inner {
@@ -1184,6 +1186,7 @@
 
   .weins-portal__visual {
     inset: 4% -5% 4% 10%;
+    width: auto;
     transform: scale(calc(1.04 - (var(--portal-frame-progress, 0.5) * 0.08)));
   }
 

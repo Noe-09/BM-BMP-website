@@ -70,7 +70,7 @@ test("revealed Creator worlds use three non-template portal grammars", async () 
     components.map(({ name, source }) => [name, source]),
   );
   assert.equal((byName.WeinsWorld.match(/<CreatorMedia/g) ?? []).length, 2);
-  assert.match(byName.WeinsWorld, /media=\{world\.media\[0\]\}[\s\S]*priority/);
+  assert.match(byName.WeinsWorld, /media=\{world\.media\[0\]\}[\s\S]*quality=\{92\}/);
   assert.equal((byName.SlyourWorld.match(/<CreatorMedia/g) ?? []).length, 2);
   assert.equal((byName.XideWorld.match(/<CreatorMedia/g) ?? []).length, 1);
   assert.match(byName.WeinsWorld, /weins-portal__slab/);
@@ -98,10 +98,35 @@ test("Creator media uses optimized images with a neutral failure state", async (
 
   assert.match(source, /from "next\/image"/);
   assert.match(source, /sizes/);
+  assert.match(source, /quality: 75 \| 88 \| 92/);
+  assert.match(source, /quality=\{quality\}/);
   assert.match(source, /onError/);
   assert.match(source, /Media unavailable/);
   assert.match(source, /preload=\{priority\}/);
   assert.match(source, /loading=\{priority \? undefined : "lazy"\}/);
+});
+
+test("Creator media delivery follows explicit primary and secondary roles", async () => {
+  const [arrival, weins, slyour, xide, gallery, config] = await Promise.all([
+    readFile(new URL("../components/creator/CreatorArrival.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/creator/worlds/WeinsWorld.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/creator/worlds/SlyourWorld.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/creator/worlds/XideWorld.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/creator/detail/ArtifactGallery.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../next.config.ts", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(config, /qualities:\s*\[75, 88, 92\]/);
+  assert.match(arrival, /quality=\{92\}/);
+  assert.match(arrival, /102vw[\s\S]*57vw[\s\S]*1010px/);
+  assert.match(weins, /quality=\{92\}[\s\S]*82vw[\s\S]*1210px/);
+  assert.match(weins, /quality=\{88\}[\s\S]*34vw[\s\S]*288px/);
+  assert.equal((weins.match(/\bpriority\b/g) ?? []).length, 0);
+  assert.match(slyour, /quality=\{92\}[\s\S]*110vw[\s\S]*1210px/);
+  assert.match(slyour, /quality=\{88\}[\s\S]*48vw[\s\S]*448px/);
+  assert.match(xide, /quality=\{92\}[\s\S]*96vw[\s\S]*1088px/);
+  assert.match(gallery, /quality=\{index === 0 \? 92 : 88\}/);
+  assert.match(gallery, /92vw/);
 });
 
 test("sealed worlds disclose status without leaking media or navigation", async () => {

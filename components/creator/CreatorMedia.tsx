@@ -9,6 +9,7 @@ type CreatorMediaProps = {
   media: CreatorMediaRecord | null | undefined;
   className?: string;
   priority?: boolean;
+  quality: 75 | 88 | 92;
   sizes: string;
 };
 
@@ -16,6 +17,7 @@ export function CreatorMedia({
   media,
   className = "",
   priority = false,
+  quality,
   sizes,
 }: CreatorMediaProps) {
   const [failed, setFailed] = useState(false);
@@ -38,6 +40,7 @@ export function CreatorMedia({
             fill
             preload={priority}
             loading={priority ? undefined : "lazy"}
+            quality={quality}
             sizes={sizes}
             onError={() => setFailed(true)}
           />

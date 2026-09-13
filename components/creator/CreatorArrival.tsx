@@ -12,7 +12,8 @@ export function CreatorArrival({ firstWorld }: CreatorArrivalProps) {
         <CreatorMedia
           media={firstWorld.media[0]}
           priority
-          sizes="(max-width: 640px) 84vw, 58vw"
+          quality={92}
+          sizes="(max-width: 640px) 102vw, (max-width: 1800px) 57vw, 1010px"
         />
       </div>
       <div className="creator-shell creator-arrival__inner">

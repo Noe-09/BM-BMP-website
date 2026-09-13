@@ -18,10 +18,11 @@ export function ArtifactGallery({ world }: { world: CreatorWorld }) {
             key={media.src}
             media={media}
             className={`creator-detail__artifact creator-detail__artifact--${index + 1}`}
+            quality={index === 0 ? 92 : 88}
             sizes={
               index === 0
-                ? "(max-width: 640px) 92vw, 62vw"
-                : "(max-width: 640px) 80vw, 34vw"
+                ? "(max-width: 640px) 92vw, (max-width: 1600px) 62vw, 992px"
+                : "(max-width: 640px) 92vw, (max-width: 1600px) 34vw, 544px"
             }
           />
         ))}

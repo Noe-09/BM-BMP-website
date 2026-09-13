@@ -17,15 +17,16 @@ export function WeinsWorld({ world }: { world: CreatorWorld }) {
         <div className="weins-portal__visual">
           <CreatorMedia
             media={world.media[0]}
-            priority
-            sizes="(max-width: 640px) 100vw, 86vw"
+            quality={92}
+            sizes="(max-width: 640px) 100vw, (max-width: 1490px) 82vw, 1210px"
           />
         </div>
         <div className="weins-portal__slab" aria-hidden="true" />
         <CreatorMedia
           media={world.media[2]}
           className="weins-portal__silhouette"
-          sizes="(max-width: 640px) 38vw, 19vw"
+          quality={88}
+          sizes="(max-width: 640px) 34vw, 288px"
         />
         <div className="creator-shell weins-portal__identity">
           <p className="weins-portal__index">{world.index} / 06</p>

@@ -18,7 +18,8 @@ export function XideWorld({ world }: { world: CreatorWorld }) {
         <CreatorMedia
           media={world.media[0]}
           className="xide-portal__environment"
-          sizes="(max-width: 640px) 92vw, 68vw"
+          quality={92}
+          sizes="(max-width: 640px) 96vw, (max-width: 1813px) 60vw, 1088px"
         />
         <div className="creator-shell xide-portal__identity">
           <p>{world.index} / 06</p>

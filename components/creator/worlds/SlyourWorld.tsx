@@ -20,12 +20,14 @@ export function SlyourWorld({ world }: { world: CreatorWorld }) {
         <CreatorMedia
           media={world.media[0]}
           className="slyour-portal__campaign"
-          sizes="(max-width: 640px) 112vw, 72vw"
+          quality={92}
+          sizes="(max-width: 640px) 110vw, (max-width: 1600px) 76vw, 1210px"
         />
         <CreatorMedia
           media={world.media[1]}
           className="slyour-portal__object"
-          sizes="(max-width: 640px) 48vw, 24vw"
+          quality={88}
+          sizes="(max-width: 640px) 48vw, (max-width: 1660px) 27vw, 448px"
         />
         <div className="creator-shell slyour-portal__identity">
           <p>{world.index} / 06</p>

@@ -91,17 +91,17 @@
 - Produces: `quality?: 88 | 92` on `CreatorMedia`
 - Produces: Next.js image quality allowlist `[75, 88, 92]`
 
-- [ ] Add failing component tests for explicit primary/secondary quality and
+- [x] Add failing component tests for explicit primary/secondary quality and
       realistic transformed `sizes` values.
-- [ ] Confirm the tests fail because CreatorMedia has no quality contract.
-- [ ] Add the quality prop and pass it to Next/Image without changing fallback
+- [x] Confirm the tests fail because CreatorMedia has no quality contract.
+- [x] Add the quality prop and pass it to Next/Image without changing fallback
       behavior or eager/lazy semantics.
-- [ ] Configure the Next.js 16 quality allowlist.
-- [ ] Apply quality 92 to arrival/primary portal media and quality 88 to
+- [x] Configure the Next.js 16 quality allowlist.
+- [x] Apply quality 92 to arrival/primary portal media and quality 88 to
       secondary portal/detail media.
-- [ ] Correct `sizes` after the geometry reductions, avoiding global overserve.
-- [ ] Run Creator tests, typecheck, lint, and a production build.
-- [ ] Commit as `fix: correct creator portal image delivery`.
+- [x] Correct `sizes` after the geometry reductions, avoiding global overserve.
+- [x] Run Creator tests, typecheck, lint, and a production build.
+- [x] Commit as `fix: correct creator portal image delivery`.
 
 ### Task 4: Verified WEINS asset correction
 
