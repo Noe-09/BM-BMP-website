@@ -195,6 +195,8 @@ test("the restrained Studio navigation exposes every canonical destination", asy
   const html = await response.text();
 
   for (const href of [
+    "/",
+    "/studio",
     "/work",
     "/bm-visual",
     "/bm-tech",

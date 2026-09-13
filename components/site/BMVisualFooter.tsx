@@ -9,7 +9,7 @@ export function BMVisualFooter() {
     <footer className="footer bm-rule bm-visual-footer">
       <Container className="footer-inner">
         <div>
-          <Link href={NAVIGATION.home.href.value} aria-label="BMP home">
+          <Link href={NAVIGATION.studio.href.value} aria-label="BMP studio">
             <strong>BMP / BM Visual</strong>
           </Link>
           <p>Creative and visual division of BMP</p>

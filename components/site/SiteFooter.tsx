@@ -9,7 +9,7 @@ export function SiteFooter() {
     <footer className="bmp-footer">
       <Container className="bmp-footer__inner">
         <div className="bmp-footer__identity">
-          <Link href={NAVIGATION.home.href.value} aria-label="BMP home">
+          <Link href={NAVIGATION.studio.href.value} aria-label="BMP studio">
             {BRAND.name.value}
           </Link>
           <p>{BRAND.promise.value}</p>
