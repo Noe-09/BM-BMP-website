@@ -46,6 +46,9 @@ export function validateCreatorWorld(world: CreatorWorld): readonly string[] {
   if (world.revealState === "sealed" && world.liveUrl !== null) {
     errors.push(`${world.slug}: sealed worlds cannot expose live URLs`);
   }
+  if (world.liveUrl !== null && !world.liveUrl.startsWith("https://")) {
+    errors.push(`${world.slug}: live URLs must use HTTPS`);
+  }
   if (publishable && !world.media.some(isVerifiedCreatorMedia)) {
     errors.push(`${world.slug}: publishable worlds require verified media`);
   }

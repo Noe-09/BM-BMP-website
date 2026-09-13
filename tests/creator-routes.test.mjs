@@ -89,7 +89,13 @@ test("Creator publishes only the three approved detail routes", async () => {
 });
 
 test("Creator details use the approved exhibition grammar", async () => {
-  for (const slug of ["weins", "slyour", "the-xide"]) {
+  const destinations = new Map([
+    ["weins", "https://weins-chi.vercel.app/"],
+    ["slyour", "https://slyour.vercel.app/"],
+    ["the-xide", "https://thexide.vercel.app/"],
+  ]);
+
+  for (const [slug, liveUrl] of destinations) {
     const response = await fetch(`${baseUrl}/creator/${slug}`);
     const html = await response.text();
 
@@ -107,7 +113,47 @@ test("Creator details use the approved exhibition grammar", async () => {
     ]) {
       assert.ok(html.includes(marker), `${slug} should include ${marker}`);
     }
-    assert.doesNotMatch(html, /VISIT LIVE/);
+    assert.match(
+      html,
+      new RegExp(
+        `href="${liveUrl.replaceAll(".", "\\.")}"[^>]*target="_blank"[^>]*rel="noopener noreferrer"`,
+      ),
+    );
+    assert.match(html, /VISIT LIVE/);
+    assert.match(html, /opens in a new tab/);
     assert.doesNotMatch(html, /components\/case|data-bm-visual/);
+  }
+});
+
+test("Creator overview keeps portals internal and adds LIVE only in eligible Index rows", async () => {
+  const response = await fetch(`${baseUrl}/creator`);
+  const html = await response.text();
+  const portalsStart = html.indexOf('data-creator-stage="01-06-worlds"');
+  const indexStart = html.indexOf('data-creator-index="worlds"');
+  const indexEnd = html.indexOf("</section>", indexStart);
+  const portals = html.slice(portalsStart, indexStart);
+  const index = html.slice(indexStart, indexEnd);
+
+  for (const slug of ["weins", "slyour", "the-xide"]) {
+    assert.match(portals, new RegExp(`href="/creator/${slug}"`));
+  }
+  assert.equal(portals.match(/ENTER WORLD/g)?.length, 3);
+
+  for (const liveUrl of [
+    "https://weins-chi.vercel.app/",
+    "https://slyour.vercel.app/",
+    "https://thexide.vercel.app/",
+  ]) {
+    assert.match(index, new RegExp(`href="${liveUrl.replaceAll(".", "\\.")}"`));
+  }
+  assert.equal(index.match(/LIVE/g)?.length, 3);
+  assert.equal(index.match(/target="_blank"/g)?.length, 3);
+  assert.equal(index.match(/rel="noopener noreferrer"/g)?.length, 3);
+
+  for (const slug of ["pawsona", "relationship", "miner"]) {
+    const rowStart = index.indexOf(`data-index-world="${slug}"`);
+    const rowEnd = index.indexOf("</li>", rowStart);
+    const row = index.slice(rowStart, rowEnd);
+    assert.doesNotMatch(row, /<a\b|LIVE/);
   }
 });

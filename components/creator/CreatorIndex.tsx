@@ -13,7 +13,11 @@ function IndexContents({ world }: { world: CreatorWorld }) {
       <span className="creator-index__name">{world.name}</span>
       <span className="creator-index__motifs">{world.motifs.join(" / ")}</span>
       <span className="creator-index__state">{world.statusLabel}</span>
-      {world.route ? <span aria-hidden="true">↗</span> : null}
+      {world.route ? (
+        <span className="creator-index__internal-action">
+          ENTER WORLD <span aria-hidden="true">→</span>
+        </span>
+      ) : null}
     </>
   );
 }
@@ -36,11 +40,24 @@ export function CreatorIndex({ worlds }: CreatorIndexProps) {
           {worlds.map((world) => (
             <li key={world.slug} data-index-world={world.slug}>
               {world.route ? (
-                <Link href={world.route}>
-                  <IndexContents world={world} />
-                </Link>
+                <>
+                  <Link className="creator-index__world-link" href={world.route}>
+                    <IndexContents world={world} />
+                  </Link>
+                  {world.liveUrl ? (
+                    <a
+                      className="creator-index__live"
+                      href={world.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Visit ${world.name} live experience (opens in a new tab)`}
+                    >
+                      LIVE <span aria-hidden="true">↗</span>
+                    </a>
+                  ) : null}
+                </>
               ) : (
-                <div>
+                <div className="creator-index__sealed-row">
                   <IndexContents world={world} />
                 </div>
               )}

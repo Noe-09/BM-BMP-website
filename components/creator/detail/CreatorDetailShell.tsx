@@ -87,8 +87,18 @@ export function CreatorDetailShell({ world, worlds }: CreatorDetailShellProps) {
             <p className="creator-kicker">ENTER / EXIT</p>
             <h2>{world.name} remains its own world.</h2>
             <div>
-              {world.liveUrl ? <a href={world.liveUrl}>VISIT LIVE</a> : null}
               <Link href="/creator">Return to Creator</Link>
+              {world.liveUrl ? (
+                <a
+                  className="creator-detail__live-link"
+                  href={world.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Visit ${world.name} live experience (opens in a new tab)`}
+                >
+                  VISIT LIVE <span aria-hidden="true">↗</span>
+                </a>
+              ) : null}
             </div>
           </div>
         </section>

@@ -72,6 +72,34 @@ test("published worlds provide complete detail metadata and verified media", () 
   }
 });
 
+test("published Creator worlds expose verified HTTPS live destinations", () => {
+  assert.deepEqual(
+    getPublishedCreatorWorlds(CREATOR.worlds).map(({ slug, liveUrl }) => ({
+      slug,
+      liveUrl,
+    })),
+    [
+      { slug: "weins", liveUrl: "https://weins-chi.vercel.app/" },
+      { slug: "slyour", liveUrl: "https://slyour.vercel.app/" },
+      { slug: "the-xide", liveUrl: "https://thexide.vercel.app/" },
+    ],
+  );
+
+  assert.ok(
+    CREATOR.worlds
+      .filter(({ revealState }) => revealState === "sealed")
+      .every(({ liveUrl }) => liveUrl === null),
+  );
+});
+
+test("THE XIDE detail copy reflects its verified live destination", () => {
+  const xide = CREATOR.worlds.find(({ slug }) => slug === "the-xide");
+
+  assert.ok(xide?.detail);
+  assert.match(xide.detail.at(-1).body, /verified live destination/i);
+  assert.doesNotMatch(xide.detail.at(-1).body, /when .* verified/i);
+});
+
 test("WEINS publishes three distinct verified source assets", async () => {
   const weins = CREATOR.worlds.find(({ slug }) => slug === "weins");
   assert.ok(weins);
@@ -129,6 +157,19 @@ test("publishable worlds fail validation without proof or detail grammar", () =>
       "weins: publishable worlds require verified media",
       "weins: publishable worlds require six detail sections",
     ],
+  );
+});
+
+test("Creator rejects live destinations that are not HTTPS", () => {
+  const published = CREATOR.worlds.find(({ slug }) => slug === "weins");
+  assert.ok(published);
+
+  assert.deepEqual(
+    validateCreatorWorld({
+      ...published,
+      liveUrl: "http://weins.example",
+    }),
+    ["weins: live URLs must use HTTPS"],
   );
 });
 

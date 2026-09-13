@@ -1128,22 +1128,56 @@
 }
 
 .creator-index__list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   border-top: 1px solid rgba(17, 17, 17, 0.25);
 }
 
-.creator-index__list li > a,
-.creator-index__list li > div {
+.creator-index__world-link,
+.creator-index__sealed-row {
+  min-width: 0;
   min-height: clamp(5rem, 8vw, 8rem);
   display: grid;
-  grid-template-columns: 4rem minmax(10rem, 1fr) minmax(13rem, 0.75fr) 7rem 1.5rem;
+  grid-template-columns: 4rem minmax(10rem, 1fr) minmax(13rem, 0.75fr) 7rem minmax(7.5rem, auto);
   gap: 1rem;
   align-items: center;
   transition: padding 260ms cubic-bezier(0.2, 0.8, 0.2, 1), color 260ms ease, background 260ms ease;
 }
 
-.creator-index__list li > a:hover,
-.creator-index__list li > a:focus-visible {
+.creator-index__sealed-row {
+  grid-column: 1 / -1;
+}
+
+.creator-index__world-link:hover,
+.creator-index__world-link:focus-visible {
   padding-inline: 1rem;
+  color: var(--creator-paper);
+  background: #111;
+}
+
+.creator-index__internal-action {
+  justify-self: end;
+  white-space: nowrap;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+}
+
+.creator-index__live {
+  min-width: clamp(6.5rem, 8vw, 8rem);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-inline: 1rem;
+  border-left: 1px solid rgba(17, 17, 17, 0.25);
+  font-size: 0.62rem;
+  letter-spacing: 0.13em;
+  transition: color 180ms ease, background 180ms ease;
+}
+
+.creator-index__live:hover,
+.creator-index__live:focus-visible {
   color: var(--creator-paper);
   background: #111;
 }
@@ -1237,9 +1271,9 @@
     grid-template-columns: 4rem 1fr 8rem;
   }
 
-  .creator-index__list li > a,
-  .creator-index__list li > div {
-    grid-template-columns: 3rem minmax(8rem, 1fr) 6rem 1.5rem;
+  .creator-index__world-link,
+  .creator-index__sealed-row {
+    grid-template-columns: 3rem minmax(8rem, 1fr) 6rem minmax(7.5rem, auto);
   }
 
   .creator-index__motifs {
@@ -1493,8 +1527,12 @@
     grid-column: 1;
   }
 
-  .creator-index__list li > a,
-  .creator-index__list li > div {
+  .creator-index__list li {
+    grid-template-columns: 1fr;
+  }
+
+  .creator-index__world-link,
+  .creator-index__sealed-row {
     min-height: 7.5rem;
     grid-template-columns: 2.2rem 1fr auto;
     gap: 0.7rem;
@@ -1511,8 +1549,22 @@
     grid-row: 1;
   }
 
-  .creator-index__list li > a > span:last-child {
-    display: none;
+  .creator-index__internal-action {
+    grid-column: 2 / -1;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 0.75rem;
+  }
+
+  .creator-index__live {
+    grid-column: 1;
+    width: 100%;
+    justify-content: flex-end;
+    border-top: 1px solid rgba(17, 17, 17, 0.25);
+    border-left: 0;
+    padding-inline: 2.2rem 0;
   }
 
   .creator-colophon__statement {
@@ -1885,14 +1937,24 @@
   border-color: color-mix(in srgb, var(--detail-ground) 36%, transparent);
 }
 
+.creator-detail__live-link {
+  opacity: 0.72;
+  transition: opacity 180ms ease;
+}
+
+.creator-detail__live-link:hover,
+.creator-detail__live-link:focus-visible {
+  opacity: 1;
+}
+
 @media (max-width: 900px) {
   .creator-world__header {
     grid-template-columns: 5rem 5rem 1fr;
   }
 
-  .creator-index__list li > a,
-  .creator-index__list li > div {
-    grid-template-columns: 3rem minmax(8rem, 1fr) 6rem 1.5rem;
+  .creator-index__world-link,
+  .creator-index__sealed-row {
+    grid-template-columns: 3rem minmax(8rem, 1fr) 6rem minmax(7.5rem, auto);
   }
 
   .creator-index__motifs {
@@ -2086,8 +2148,12 @@
     grid-column: 1;
   }
 
-  .creator-index__list li > a,
-  .creator-index__list li > div {
+  .creator-index__list li {
+    grid-template-columns: 1fr;
+  }
+
+  .creator-index__world-link,
+  .creator-index__sealed-row {
     min-height: 7.5rem;
     grid-template-columns: 2.2rem 1fr auto;
     gap: 0.7rem;
@@ -2104,8 +2170,22 @@
     grid-row: 1;
   }
 
-  .creator-index__list li > a > span:last-child {
-    display: none;
+  .creator-index__internal-action {
+    grid-column: 2 / -1;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 0.75rem;
+  }
+
+  .creator-index__live {
+    grid-column: 1;
+    width: 100%;
+    justify-content: flex-end;
+    border-top: 1px solid rgba(17, 17, 17, 0.25);
+    border-left: 0;
+    padding-inline: 2.2rem 0;
   }
 
   .creator-colophon__statement {

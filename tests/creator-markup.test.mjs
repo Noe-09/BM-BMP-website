@@ -181,6 +181,33 @@ test("sealed worlds disclose status without leaking media or navigation", async 
   }
 });
 
+test("Creator live actions derive destinations from world data", async () => {
+  const [index, detail, ...portals] = await Promise.all([
+    readFile(new URL("../components/creator/CreatorIndex.tsx", import.meta.url), "utf8"),
+    readFile(
+      new URL(
+        "../components/creator/detail/CreatorDetailShell.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    ...["WeinsWorld", "SlyourWorld", "XideWorld"].map((name) =>
+      readFile(
+        new URL(`../components/creator/worlds/${name}.tsx`, import.meta.url),
+        "utf8",
+      ),
+    ),
+  ]);
+
+  assert.match(index, /world\.liveUrl/);
+  assert.match(detail, /world\.liveUrl/);
+  assert.doesNotMatch([index, detail, ...portals].join("\n"), /https:\/\//);
+  for (const portal of portals) {
+    assert.match(portal, /ENTER WORLD/);
+    assert.doesNotMatch(portal, /world\.liveUrl|VISIT LIVE|LIVE ↗/);
+  }
+});
+
 test("Creator Veil keeps every atmospheric layer decorative", async () => {
   const source = await readFile(
     new URL("../components/creator/veil/CreatorVeil.tsx", import.meta.url),
@@ -198,6 +225,9 @@ test("Creator overview CSS forms a continuous sticky exhibition", async () => {
     new URL("../app/creator/creator.css", import.meta.url),
     "utf8",
   );
+  const indexGridStart = css.indexOf(".creator-index__world-link,");
+  const indexGridEnd = css.indexOf("}", indexGridStart);
+  const indexGrid = css.slice(indexGridStart, indexGridEnd);
 
   assert.match(css, /\.creator-portal-sequence/);
   assert.match(css, /\.creator-world \{[\s\S]*position: sticky/);
@@ -227,6 +257,10 @@ test("Creator overview CSS forms a continuous sticky exhibition", async () => {
   );
   assert.match(css, /\.slyour-portal__editorial-wall/);
   assert.match(css, /\.xide-portal__darkness/);
+  assert.match(
+    indexGrid,
+    /grid-template-columns:[^;]*minmax\(7\.5rem,\s*auto\)/s,
+  );
   assert.doesNotMatch(css, /\.creator-world \{[\s\S]{0,220}border-top/);
   assert.doesNotMatch(css, /\.creator-veil \{[\s\S]{0,260}border:/);
 });

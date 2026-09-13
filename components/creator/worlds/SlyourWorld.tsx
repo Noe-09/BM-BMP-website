@@ -36,7 +36,7 @@ export function SlyourWorld({ world }: { world: CreatorWorld }) {
             <p>{world.motifs.join(" / ")}</p>
           </div>
           <Link href={world.route!}>
-            {world.statusLabel} <span aria-hidden="true">↗</span>
+            ENTER WORLD <span aria-hidden="true">→</span>
           </Link>
         </div>
       </div>

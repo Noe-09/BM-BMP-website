@@ -108,7 +108,7 @@ const worlds: readonly CreatorWorld[] = [
       "Creator presents the essential system; the complete WEINS flagship remains its own authored destination.",
     ]),
     route: "/creator/weins",
-    liveUrl: null,
+    liveUrl: "https://weins-chi.vercel.app/",
   },
   {
     index: "02",
@@ -157,7 +157,7 @@ const worlds: readonly CreatorWorld[] = [
       "Creator holds the world as an exhibition chapter while the product system continues inside its dedicated flagship.",
     ]),
     route: "/creator/slyour",
-    liveUrl: null,
+    liveUrl: "https://slyour.vercel.app/",
   },
   {
     index: "03",
@@ -203,10 +203,10 @@ const worlds: readonly CreatorWorld[] = [
       "Verified candle, diffuser, room-spray, botanical, and scent-system material establishes the current preview.",
       "TRACE, BLOOM, and SEDIMENT organize the fragrance system as an unfolding experience rather than another ecommerce showcase.",
       "Preview. The owned source and selected visual family are verified; unsupported performance and production claims remain excluded.",
-      "The preview can open further when a public live destination is independently verified.",
+      "Continue into the verified live destination for the fully authored sensory world.",
     ]),
     route: "/creator/the-xide",
-    liveUrl: null,
+    liveUrl: "https://thexide.vercel.app/",
   },
   {
     index: "04",
