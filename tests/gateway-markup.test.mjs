@@ -19,7 +19,7 @@ test("gateway fallback exposes all three canonical destinations", async () => {
 test("selection previews and briefing decisions have distinct semantics", async () => {
   const selection = await read("../components/gateway/SelectionOverlay.tsx");
   const briefing = await read("../components/gateway/BriefingOverlay.tsx");
-  const css = await read("../app/gateway-prototype/gateway.css");
+  const css = await read("../app/gateway.css");
 
   assert.match(selection, /GATEWAY_DIVISIONS/);
   assert.match(selection, /getGatewayDestination/);
@@ -51,7 +51,7 @@ test("selection previews and briefing decisions have distinct semantics", async 
 
 test("enhanced selection exposes one quiet canonical master-brand intro", async () => {
   const source = await read("../components/gateway/SelectionOverlay.tsx");
-  const css = await read("../app/gateway-prototype/gateway.css");
+  const css = await read("../app/gateway.css");
 
   assert.equal(source.match(/<h1\b/g)?.length, 1);
   assert.match(source, /<h1>\s*BM\s*<\/h1>/);
@@ -76,12 +76,16 @@ test("context cursor adds isolated gateway mode while retaining existing modes",
   assert.match(css, /\.context-cursor\[data-mode="view"\],\s*\.context-cursor\[data-mode="explore"\]\s*\{[^}]*width:\s*84px;/s);
 });
 
-test("gateway route is isolated from the production homepage", async () => {
-  const gateway = await read("../app/gateway-prototype/page.tsx");
-  const home = await read("../app/page.tsx");
+test("the production root owns the Gateway and Studio owns the former Home", async () => {
+  const gateway = await read("../app/page.tsx");
+  const studio = await read("../app/studio/page.tsx");
+  const deprecated = await read("../app/gateway-prototype/page.tsx");
 
   assert.match(gateway, /gateway\.css/);
-  assert.doesNotMatch(home, /GatewayPrototype|gateway-prototype/i);
+  assert.match(gateway, /GatewayPrototype/);
+  assert.match(studio, /BmpHero/);
+  assert.doesNotMatch(studio, /GatewayPrototype|gateway-prototype/i);
+  assert.match(deprecated, /redirect\("\/"\)/);
 });
 
 test("technical prototype route loads the gateway fallback stylesheet directly", async () => {
@@ -134,11 +138,11 @@ test("orchestrator owns session resolution, loader modes, fallback timing, and s
 });
 
 test("gateway route renders the shared client orchestrator from a server component", async () => {
-  const source = await read("../app/gateway-prototype/page.tsx");
+  const source = await read("../app/page.tsx");
 
   assert.match(source, /GatewayPrototype/);
-  assert.match(source, /BM Visual, BM Tech, and BMP Creator/);
-  assert.doesNotMatch(source, /BM Visuals|BMP Technical/);
+  assert.match(source, /BRAND\.positioning\.value/);
+  assert.doesNotMatch(source, /noindex|nofollow/);
   assert.doesNotMatch(source, /[\"']use client[\"']/);
 });
 
@@ -183,7 +187,7 @@ test("orchestrator integrates semantic selection and preserves native activation
 });
 
 test("gateway CSS gives the lifecycle owner the top sibling stacking layer", async () => {
-  const css = await read("../app/gateway-prototype/gateway.css");
+  const css = await read("../app/gateway.css");
   const source = await read("../components/gateway/GatewayPrototype.tsx");
 
   assert.match(source, /data-layer-owner=\{presentation\.layerOwner\}/);
@@ -198,7 +202,7 @@ test("gateway CSS gives the lifecycle owner the top sibling stacking layer", asy
 });
 
 test("gateway CSS contains coarse-pointer and reduced-motion modes", async () => {
-  const css = await read("../app/gateway-prototype/gateway.css");
+  const css = await read("../app/gateway.css");
 
   assert.match(css, /pointer: coarse|hover: none/);
   assert.match(css, /prefers-reduced-motion: reduce/);
@@ -217,7 +221,7 @@ test("gateway route exposes scoped progressive-enhancement state hooks", async (
 });
 
 test("gateway art direction excludes decorative UI effects and visitor-facing errors", async () => {
-  const css = await read("../app/gateway-prototype/gateway.css");
+  const css = await read("../app/gateway.css");
   const fallback = await read("../components/gateway/GatewayFallback.tsx");
 
   assert.doesNotMatch(css, /gradient\s*\(|backdrop-filter|box-shadow|drop-shadow/i);
@@ -232,7 +236,7 @@ test("gateway art direction excludes decorative UI effects and visitor-facing er
 });
 
 test("selection CSS positions all three identities as spatial coordinates", async () => {
-  const css = await read("../app/gateway-prototype/gateway.css");
+  const css = await read("../app/gateway.css");
 
   assert.match(css, /\.gateway-selection__division--visuals\s*\{/);
   assert.match(css, /\.gateway-selection__division--creator\s*\{/);
@@ -242,7 +246,7 @@ test("selection CSS positions all three identities as spatial coordinates", asyn
 });
 
 test("briefing CSS uses left-object and right-editorial composition", async () => {
-  const css = await read("../app/gateway-prototype/gateway.css");
+  const css = await read("../app/gateway.css");
 
   assert.match(css, /\.gateway-briefing\s*\{[^}]*right:/s);
   assert.match(css, /\.gateway-briefing__headline\s*\{/);
@@ -253,7 +257,7 @@ test("briefing CSS uses left-object and right-editorial composition", async () =
 });
 
 test("mobile and tablet modes preserve complete selection and briefing content", async () => {
-  const css = await read("../app/gateway-prototype/gateway.css");
+  const css = await read("../app/gateway.css");
 
   assert.match(css, /@media \(max-width: 1023px\)[^]*\.gateway-briefing\s*\{/);
   assert.match(css, /@media \(max-width: 640px\)[^]*\.gateway-selection__name\s*\{[^}]*overflow-wrap:\s*normal;/);
@@ -261,7 +265,7 @@ test("mobile and tablet modes preserve complete selection and briefing content",
 });
 
 test("coarse preview exposes a deliberate second-step selection affordance", async () => {
-  const css = await read("../app/gateway-prototype/gateway.css");
+  const css = await read("../app/gateway.css");
 
   assert.match(css, /@media \(hover: none\), \(pointer: coarse\)[^]*\.gateway-selection__activate\s*\{/);
   assert.match(css, /min-height:\s*2\.75rem/);
