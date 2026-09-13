@@ -37,7 +37,10 @@ test("Creator keeps browser interaction inside one narrow controller", async () 
   assert.match(source, /prefers-reduced-motion/);
   assert.match(source, /getBoundingClientRect/);
   assert.match(source, /data-creator-chapter/);
+  assert.match(source, /dampCreatorVisualProgress/);
+  assert.match(source, /--portal-target-progress/);
   assert.match(source, /--portal-progress/);
+  assert.match(source, /settled/);
   assert.match(sequence, /creator-portal-sequence/);
   assert.match(sequence, /data-creator-chapter/);
   assert.doesNotMatch(source, /wheel|scrollTo|scrollIntoView/);

@@ -34,18 +34,18 @@
 - Produces: `{ value: number; settled: boolean }` with bounded, reversible behavior
 - Consumes: raw per-chapter progress from browser geometry
 
-- [ ] Add failing pure-function tests for equivalent elapsed-time behavior,
+- [x] Add failing pure-function tests for equivalent elapsed-time behavior,
       large-gap catch-up, direction reversal, invalid input, and convergence.
-- [ ] Run the focused journey test and confirm the new assertions fail because
+- [x] Run the focused journey test and confirm the new assertions fail because
       the damping export does not exist.
-- [ ] Implement the minimal pure damping helper.
-- [ ] Re-run the focused test and confirm it passes.
-- [ ] Add failing controller markup assertions for separate target/rendered
+- [x] Implement the minimal pure damping helper.
+- [x] Re-run the focused test and confirm it passes.
+- [x] Add failing controller markup assertions for separate target/rendered
       variables, reduced-motion bypass, continued settling RAF, and cleanup.
-- [ ] Refactor the controller to keep per-chapter target/rendered refs, use raw
+- [x] Refactor the controller to keep per-chapter target/rendered refs, use raw
       values for semantics, and stop RAF after convergence.
-- [ ] Run Creator journey/markup tests, typecheck, and lint.
-- [ ] Commit as `perf: smooth creator visual progress rendering`.
+- [x] Run Creator journey/markup tests, typecheck, and lint.
+- [x] Commit as `perf: smooth creator visual progress rendering`.
 
 ### Task 2: Transform-first portal geometry and presence plateaus
 

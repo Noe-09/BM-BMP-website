@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   clampCreatorProgress,
+  dampCreatorVisualProgress,
   getCreatorDirection,
   getCreatorJourneyState,
   getCreatorWorldProgress,
@@ -62,6 +63,50 @@ test("Creator direction follows current movement in both directions", () => {
   assert.equal(getCreatorDirection(0.7, 0.4), -1);
   assert.equal(getCreatorDirection(0.4, 0.7), 1);
   assert.equal(getCreatorDirection(0.4, 0.4), 0);
+});
+
+test("Creator visual damping is equivalent across equal elapsed time", () => {
+  const oneFrame = dampCreatorVisualProgress(0.4, 0.48, 1000 / 30);
+  const halfFrame = dampCreatorVisualProgress(0.4, 0.48, 1000 / 60);
+  const twoHalfFrames = dampCreatorVisualProgress(
+    halfFrame.value,
+    0.48,
+    1000 / 60,
+  );
+
+  assert.ok(Math.abs(oneFrame.value - twoHalfFrames.value) < 0.000001);
+  assert.equal(oneFrame.settled, false);
+});
+
+test("Creator visual damping bounds lag and snaps genuinely large jumps", () => {
+  const bounded = dampCreatorVisualProgress(0.2, 0.43, 16);
+  const snapped = dampCreatorVisualProgress(0.1, 0.9, 16);
+
+  assert.ok(0.43 - bounded.value <= 0.1);
+  assert.deepEqual(snapped, { value: 0.9, settled: true });
+});
+
+test("Creator visual damping responds immediately when direction reverses", () => {
+  const reversed = dampCreatorVisualProgress(0.64, 0.3, 16);
+
+  assert.ok(reversed.value < 0.64);
+  assert.ok(reversed.value - 0.3 <= 0.1);
+  assert.equal(reversed.settled, false);
+});
+
+test("Creator visual damping bypasses motion and converges exactly", () => {
+  assert.deepEqual(
+    dampCreatorVisualProgress(0.2, 0.7, 16, { reducedMotion: true }),
+    { value: 0.7, settled: true },
+  );
+  assert.deepEqual(dampCreatorVisualProgress(0.49999, 0.5, 16), {
+    value: 0.5,
+    settled: true,
+  });
+  assert.deepEqual(dampCreatorVisualProgress(Number.NaN, 0.4, -10), {
+    value: 0.4,
+    settled: true,
+  });
 });
 
 test("Creator journey state derives world, velocity, and reduced motion", () => {

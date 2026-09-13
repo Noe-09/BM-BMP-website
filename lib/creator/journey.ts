@@ -17,9 +17,66 @@ export type CreatorJourneyInput = {
   reducedMotion: boolean;
 };
 
+export type CreatorVisualDampingOptions = {
+  lambda?: number;
+  maxLag?: number;
+  snapGap?: number;
+  epsilon?: number;
+  reducedMotion?: boolean;
+};
+
+export type CreatorVisualDampingState = {
+  value: number;
+  settled: boolean;
+};
+
+const CREATOR_VISUAL_DAMPING = {
+  lambda: 18,
+  maxLag: 0.1,
+  snapGap: 0.36,
+  epsilon: 0.0001,
+} as const;
+
 export function clampCreatorProgress(value: number): number {
   if (!Number.isFinite(value)) return 0;
   return Math.min(1, Math.max(0, value));
+}
+
+export function dampCreatorVisualProgress(
+  current: number,
+  target: number,
+  elapsedMs: number,
+  options: CreatorVisualDampingOptions = {},
+): CreatorVisualDampingState {
+  const targetValue = clampCreatorProgress(target);
+  if (!Number.isFinite(current) || options.reducedMotion) {
+    return { value: targetValue, settled: true };
+  }
+
+  const currentValue = clampCreatorProgress(current);
+  const lambda = Math.max(0, options.lambda ?? CREATOR_VISUAL_DAMPING.lambda);
+  const maxLag = Math.max(0, options.maxLag ?? CREATOR_VISUAL_DAMPING.maxLag);
+  const snapGap = Math.max(maxLag, options.snapGap ?? CREATOR_VISUAL_DAMPING.snapGap);
+  const epsilon = Math.max(0, options.epsilon ?? CREATOR_VISUAL_DAMPING.epsilon);
+  const gap = targetValue - currentValue;
+
+  if (Math.abs(gap) <= epsilon || Math.abs(gap) >= snapGap) {
+    return { value: targetValue, settled: true };
+  }
+
+  const boundedCurrent =
+    Math.abs(gap) > maxLag
+      ? targetValue - Math.sign(gap) * maxLag
+      : currentValue;
+  const deltaSeconds = Math.max(0, elapsedMs) / 1000;
+  const alpha = 1 - Math.exp(-lambda * deltaSeconds);
+  const value = boundedCurrent + (targetValue - boundedCurrent) * alpha;
+
+  if (Math.abs(targetValue - value) <= epsilon) {
+    return { value: targetValue, settled: true };
+  }
+
+  return { value: clampCreatorProgress(value), settled: false };
 }
 
 export function getCreatorWorldProgress(

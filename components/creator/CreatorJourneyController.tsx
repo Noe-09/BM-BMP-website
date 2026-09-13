@@ -2,7 +2,10 @@
 
 import { useEffect } from "react";
 
-import { getCreatorJourneyState } from "@/lib/creator/journey";
+import {
+  dampCreatorVisualProgress,
+  getCreatorJourneyState,
+} from "@/lib/creator/journey";
 
 type CreatorJourneyControllerProps = {
   worldSlugs: readonly string[];
@@ -22,10 +25,11 @@ export function CreatorJourneyController({
     let frame = 0;
     let previousProgress = 0;
     let previousTime = performance.now();
+    const renderedProgress = chapters.map(() => Number.NaN);
 
-    const update = () => {
+    const update = (frameTime = performance.now()) => {
       frame = 0;
-      const now = performance.now();
+      const elapsedMs = Math.min(Math.max(frameTime - previousTime, 0), 64);
       const first = chapters[0];
       const last = chapters[chapters.length - 1];
       const firstBounds = first.getBoundingClientRect();
@@ -37,27 +41,44 @@ export function CreatorJourneyController({
       const state = getCreatorJourneyState({
         progress,
         previousProgress,
-        elapsedMs: now - previousTime,
+        elapsedMs,
         worldSlugs,
         reducedMotion: motionQuery.matches,
       });
 
       let activeWorld = marker < start ? "arrival" : state.activeWorld;
       let activePortalProgress = 0;
+      let settled = true;
 
-      for (const chapter of chapters) {
+      chapters.forEach((chapter, index) => {
         const bounds = chapter.getBoundingClientRect();
         const travel = Math.max(bounds.height + window.innerHeight, 1);
-        const portalProgress = Math.min(
+        const targetPortalProgress = Math.min(
           1,
           Math.max(0, (window.innerHeight - bounds.top) / travel),
         );
-        const presence = Math.max(0, 1 - Math.abs(portalProgress - 0.5) * 2);
+        const visual = dampCreatorVisualProgress(
+          renderedProgress[index],
+          targetPortalProgress,
+          elapsedMs,
+          { reducedMotion: motionQuery.matches },
+        );
+        const presence = Math.max(0, 1 - Math.abs(visual.value - 0.5) * 2);
         const portal = chapter.querySelector<HTMLElement>("[data-creator-world]");
 
-        chapter.style.setProperty("--portal-progress", portalProgress.toFixed(4));
+        renderedProgress[index] = visual.value;
+        settled = settled && visual.settled;
+        chapter.style.setProperty(
+          "--portal-target-progress",
+          targetPortalProgress.toFixed(4),
+        );
+        chapter.style.setProperty("--portal-progress", visual.value.toFixed(4));
         chapter.style.setProperty("--portal-presence", presence.toFixed(4));
-        portal?.style.setProperty("--portal-progress", portalProgress.toFixed(4));
+        portal?.style.setProperty(
+          "--portal-target-progress",
+          targetPortalProgress.toFixed(4),
+        );
+        portal?.style.setProperty("--portal-progress", visual.value.toFixed(4));
         portal?.style.setProperty("--portal-presence", presence.toFixed(4));
 
         if (
@@ -65,9 +86,9 @@ export function CreatorJourneyController({
           bounds.bottom > window.innerHeight * 0.44
         ) {
           activeWorld = chapter.dataset.creatorChapter ?? activeWorld;
-          activePortalProgress = portalProgress;
+          activePortalProgress = targetPortalProgress;
         }
-      }
+      });
 
       root.dataset.activeWorld = activeWorld ?? "arrival";
       root.dataset.direction = String(state.direction);
@@ -80,7 +101,9 @@ export function CreatorJourneyController({
       root.style.setProperty("--creator-velocity", state.velocity.toFixed(6));
 
       previousProgress = state.globalCreatorProgress;
-      previousTime = now;
+      previousTime = frameTime;
+
+      if (!settled) frame = window.requestAnimationFrame(update);
     };
 
     const queueUpdate = () => {
