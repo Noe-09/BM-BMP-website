@@ -66,6 +66,7 @@ test("revealed Creator worlds use three non-template portal grammars", async () 
     components.map(({ name, source }) => [name, source]),
   );
   assert.equal((byName.WeinsWorld.match(/<CreatorMedia/g) ?? []).length, 2);
+  assert.match(byName.WeinsWorld, /media=\{world\.media\[0\]\}[\s\S]*priority/);
   assert.equal((byName.SlyourWorld.match(/<CreatorMedia/g) ?? []).length, 2);
   assert.equal((byName.XideWorld.match(/<CreatorMedia/g) ?? []).length, 1);
   assert.match(byName.WeinsWorld, /weins-portal__slab/);
@@ -95,7 +96,8 @@ test("Creator media uses optimized images with a neutral failure state", async (
   assert.match(source, /sizes/);
   assert.match(source, /onError/);
   assert.match(source, /Media unavailable/);
-  assert.match(source, /loading=\{priority \? "eager" : "lazy"\}/);
+  assert.match(source, /preload=\{priority\}/);
+  assert.match(source, /loading=\{priority \? undefined : "lazy"\}/);
 });
 
 test("sealed worlds disclose status without leaking media or navigation", async () => {
@@ -170,6 +172,10 @@ test("Creator degrades motion safely and cleans up every global listener", async
   assert.match(css, /overflow-x: clip/);
   assert.match(css, /\.creator-page \.bmp-header__mark,[\s\S]*min-height: 44px/);
   assert.match(css, /\.creator-threshold h2 \{\n    font-size: clamp\(3/);
+  assert.match(
+    css,
+    /\.creator-arrival__footer p \{[\s\S]{0,160}font-size: 0\.82rem;[\s\S]{0,80}line-height: 1\.25;/,
+  );
   assert.match(controller, /cancelAnimationFrame/);
   assert.ok((controller.match(/removeEventListener/g) ?? []).length >= 3);
   assert.doesNotMatch(`${controller}\n${sequence}`, /three|WebGL|canvas/i);

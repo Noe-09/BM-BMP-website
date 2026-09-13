@@ -36,7 +36,8 @@ export function CreatorMedia({
             src={media.src}
             alt={media.alt}
             fill
-            loading={priority ? "eager" : "lazy"}
+            preload={priority}
+            loading={priority ? undefined : "lazy"}
             sizes={sizes}
             onError={() => setFailed(true)}
           />

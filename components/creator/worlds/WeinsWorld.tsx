@@ -17,6 +17,7 @@ export function WeinsWorld({ world }: { world: CreatorWorld }) {
         <div className="weins-portal__visual">
           <CreatorMedia
             media={world.media[0]}
+            priority
             sizes="(max-width: 640px) 100vw, 86vw"
           />
         </div>

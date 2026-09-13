@@ -1161,10 +1161,13 @@
 
   .creator-arrival__footer {
     align-items: center;
+    gap: 1rem;
   }
 
   .creator-arrival__footer p {
-    max-width: 12rem;
+    max-width: 9rem;
+    font-size: 0.82rem;
+    line-height: 1.25;
   }
 
   .creator-portal-chapter,
