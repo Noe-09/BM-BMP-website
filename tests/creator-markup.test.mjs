@@ -78,16 +78,47 @@ test("revealed Creator worlds use three non-template portal grammars", async () 
   assert.match(byName.XideWorld, /xide-portal__darkness/);
 });
 
-test("Creator arrival lets the first verified world intrude without an orbit", async () => {
-  const source = await readFile(
-    new URL("../components/creator/CreatorArrival.tsx", import.meta.url),
-    "utf8",
-  );
+test("Creator arrival owns a neutral artifact before World 01", async () => {
+  const [source, experience, controller, css] = await Promise.all([
+    readFile(
+      new URL("../components/creator/CreatorArrival.tsx", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL("../components/creator/CreatorExperience.tsx", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../components/creator/CreatorJourneyController.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(new URL("../app/creator/creator.css", import.meta.url), "utf8"),
+  ]);
 
-  assert.match(source, /CreatorMedia/);
-  assert.match(source, /firstWorld\.media\[0\]/);
-  assert.match(source, /priority/);
-  assert.doesNotMatch(source, /creator-arrival__orbit/);
+  assert.match(source, /data-creator-arrival-artifact="neutral-threshold"/);
+  assert.match(source, /className="creator-arrival__artifact"/);
+  assert.match(source, /aria-hidden="true"/);
+  assert.match(source, /firstWorldSlug/);
+  assert.match(experience, /firstWorldSlug=\{worlds\[0\]\.slug\}/);
+  assert.doesNotMatch(source, /CreatorMedia|firstWorld\.media|next\/image/);
+  assert.match(controller, /--arrival-target-progress/);
+  assert.match(controller, /--arrival-progress/);
+  assert.match(css, /\.creator-arrival__artifact\s*\{[^}]*--arrival-progress/s);
+  assert.match(
+    css,
+    /\.creator-arrival__seam\s*\{[^}]*width:\s*0\.8rem;[^}]*scaleX\(/s,
+  );
+  assert.doesNotMatch(
+    css,
+    /\.creator-arrival__seam\s*\{[^}]*width:\s*clamp\(/s,
+  );
+  assert.doesNotMatch(
+    css,
+    /\.creator-arrival__(?:threshold|artifact)[^{]*\{[^}]*url\(/s,
+  );
 });
 
 test("Creator media uses optimized images with a neutral failure state", async () => {
@@ -107,8 +138,7 @@ test("Creator media uses optimized images with a neutral failure state", async (
 });
 
 test("Creator media delivery follows explicit primary and secondary roles", async () => {
-  const [arrival, weins, slyour, xide, gallery, config] = await Promise.all([
-    readFile(new URL("../components/creator/CreatorArrival.tsx", import.meta.url), "utf8"),
+  const [weins, slyour, xide, gallery, config] = await Promise.all([
     readFile(new URL("../components/creator/worlds/WeinsWorld.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/creator/worlds/SlyourWorld.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/creator/worlds/XideWorld.tsx", import.meta.url), "utf8"),
@@ -117,8 +147,6 @@ test("Creator media delivery follows explicit primary and secondary roles", asyn
   ]);
 
   assert.match(config, /qualities:\s*\[75, 88, 92\]/);
-  assert.match(arrival, /quality=\{92\}/);
-  assert.match(arrival, /102vw[\s\S]*57vw[\s\S]*1010px/);
   assert.match(weins, /quality=\{92\}[\s\S]*82vw[\s\S]*1210px/);
   assert.match(weins, /quality=\{88\}[\s\S]*34vw[\s\S]*288px/);
   assert.equal((weins.match(/\bpriority\b/g) ?? []).length, 0);

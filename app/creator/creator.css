@@ -50,13 +50,17 @@
 }
 
 .creator-arrival {
+  --arrival-target-progress: 0;
+  --arrival-progress: 0;
   position: relative;
   min-height: 132svh;
   overflow: clip;
-  background: #080808;
+  background:
+    radial-gradient(circle at 76% 44%, rgba(228, 224, 214, 0.045), transparent 28%),
+    #080808;
 }
 
-.creator-arrival__intrusion {
+.creator-arrival__threshold {
   position: sticky;
   top: var(--creator-header-height);
   height: calc(100svh - var(--creator-header-height));
@@ -65,32 +69,97 @@
   pointer-events: none;
 }
 
-.creator-arrival__intrusion .creator-media {
+.creator-arrival__artifact {
   position: absolute;
-  top: 5%;
-  right: -7vw;
-  width: min(56vw, 62rem);
-  height: 105%;
-  clip-path: polygon(19% 0, 100% 0, 100% 100%, 0 86%);
-  filter: grayscale(1) contrast(1.05);
-  opacity: 0.54;
-  transform: scale(1.02);
+  top: 8%;
+  right: 5vw;
+  width: min(48vw, 50rem);
+  height: 82%;
+  opacity: calc(0.78 - (var(--arrival-progress, 0) * 0.48));
+  transform: translate3d(calc(var(--arrival-progress, 0) * 8vw), 0, 0)
+    scale(calc(1.04 - (var(--arrival-progress, 0) * 0.22)));
   transform-origin: center right;
+  will-change: opacity, transform;
 }
 
-.creator-arrival__intrusion .creator-media::after {
+.creator-arrival__artifact::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, #080808 0, rgba(8, 8, 8, 0.8) 20%, transparent 62%);
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(8, 8, 8, 0.6) 0%,
+    rgba(8, 8, 8, 0.24) 34%,
+    transparent 62%
+  );
 }
 
-.creator-arrival__intrusion .creator-media__frame {
-  height: 100%;
+.creator-arrival__depth,
+.creator-arrival__plane,
+.creator-arrival__seam {
+  position: absolute;
 }
 
-.creator-arrival__intrusion figcaption {
-  display: none;
+.creator-arrival__depth {
+  inset: 3% -2% -3% 5%;
+  background: #242422;
+  box-shadow: 0 2rem 7rem rgba(0, 0, 0, 0.48);
+  transform: translate3d(
+    calc(var(--arrival-progress, 0) * 3vw),
+    calc(var(--arrival-progress, 0) * 2vh),
+    0
+  );
+}
+
+.creator-arrival__plane {
+  top: 0;
+  bottom: 0;
+  width: calc(50% - 1px);
+  overflow: hidden;
+  background:
+    linear-gradient(108deg, transparent 0 42%, rgba(255, 255, 255, 0.2) 42.2% 43%, transparent 43.2%),
+    linear-gradient(180deg, #dedbd3 0%, #b9b7b1 58%, #d2cfc7 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.creator-arrival__plane::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 3.9rem,
+    rgba(27, 27, 25, 0.18) 4rem,
+    transparent 4.06rem
+  );
+}
+
+.creator-arrival__plane--left {
+  left: 0;
+  clip-path: polygon(9% 0, 100% 3%, 100% 97%, 0 88%);
+  transform: translateX(calc(var(--arrival-progress, 0) * -12%));
+}
+
+.creator-arrival__plane--right {
+  right: 0;
+  clip-path: polygon(0 3%, 91% 0, 100% 90%, 0 97%);
+  transform: translateX(calc(var(--arrival-progress, 0) * 12%));
+}
+
+.creator-arrival__seam {
+  top: 9%;
+  bottom: 9%;
+  left: 50%;
+  width: 0.8rem;
+  background: #080808;
+  box-shadow: 0 0 2.5rem rgba(244, 240, 229, 0.1);
+  opacity: calc(0.7 + (var(--arrival-progress, 0) * 0.3));
+  transform: translateX(-50%)
+    scaleX(calc(0.08 + (var(--arrival-progress, 0) * 0.92)));
+  transform-origin: center;
 }
 
 .creator-arrival__inner {
@@ -1184,16 +1253,16 @@
   }
 
   .creator-arrival {
-    min-height: 112svh;
+    min-height: 124svh;
   }
 
-  .creator-arrival__intrusion .creator-media {
-    top: 20%;
-    right: -28vw;
-    width: 100vw;
-    height: 82%;
-    opacity: 0.46;
-    transform: scale(1.02);
+  .creator-arrival__artifact {
+    top: 14%;
+    right: -18vw;
+    width: 78vw;
+    height: 68%;
+    transform: translate3d(calc(var(--arrival-progress, 0) * 12vw), 0, 0)
+      scale(calc(1.02 - (var(--arrival-progress, 0) * 0.18)));
   }
 
   .creator-arrival__inner {
@@ -1483,6 +1552,21 @@
 
   .weins-portal__visual {
     transform: translateY(-50%) scale(1);
+  }
+
+  .creator-arrival__artifact {
+    opacity: 0.5;
+    transform: scale(0.92);
+  }
+
+  .creator-arrival__depth,
+  .creator-arrival__plane--left,
+  .creator-arrival__plane--right {
+    transform: none;
+  }
+
+  .creator-arrival__seam {
+    transform: translateX(-50%) scaleX(0.4);
   }
 
   .weins-portal__slab {

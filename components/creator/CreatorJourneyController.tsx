@@ -20,12 +20,16 @@ export function CreatorJourneyController({
     const chapters = Array.from(
       document.querySelectorAll<HTMLElement>("[data-creator-chapter]"),
     );
-    if (!root || chapters.length === 0) return;
+    const arrival = document.querySelector<HTMLElement>(
+      '[data-creator-stage="00-arrival"]',
+    );
+    if (!root || !arrival || chapters.length === 0) return;
 
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
     let previousProgress = 0;
     let previousTime = performance.now();
+    let renderedArrivalProgress = Number.NaN;
     const renderedProgress = chapters.map(() => Number.NaN);
 
     const update = (frameTime = performance.now()) => {
@@ -49,7 +53,31 @@ export function CreatorJourneyController({
 
       let activeWorld = marker < start ? "arrival" : state.activeWorld;
       let activePortalProgress = 0;
-      let settled = true;
+      const arrivalBounds = arrival.getBoundingClientRect();
+      const arrivalTravel = Math.max(
+        arrivalBounds.height - window.innerHeight,
+        1,
+      );
+      const targetArrivalProgress = Math.min(
+        1,
+        Math.max(0, -arrivalBounds.top / arrivalTravel),
+      );
+      const arrivalVisual = dampCreatorVisualProgress(
+        renderedArrivalProgress,
+        targetArrivalProgress,
+        elapsedMs,
+        { reducedMotion: motionQuery.matches },
+      );
+      renderedArrivalProgress = arrivalVisual.value;
+      arrival.style.setProperty(
+        "--arrival-target-progress",
+        targetArrivalProgress.toFixed(4),
+      );
+      arrival.style.setProperty(
+        "--arrival-progress",
+        arrivalVisual.value.toFixed(4),
+      );
+      let settled = arrivalVisual.settled;
 
       chapters.forEach((chapter, index) => {
         const bounds = chapter.getBoundingClientRect();

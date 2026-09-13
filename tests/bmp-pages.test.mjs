@@ -214,10 +214,18 @@ test("About publishes the canonical story, process, and team position", async ()
 
 test("Creator renders the approved six-world exhibition arc", async () => {
   const html = await getPage("/creator");
+  const arrivalStart = html.indexOf('<section class="creator-arrival"');
+  const arrivalEnd = html.indexOf("</section>", arrivalStart);
+  const arrival = html.slice(arrivalStart, arrivalEnd);
+
   assert.equal(html.match(/<h1\b/g)?.length, 1);
   assert.ok(html.includes("THINGS"));
   assert.ok(html.includes("WE DECIDED"));
   assert.ok(html.includes("SHOULD EXIST."));
+  assert.ok(arrival.includes('data-creator-arrival-artifact="neutral-threshold"'));
+  assert.ok(arrival.includes('aria-hidden="true"'));
+  assert.ok(arrival.includes('href="#creator-world-weins"'));
+  assert.doesNotMatch(arrival, /<img\b|\/creator\/(?:weins|slyour|the-xide)\//);
   assert.match(html, /data-creator-products="6"/);
   assert.match(html, /data-creator-threshold="unrevealed"/);
   assert.ok(html.includes("THE UNREVEALED"));

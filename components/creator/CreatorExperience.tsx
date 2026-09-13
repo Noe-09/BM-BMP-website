@@ -19,7 +19,7 @@ export function CreatorExperience({ worlds }: CreatorExperienceProps) {
       data-direction="0"
     >
       <CreatorJourneyController worldSlugs={worlds.map(({ slug }) => slug)} />
-      <CreatorArrival firstWorld={worlds[0]} />
+      <CreatorArrival firstWorldSlug={worlds[0].slug} />
       <CreatorWorldSequence worlds={worlds} />
       <CreatorIndex worlds={worlds} />
       <CreatorColophon />

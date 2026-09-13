@@ -1,20 +1,21 @@
-import type { CreatorWorld } from "@/content/creator";
-import { CreatorMedia } from "./CreatorMedia";
-
 type CreatorArrivalProps = {
-  firstWorld: CreatorWorld;
+  firstWorldSlug: string;
 };
 
-export function CreatorArrival({ firstWorld }: CreatorArrivalProps) {
+export function CreatorArrival({ firstWorldSlug }: CreatorArrivalProps) {
   return (
     <section className="creator-arrival" data-creator-stage="00-arrival">
-      <div className="creator-arrival__intrusion">
-        <CreatorMedia
-          media={firstWorld.media[0]}
-          priority
-          quality={92}
-          sizes="(max-width: 640px) 102vw, (max-width: 1800px) 57vw, 1010px"
-        />
+      <div
+        className="creator-arrival__threshold"
+        data-creator-arrival-artifact="neutral-threshold"
+        aria-hidden="true"
+      >
+        <div className="creator-arrival__artifact">
+          <span className="creator-arrival__depth" />
+          <span className="creator-arrival__plane creator-arrival__plane--left" />
+          <span className="creator-arrival__plane creator-arrival__plane--right" />
+          <span className="creator-arrival__seam" />
+        </div>
       </div>
       <div className="creator-shell creator-arrival__inner">
         <p className="creator-kicker">
@@ -28,7 +29,7 @@ export function CreatorArrival({ firstWorld }: CreatorArrivalProps) {
         </h1>
         <div className="creator-arrival__footer">
           <p>Six authored worlds inside BMP.</p>
-          <a href={`#creator-world-${firstWorld.slug}`}>
+          <a href={`#creator-world-${firstWorldSlug}`}>
             Enter <span aria-hidden="true">↓</span>
           </a>
         </div>
