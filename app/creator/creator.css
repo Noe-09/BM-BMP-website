@@ -287,7 +287,7 @@
 }
 
 .weins-portal__visual figcaption,
-.weins-portal__silhouette figcaption {
+.weins-portal__proportion figcaption {
   display: none;
 }
 
@@ -304,7 +304,7 @@
   will-change: transform;
 }
 
-.weins-portal__silhouette {
+.weins-portal__proportion {
   position: absolute;
   right: clamp(1rem, 4vw, 4rem);
   bottom: 6vh;
@@ -317,7 +317,7 @@
   transform: translateY(calc((1 - var(--portal-presence, 1)) * 14vh));
 }
 
-.weins-portal__silhouette .creator-media__frame {
+.weins-portal__proportion .creator-media__frame {
   height: 100%;
 }
 
@@ -1194,7 +1194,7 @@
     width: 35vw;
   }
 
-  .weins-portal__silhouette {
+  .weins-portal__proportion {
     right: -1rem;
     bottom: 3vh;
     width: 34vw;
@@ -1432,7 +1432,7 @@
     transform: translateX(12vw) scaleX(0.58);
   }
 
-  .weins-portal__silhouette,
+  .weins-portal__proportion,
   .xide-portal__environment,
   .xide-portal__glow {
     opacity: 1;

@@ -91,9 +91,9 @@ const worlds: readonly CreatorWorld[] = [
         source: "owned-repository:Noe-09/Weins@5d72137",
       },
       {
-        src: "/creator/weins/look-01-silhouette.jpg",
-        alt: "WEINS full-body silhouette study against monolithic concrete architecture",
-        label: "Silhouette",
+        src: "/creator/weins/look-04-proportion.jpg",
+        alt: "WEINS split-frame proportion study of an oversized black tee and trouser",
+        label: "Proportion",
         kind: "image",
         status: "verified",
         source: "owned-repository:Noe-09/Weins@5d72137",

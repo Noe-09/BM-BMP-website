@@ -118,13 +118,13 @@
 - Produces: distinct WEINS portal secondary media with SHA-256
   `dcbcb7acf838ae7ded642c3243efbb97b02905645ced31d7d10264ca786cf112`
 
-- [ ] Add a failing registry test requiring distinct WEINS portal sources and
+- [x] Add a failing registry test requiring distinct WEINS portal sources and
       the verified proportion asset.
-- [ ] Confirm it fails against the duplicate current asset.
-- [ ] Copy the audited source, verify its hash and dimensions, update src/alt/
+- [x] Confirm it fails against the duplicate current asset.
+- [x] Copy the audited source, verify its hash and dimensions, update src/alt/
       label, and remove the duplicate file.
-- [ ] Run Creator publication and markup tests.
-- [ ] Commit as `fix: restore distinct verified WEINS media`.
+- [x] Run Creator publication and markup tests.
+- [x] Commit as `fix: restore distinct verified WEINS media`.
 
 ### Task 5: World typography chroma and optical hierarchy
 

@@ -24,7 +24,7 @@ export function WeinsWorld({ world }: { world: CreatorWorld }) {
         <div className="weins-portal__slab" aria-hidden="true" />
         <CreatorMedia
           media={world.media[2]}
-          className="weins-portal__silhouette"
+          className="weins-portal__proportion"
           quality={88}
           sizes="(max-width: 640px) 34vw, 288px"
         />

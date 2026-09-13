@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import { CREATOR } from "../content/creator.ts";
@@ -68,6 +70,26 @@ test("published worlds provide complete detail metadata and verified media", () 
       assert.match(media.source, /^owned-repository:/);
     }
   }
+});
+
+test("WEINS publishes three distinct verified source assets", async () => {
+  const weins = CREATOR.worlds.find(({ slug }) => slug === "weins");
+  assert.ok(weins);
+  assert.equal(weins.media[2]?.src, "/creator/weins/look-04-proportion.jpg");
+
+  const hashes = await Promise.all(
+    weins.media.map(async ({ src }) =>
+      createHash("sha256")
+        .update(await readFile(new URL(`../public${src}`, import.meta.url)))
+        .digest("hex"),
+    ),
+  );
+
+  assert.equal(new Set(hashes).size, weins.media.length);
+  assert.equal(
+    hashes[2],
+    "dcbcb7acf838ae7ded642c3243efbb97b02905645ced31d7d10264ca786cf112",
+  );
 });
 
 test("sealed worlds fail validation when they leak publication material", () => {
