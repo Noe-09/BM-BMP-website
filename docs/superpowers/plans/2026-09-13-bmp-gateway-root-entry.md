@@ -28,9 +28,9 @@
 - Modify: `tests/gateway-markup.test.mjs`
 - Modify: `tests/bmp-shell.test.mjs`
 
-- [ ] Write failing source and HTTP regressions proving `/` owns Gateway metadata, `/studio` owns the old Home, `/gateway-prototype` redirects to `/`, direct routes do not redirect, and Gateway CSS has one canonical owner.
-- [ ] Add metadata assertions for an indexable canonical root and distinct indexable Studio title, both using canonical brand positioning.
-- [ ] Run the focused tests and confirm they fail for the pre-migration route structure.
+- [x] Write failing source and HTTP regressions proving `/` owns Gateway metadata, `/studio` owns the old Home, `/gateway-prototype` redirects to `/`, direct routes do not redirect, and Gateway CSS has one canonical owner.
+- [x] Add metadata assertions for an indexable canonical root and distinct indexable Studio title, both using canonical brand positioning.
+- [x] Run the focused tests and confirm they fail for the pre-migration route structure.
 
 ### Task 2: Migrate Home and Gateway route ownership
 
@@ -43,11 +43,11 @@
 - Modify: `app/gateway-prototype/technical/page.tsx`
 - Modify: affected Gateway markup tests
 
-- [ ] Move the existing Home imports and JSX unchanged to `/studio` and add distinct Studio metadata from `BRAND.positioning`.
-- [ ] Render `GatewayPrototype` at `/` with production metadata and the canonical stylesheet import.
-- [ ] Redirect `/gateway-prototype` to `/` with `redirect()` so preview rollback is not permanently cached.
-- [ ] Retarget internal development routes/tests to the single `app/gateway.css` file without duplicating CSS.
-- [ ] Run focused routing, markup, and shell tests to green; commit the route migration.
+- [x] Move the existing Home imports and JSX unchanged to `/studio` and add distinct Studio metadata from `BRAND.positioning`.
+- [x] Render `GatewayPrototype` at `/` with production metadata and the canonical stylesheet import.
+- [x] Redirect `/gateway-prototype` to `/` with `redirect()` so preview rollback is not permanently cached.
+- [x] Retarget internal development routes/tests to the single `app/gateway.css` file without duplicating CSS.
+- [x] Run focused routing, markup, and shell tests to green; commit the route migration.
 
 ### Task 3: Separate identity and world-switching navigation
 
@@ -59,10 +59,10 @@
 - Modify: `components/site/BMVisualFooter.tsx`
 - Modify: navigation/shell tests as required
 
-- [ ] Write failing tests for BMP identity → `/studio`, explicit `Switch World` → `/`, and unchanged direct links.
-- [ ] Add typed identity and Gateway navigation entries; apply them deliberately to shared and BM Visual headers/footers with the smallest existing-design-compatible link addition.
-- [ ] Verify every informational/division route remains direct and no blind `href="/"` replacement occurred.
-- [ ] Run focused navigation and page tests to green; commit the navigation migration.
+- [x] Write failing tests for BMP identity → `/studio`, explicit `Switch World` → `/`, and unchanged direct links.
+- [x] Add typed identity and Gateway navigation entries; apply them deliberately to shared and BM Visual headers/footers with the smallest existing-design-compatible link addition.
+- [x] Verify every informational/division route remains direct and no blind `href="/"` replacement occurred.
+- [x] Run focused navigation and page tests to green; commit the navigation migration.
 
 ### Task 4: Add deterministic returning-session replay
 
@@ -74,27 +74,27 @@
 - Modify: `tests/gateway-state.test.mjs`
 - Modify: `tests/gateway-markup.test.mjs`
 
-- [ ] Write failing reducer and markup tests for returning-only replay, valid neutral-chamber guards, state cleanup, accessible button semantics, and no storage deletion/navigation.
-- [ ] Add `REPLAY_JOURNEY` to the reducer, accepted only for a returning neutral split/preview state.
-- [ ] Reset only in-memory journey/briefing/selection refs and visual progress, dispatch replay, and wake the existing single animation loop.
-- [ ] Render a visually secondary `REPLAY JOURNEY` button only for returning neutral selection; keep it reachable by keyboard/touch.
-- [ ] Verify replay completes through the existing deterministic journey path and leaves the session marker intact.
-- [ ] Run focused state, journey, navigation, and markup tests to green; commit replay.
+- [x] Write failing reducer and markup tests for returning-only replay, valid neutral-chamber guards, state cleanup, accessible button semantics, and no storage deletion/navigation.
+- [x] Add `REPLAY_JOURNEY` to the reducer, accepted only for a returning neutral split/preview state.
+- [x] Reset only in-memory journey/briefing/selection refs and visual progress, dispatch replay, and wake the existing single animation loop.
+- [x] Render a visually secondary `REPLAY JOURNEY` button only for returning neutral selection; keep it reachable by keyboard/touch.
+- [x] Verify replay completes through the existing deterministic journey path and leaves the session marker intact.
+- [x] Run focused state, journey, navigation, and markup tests to green; commit replay.
 
 ### Task 5: Full automated verification and browser QA
 
 **Files:**
 - Create or update: `docs/gateway-root-entry/verification.md`
 
-- [ ] Run `node --test --test-concurrency=1 tests/*.test.mjs`.
-- [ ] Run `tsc --noEmit`.
-- [ ] Run `eslint .`.
-- [ ] Run `next build --webpack`.
-- [ ] Run `git diff --check`.
-- [ ] Start the production build and browser-test desktop first visit, returning session, replay, three hover/focus previews, briefing Go Back/Continue, direct routes, touch viewport, reduced motion, and `/gateway-prototype` redirect.
-- [ ] Confirm one canvas, no console/runtime/WebGL errors, and unchanged scene budget tests.
-- [ ] Record exact results and remaining naming debt; run final clean-tree and scope preflight.
-- [ ] Commit verification evidence.
+- [x] Run `node --test --test-concurrency=1 tests/*.test.mjs`.
+- [x] Run `tsc --noEmit`.
+- [x] Run `eslint .`.
+- [x] Run `next build --webpack`.
+- [x] Run `git diff --check`.
+- [x] Start the production build and browser-test desktop first visit, returning session, replay, three hover/focus previews, briefing Go Back/Continue, direct routes, touch viewport, and `/gateway-prototype` redirect; validate reduced motion through its automated contract because the browser runner cannot emulate it.
+- [x] Confirm one canvas, no console/runtime/WebGL errors, and unchanged scene budget tests.
+- [x] Record exact results and remaining naming debt; run final clean-tree and scope preflight.
+- [x] Commit verification evidence.
 
 ### Task 6: Preview PR delivery
 
