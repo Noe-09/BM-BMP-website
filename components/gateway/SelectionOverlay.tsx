@@ -23,6 +23,8 @@ type SelectionOverlayProps = {
   onPreview(division: GatewayDivision): void;
   onClearPreview(): void;
   onSelect(division: GatewayDivision): void;
+  onReplay(): void;
+  showReplay: boolean;
   registerDestinationControl(
     division: GatewayDivision,
     node: HTMLButtonElement | null,
@@ -37,6 +39,8 @@ export function SelectionOverlay({
   onPreview,
   onClearPreview,
   onSelect,
+  onReplay,
+  showReplay,
   registerDestinationControl,
 }: SelectionOverlayProps) {
   const previewDivision = state.previewDivision;
@@ -82,6 +86,16 @@ export function SelectionOverlay({
       <div className="gateway-core-mark" aria-hidden="true">
         BM
       </div>
+
+      {showReplay ? (
+        <button
+          className="gateway-selection__replay"
+          onClick={onReplay}
+          type="button"
+        >
+          REPLAY JOURNEY
+        </button>
+      ) : null}
 
       {GATEWAY_DIVISIONS.map((division) => {
         const destination = getGatewayDestination(division);

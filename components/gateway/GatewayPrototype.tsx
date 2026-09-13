@@ -553,6 +553,26 @@ export function GatewayPrototype() {
     requestFrameRef.current();
   }, []);
 
+  const handleReplayJourney = useCallback(() => {
+    if (
+      !returningRef.current ||
+      phaseRef.current !== "split" ||
+      state.previewDivision !== null ||
+      state.selectedDivision !== null
+    ) {
+      return;
+    }
+
+    journeyRef.current = createJourney(0);
+    briefingRef.current = createBriefingTimeline(0);
+    skipTargetRef.current = null;
+    setTravelProgress(0);
+    setBriefingProgress(0);
+    setExitProgress(0);
+    dispatch({ type: "REPLAY_JOURNEY" });
+    requestFrameRef.current();
+  }, [state.previewDivision, state.selectedDivision]);
+
   useEffect(() => {
     if (
       state.phase !== "preview" &&
@@ -810,8 +830,10 @@ export function GatewayPrototype() {
                   coarsePointer={profile.pointer === "coarse"}
                   onPreview={handlePreview}
                   onClearPreview={handleClearPreview}
+                  onReplay={handleReplayJourney}
                   onSelect={handleSelect}
                   registerDestinationControl={registerDestinationControl}
+                  showReplay={state.returning && state.phase === "split"}
                 />
               ) : null}
               {state.selectedDivision ? (

@@ -135,6 +135,7 @@
 .gateway-loader__skip:focus-visible,
 .gateway-travel-cue:focus-visible,
 .gateway-selection__preview:focus-visible,
+.gateway-selection__replay:focus-visible,
 .gateway-briefing__back:focus-visible,
 .gateway-briefing__continue:focus-visible,
 .gateway-fallback__division:focus-visible {
@@ -240,6 +241,7 @@
 
 .gateway-selection__name,
 .gateway-selection__activate,
+.gateway-selection__replay,
 .gateway-briefing__name,
 .gateway-briefing__back,
 .gateway-briefing__continue,
@@ -251,6 +253,21 @@
   font-weight: 650;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+.gateway-selection__replay {
+  position: absolute;
+  z-index: 3;
+  top: var(--gateway-pad);
+  left: var(--gateway-pad);
+  min-height: 2.75rem;
+  margin: 0;
+  padding: 0 0 0.25rem;
+  color: var(--gateway-muted);
+  border: 0;
+  border-bottom: 1px solid var(--gateway-line);
+  background: transparent;
+  cursor: pointer;
 }
 
 .gateway-selection__name {
@@ -542,6 +559,13 @@
 
   .gateway-travel-cue {
     white-space: nowrap;
+  }
+
+  .gateway-selection__replay {
+    top: auto;
+    right: 1rem;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    left: auto;
   }
 
   .gateway-core-mark {

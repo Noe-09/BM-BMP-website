@@ -186,6 +186,23 @@ test("orchestrator integrates semantic selection and preserves native activation
   assert.match(source, /aria-hidden=\{!presentation\.fallbackActive\}/);
 });
 
+test("returning visitors can replay in memory without navigation or storage deletion", async () => {
+  const orchestrator = await read("../components/gateway/GatewayPrototype.tsx");
+  const selection = await read("../components/gateway/SelectionOverlay.tsx");
+
+  assert.match(orchestrator, /handleReplayJourney/);
+  assert.match(orchestrator, /journeyRef\.current = createJourney\(0\)/);
+  assert.match(orchestrator, /dispatch\(\{ type: "REPLAY_JOURNEY" \}\)/);
+  assert.match(
+    orchestrator,
+    /showReplay=\{state\.returning && state\.phase === "split"\}/,
+  );
+  assert.doesNotMatch(orchestrator, /sessionStorage\.(?:clear|removeItem)/);
+  assert.match(selection, /<button[^>]*className="gateway-selection__replay"/s);
+  assert.match(selection, /REPLAY JOURNEY/);
+  assert.match(selection, /onReplay/);
+});
+
 test("gateway CSS gives the lifecycle owner the top sibling stacking layer", async () => {
   const css = await read("../app/gateway.css");
   const source = await read("../components/gateway/GatewayPrototype.tsx");
