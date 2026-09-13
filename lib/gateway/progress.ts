@@ -45,6 +45,8 @@ export function getGatewayPresentation({
   const selectionPhase =
     phase === "split" ||
     phase === "preview" ||
+    phase === "briefing" ||
+    phase === "decision" ||
     phase === "commit" ||
     phase === "exit";
   const showSelection =
@@ -58,6 +60,8 @@ export function getGatewayPresentation({
     phase === "ready" ||
     phase === "auto-entry" ||
     phase === "user-travel" ||
+    phase === "briefing" ||
+    phase === "decision" ||
     phase === "commit" ||
     phase === "exit";
 

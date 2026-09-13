@@ -4,42 +4,43 @@ import test from "node:test";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 
-test("gateway fallback exposes both BM divisions and approved short descriptions", async () => {
+test("gateway fallback exposes all three canonical destinations", async () => {
   const source = await read("../components/gateway/GatewayFallback.tsx");
 
-  assert.match(source, /BM VISUALS/);
-  assert.match(source, /Creative \/ Digital Experience/);
-  assert.match(source, /Digital identities/);
-  assert.match(source, /with motion, story and distinction\./);
-  assert.match(source, /href="\/"/);
-
-  assert.match(source, /BMP TECHNICAL/);
-  assert.match(source, /Technology \/ AI Systems/);
-  assert.match(source, /AI systems, product logic/);
-  assert.match(source, /and technical execution\./);
-  assert.match(source, /href="\/gateway-prototype\/technical"/);
+  assert.match(source, /GATEWAY_DIVISIONS/);
+  assert.match(source, /getGatewayDestination/);
+  assert.doesNotMatch(source, /BM VISUALS|BMP TECHNICAL/);
+  assert.doesNotMatch(source, /gateway-prototype\/technical/);
+  assert.match(source, /destination\.href/);
+  assert.match(source, /destination\.publicLabel/);
+  assert.match(source, /destination\.headline/);
 });
 
-test("selection overlay contains approved short copy and both real CTAs", async () => {
-  const source = await read("../components/gateway/SelectionOverlay.tsx");
+test("selection previews and briefing decisions have distinct semantics", async () => {
+  const selection = await read("../components/gateway/SelectionOverlay.tsx");
+  const briefing = await read("../components/gateway/BriefingOverlay.tsx");
   const css = await read("../app/gateway-prototype/gateway.css");
 
-  assert.match(source, /Digital identities/);
-  assert.match(source, /with motion, story and distinction\./);
-  assert.match(source, /AI systems, product logic/);
-  assert.match(source, /and technical execution\./);
-  assert.match(source, /ENTER VISUALS/);
-  assert.match(source, /ENTER TECHNICAL/);
-  assert.match(source, /href="\/"/);
-  assert.match(source, /href="\/gateway-prototype\/technical"/);
-  assert.match(source, /gateway-core-mark/);
-  assert.match(source, />\s*BM\s*</);
-  assert.match(source, /<Link/);
-  assert.match(source, /<button/);
-  for (const button of source.matchAll(/<button\b[^]*?<\/button>/g)) {
+  assert.match(selection, /GATEWAY_DIVISIONS/);
+  assert.match(selection, /getGatewayDestination/);
+  assert.match(selection, /destination\.headline/);
+  assert.match(selection, /<button/);
+  assert.doesNotMatch(selection, /<Link/);
+  assert.doesNotMatch(selection, /supportingCopy|helps businesses|Apps, experiments/);
+  for (const button of selection.matchAll(/<button\b[^]*?<\/button>/g)) {
     assert.doesNotMatch(button[0], /<Link/);
   }
-  for (const link of source.matchAll(/<Link\b[^]*?<\/Link>/g)) {
+
+  assert.match(briefing, /getGatewayDestination/);
+  assert.match(briefing, /destination\.description/);
+  assert.match(briefing, /role="region"/);
+  assert.match(briefing, /aria-live="polite"/);
+  assert.match(briefing, /GO BACK/);
+  assert.match(briefing, /CONTINUE →/);
+  assert.match(briefing, /<Link/);
+  assert.match(briefing, /destination\.href/);
+  assert.doesNotMatch(briefing, /helps businesses|Apps, experiments/);
+  for (const link of briefing.matchAll(/<Link\b[^]*?<\/Link>/g)) {
     assert.doesNotMatch(link[0], /<button/);
   }
   assert.doesNotMatch(
@@ -48,13 +49,13 @@ test("selection overlay contains approved short copy and both real CTAs", async 
   );
 });
 
-test("enhanced selection exposes one semantic BM parent intro without duplicating visible art", async () => {
+test("enhanced selection exposes one quiet canonical master-brand intro", async () => {
   const source = await read("../components/gateway/SelectionOverlay.tsx");
   const css = await read("../app/gateway-prototype/gateway.css");
 
   assert.equal(source.match(/<h1\b/g)?.length, 1);
   assert.match(source, /<h1>\s*BM\s*<\/h1>/);
-  assert.match(source, /TWO WORLDS\. ONE SYSTEM\./);
+  assert.match(source, /Creative × Technology × Products\./);
   assert.match(source, /className="gateway-selection__intro"/);
   assert.match(source, /className="gateway-core-mark" aria-hidden="true"/);
   assert.match(
@@ -99,6 +100,15 @@ test("gateway canvas is decorative and scene stays dependency-light", async () =
   assert.doesNotMatch(scene, /TextureLoader|GLTFLoader/);
 });
 
+test("development scene review can inspect all three destination states", async () => {
+  const source = await read("../components/gateway/GatewaySceneReview.tsx");
+
+  assert.match(source, /GatewayDivision/);
+  assert.match(source, /deriveDestinationInteraction/);
+  assert.match(source, /Creator/);
+  assert.match(source, /briefingProgress/);
+});
+
 test("loader uses BM counter language without percent", async () => {
   const source = await read("../components/gateway/LoaderOverlay.tsx");
 
@@ -127,6 +137,8 @@ test("gateway route renders the shared client orchestrator from a server compone
   const source = await read("../app/gateway-prototype/page.tsx");
 
   assert.match(source, /GatewayPrototype/);
+  assert.match(source, /BM Visual, BM Tech, and BMP Creator/);
+  assert.doesNotMatch(source, /BM Visuals|BMP Technical/);
   assert.doesNotMatch(source, /[\"']use client[\"']/);
 });
 
@@ -150,6 +162,14 @@ test("orchestrator integrates semantic selection and preserves native activation
   const source = await read("../components/gateway/GatewayPrototype.tsx");
 
   assert.match(source, /SelectionOverlay/);
+  assert.match(source, /BriefingOverlay/);
+  assert.match(source, /briefingProgress/);
+  assert.match(source, /createBriefingTimeline/);
+  assert.match(source, /BRIEFING_COMPLETE/);
+  assert.match(source, /GO_BACK_COMPLETE/);
+  assert.match(source, /previouslySelectedControlRef/);
+  assert.match(source, /briefingHeadingRef/);
+  assert.match(source, /state\.selectedDivision/);
   assert.match(source, /event\.detail/);
   assert.match(source, /committedGuardRef/);
   assert.match(source, /shouldEnhanceGatewayNavigation/);
@@ -157,6 +177,7 @@ test("orchestrator integrates semantic selection and preserves native activation
   assert.match(source, /router\.push\(href\)/);
   assert.match(source, /window\.location\.assign\(href\)/);
   assert.match(source, /navigationFallbackMs/);
+  assert.match(source, /event\.key === "Escape"/);
   assert.match(source, /hidden=\{!presentation\.fallbackActive\}/);
   assert.match(source, /aria-hidden=\{!presentation\.fallbackActive\}/);
 });
@@ -210,63 +231,38 @@ test("gateway art direction excludes decorative UI effects and visitor-facing er
   );
 });
 
-test("mobile division names retain whole-word wrapping in the narrow preview region", async () => {
+test("selection CSS positions all three identities as spatial coordinates", async () => {
   const css = await read("../app/gateway-prototype/gateway.css");
 
-  assert.match(
-    css,
-    /@media \(max-width: 640px\)[^]*\.gateway-selection__name\s*\{[^}]*max-width:\s*10ch;[^}]*overflow-wrap:\s*normal;/,
-  );
+  assert.match(css, /\.gateway-selection__division--visuals\s*\{/);
+  assert.match(css, /\.gateway-selection__division--creator\s*\{/);
+  assert.match(css, /\.gateway-selection__division--technical\s*\{/);
+  assert.match(css, /\.gateway-selection__summary\s*\{/);
+  assert.match(css, /data-depth="foreground"|\[data-depth="foreground"\]/);
 });
 
-test("portrait tablet division names keep whole-word wrapping", async () => {
+test("briefing CSS uses left-object and right-editorial composition", async () => {
   const css = await read("../app/gateway-prototype/gateway.css");
-  const tabletMode = css.match(
-    /@media \(max-width: 1023px\)([^]*?)@media \(max-width: 640px\)/,
-  )?.[1];
 
-  assert.ok(tabletMode, "expected a portrait-tablet gateway mode");
-  assert.match(
-    tabletMode,
-    /\.gateway-selection__name\s*\{[^}]*max-width:\s*10ch;[^}]*overflow-wrap:\s*normal;/,
-  );
+  assert.match(css, /\.gateway-briefing\s*\{[^}]*right:/s);
+  assert.match(css, /\.gateway-briefing__headline\s*\{/);
+  assert.match(css, /--gateway-briefing-identity/);
+  assert.match(css, /--gateway-briefing-description/);
+  assert.match(css, /--gateway-briefing-decision/);
+  assert.match(css, /\[data-decision-ready="true"\]/);
 });
 
-test("unselected divisions retain independently legible text and action contrast", async () => {
+test("mobile and tablet modes preserve complete selection and briefing content", async () => {
   const css = await read("../app/gateway-prototype/gateway.css");
-  const readToken = (name) => {
-    const value = css.match(new RegExp(`${name}:\\s*([0-9.]+)`))?.[1];
-    assert.ok(value, `expected ${name} token`);
-    return Number(value);
-  };
 
-  assert.ok(readToken("--gateway-unselected-title-opacity") >= 0.6);
-  assert.ok(readToken("--gateway-unselected-type-opacity") >= 0.95);
-  assert.ok(readToken("--gateway-unselected-action-opacity") >= 0.42);
-  assert.doesNotMatch(
-    css,
-    /:is\(\.gateway-selection__name, \.gateway-selection__type\)\s*\{[^}]*opacity:/,
-  );
-  assert.match(
-    css,
-    /@media \(hover: none\), \(pointer: coarse\)[^]*\.gateway-selection__action\s*\{[^}]*opacity:\s*0;/,
-  );
+  assert.match(css, /@media \(max-width: 1023px\)[^]*\.gateway-briefing\s*\{/);
+  assert.match(css, /@media \(max-width: 640px\)[^]*\.gateway-selection__name\s*\{[^}]*overflow-wrap:\s*normal;/);
+  assert.match(css, /@media \(max-width: 640px\)[^]*\.gateway-briefing__description\s*\{/);
 });
 
-test("coarse CTA state selectors outrank fine-pointer secondary action contrast", async () => {
+test("coarse preview exposes a deliberate second-step selection affordance", async () => {
   const css = await read("../app/gateway-prototype/gateway.css");
-  const coarseMode = css.match(
-    /@media \(hover: none\), \(pointer: coarse\) \{([^]*?)\n\}\n\n@media \(max-height: 700px\)/,
-  )?.[1];
 
-  assert.ok(coarseMode, "expected a coarse gateway mode");
-  assert.match(
-    coarseMode,
-    /\.gateway-selection\[data-gateway-selection="neutral"\]\s+\.gateway-selection__action,\s*\.gateway-selection\[data-gateway-selection="visuals"\]\s+\.gateway-selection__division--technical\s+\.gateway-selection__action,\s*\.gateway-selection\[data-gateway-selection="technical"\]\s+\.gateway-selection__division--visuals\s+\.gateway-selection__action\s*\{[^}]*opacity:\s*0;/,
-  );
-  assert.match(
-    coarseMode,
-    /\.gateway-selection\[data-gateway-selection="visuals"\]\s+\.gateway-selection__division--visuals\s+\.gateway-selection__action,\s*\.gateway-selection\[data-gateway-selection="technical"\]\s+\.gateway-selection__division--technical\s+\.gateway-selection__action\s*\{[^}]*opacity:\s*1;/,
-  );
-  assert.doesNotMatch(coarseMode, /pointer-events\s*:/);
+  assert.match(css, /@media \(hover: none\), \(pointer: coarse\)[^]*\.gateway-selection__activate\s*\{/);
+  assert.match(css, /min-height:\s*2\.75rem/);
 });

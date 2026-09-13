@@ -6,7 +6,7 @@ import type { GatewayPose } from "./choreography";
 import { deriveJourneyFrame } from "./journey/chapterState";
 import { deriveHeroFraming } from "./journey/framing";
 import { SpectralEnvironment } from "./environment/spectralEnvironment";
-import { DualEntitySystem } from "./entities/dualEntitySystem";
+import { DestinationEntitySystem } from "./entities/destinationEntitySystem";
 import { deriveBreakthroughFrame } from "./environment/breakthroughState";
 
 export type GatewaySceneController = {
@@ -21,7 +21,7 @@ export type GatewaySceneController = {
 export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneController {
   let renderer: WebGLRenderer | undefined;
   let environment: SpectralEnvironment | undefined;
-  let entities: DualEntitySystem | undefined;
+  let entities: DestinationEntitySystem | undefined;
   let refraction: WebGLRenderTarget | undefined;
   let disposed = false;
   const dispose = () => {
@@ -46,7 +46,7 @@ export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneContr
     const world = new SpectralEnvironment();
     environment = world;
     scene.add(world.group);
-    const heroes = new DualEntitySystem();
+    const heroes = new DestinationEntitySystem();
     entities = heroes;
     scene.add(heroes.group);
     const ambient = new HemisphereLight(0xf6f5fc, 0x8ba9af, 1.05);
@@ -55,6 +55,7 @@ export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneContr
     scene.add(ambient, key);
     const pointer = new Vector2();
     let pose: GatewayPose | null = null;
+    let entityTime = 0;
 
     return {
       setTarget(frame) { pose = frame; },
@@ -72,11 +73,25 @@ export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneContr
       },
       tick(deltaSeconds) {
         if (disposed || !pose) return false;
+        if (!pose.reducedMotion) entityTime += deltaSeconds;
         const frame = deriveJourneyFrame(pose.reducedMotion ? 1 : pose.travelProgress);
         const breakthrough = deriveBreakthroughFrame(frame.progress);
         // No second damping layer: the controller's displayed progress IS this frame.
-        camera.position.set(pose.cameraX + frame.driftX, frame.driftY, pose.cameraZ);
-        camera.rotation.set(0, pose.cameraYaw, 0);
+        camera.position.set(
+          pose.cameraX + frame.driftX,
+          pose.cameraY + frame.driftY,
+          pose.cameraZ,
+        );
+        if (camera.fov !== pose.cameraFov) {
+          camera.fov = pose.cameraFov;
+          camera.updateProjectionMatrix();
+        }
+        if (pose.briefingFrame.focus > 0) {
+          camera.lookAt(pose.cameraTargetX, pose.cameraY, pose.cameraZ - 12);
+          camera.rotation.y += pose.cameraYaw;
+        } else {
+          camera.rotation.set(0, pose.cameraYaw, 0);
+        }
         background.copy(bright).lerp(spectralDepth, breakthrough.blackout);
         background.lerp(arrivalDepth, breakthrough.release);
         world.update(frame, pose.cameraZ, background);
@@ -90,10 +105,10 @@ export function createGatewayScene(canvas: HTMLCanvasElement): GatewaySceneContr
         heroes.tick(deltaSeconds, {
           // Reuse existing emergence kinematics without editing entity geometry or shaders.
           progress: pose.reducedMotion ? 1 : .72 + frame.emergence * .23,
-          selectionBias: pose.selectionBias,
+          interactions: pose.interactions,
           reducedMotion: pose.reducedMotion,
           eventDarkness: frame.darkness,
-        }, frame.progress * 22);
+        }, entityTime);
         canvas.dataset.journeyChapter = frame.chapter;
         return frame.progress > 0 && frame.progress < 1;
       },

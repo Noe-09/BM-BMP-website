@@ -29,18 +29,26 @@ export function seekJourney(state: VisualJourney, to: number, nowMs: number, dur
 
 // Autoplay only. Input gain, render damping, idle suppression and seek stay unchanged.
 const speedStops = [[0, 1], [.10, 1], [.18, .76], [.34, .76], [.44, .83], [.54, 1], [.78, 1], [.88, .90], [1, .90]] as const;
+const entranceBoostStops = [[0, 1.30], [.35, 1.30], [.55, 1], [1, 1]] as const;
 
-export function autoplaySpeedMultiplier(progress: number): number {
+const sampleSpeedStops = (
+  stops: ReadonlyArray<readonly [number, number]>,
+  progress: number,
+) => {
   const p = clamp01(progress);
-  for (let i = 1; i < speedStops.length; i++) {
-    const [end, to] = speedStops[i];
+  for (let i = 1; i < stops.length; i++) {
+    const [end, to] = stops[i];
     if (p <= end) {
-      const [start, from] = speedStops[i - 1];
+      const [start, from] = stops[i - 1];
       const t = (p - start) / (end - start);
       return from + (to - from) * t * t * (3 - 2 * t);
     }
   }
-  return speedStops[speedStops.length - 1][1];
+  return stops[stops.length - 1][1];
+};
+
+export function autoplaySpeedMultiplier(progress: number): number {
+  return sampleSpeedStops(speedStops, progress) * sampleSpeedStops(entranceBoostStops, progress);
 }
 
 export function stepJourney(state: VisualJourney, deltaSeconds: number, nowMs: number, autoplayAllowed: boolean): VisualJourney {

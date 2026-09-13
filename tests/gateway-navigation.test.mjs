@@ -5,6 +5,8 @@ import {
   getGatewayExpectedPathname,
   shouldEnhanceGatewayNavigation,
   shouldMarkGatewaySession,
+  shouldPreviewGatewayFocus,
+  shouldPreviewGatewaySelection,
   shouldRequireGatewayPreview,
   shouldUseGatewayLocationFallback,
 } from "../lib/gateway/navigation.ts";
@@ -75,6 +77,56 @@ test("coarse ordinary pointer activation requires its division preview first", (
       selectedDivision: "visuals",
     }),
     false,
+  );
+});
+
+test("coarse Creator selection previews once before deliberate selection", () => {
+  assert.equal(
+    shouldPreviewGatewaySelection({
+      coarsePointer: true,
+      division: "creator",
+      previewDivision: null,
+    }),
+    true,
+  );
+  assert.equal(
+    shouldPreviewGatewaySelection({
+      coarsePointer: true,
+      division: "creator",
+      previewDivision: "technical",
+    }),
+    true,
+  );
+  assert.equal(
+    shouldPreviewGatewaySelection({
+      coarsePointer: true,
+      division: "creator",
+      previewDivision: "creator",
+    }),
+    false,
+  );
+  assert.equal(
+    shouldPreviewGatewaySelection({
+      coarsePointer: false,
+      division: "creator",
+      previewDivision: null,
+    }),
+    false,
+  );
+});
+
+test("coarse pointer focus previews only when focus is visibly keyboard-driven", () => {
+  assert.equal(
+    shouldPreviewGatewayFocus({ coarsePointer: true, focusVisible: false }),
+    false,
+  );
+  assert.equal(
+    shouldPreviewGatewayFocus({ coarsePointer: true, focusVisible: true }),
+    true,
+  );
+  assert.equal(
+    shouldPreviewGatewayFocus({ coarsePointer: false, focusVisible: false }),
+    true,
   );
 });
 
