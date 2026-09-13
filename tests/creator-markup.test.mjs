@@ -199,6 +199,32 @@ test("Creator overview CSS forms a continuous sticky exhibition", async () => {
   assert.doesNotMatch(css, /\.creator-veil \{[\s\S]{0,260}border:/);
 });
 
+test("Creator worlds expose distinct restrained typography palettes", async () => {
+  const [css, ...sealedWorlds] = await Promise.all([
+    readFile(new URL("../app/creator/creator.css", import.meta.url), "utf8"),
+    ...["PawsonaWorld", "RelationshipWorld", "MinerWorld"].map((name) =>
+      readFile(
+        new URL(`../components/creator/worlds/${name}.tsx`, import.meta.url),
+        "utf8",
+      ),
+    ),
+  ]);
+
+  assert.match(css, /--weins-type:\s*#15171a/);
+  assert.match(css, /--slyour-crimson:\s*#a7192a/);
+  assert.match(css, /--xide-ember:\s*#bd7a3c/);
+  assert.match(css, /\.creator-world--pawsona\s*\{[^}]*--sealed-accent:\s*#78988a/s);
+  assert.match(css, /\.creator-world--relationship\s*\{[^}]*--sealed-accent:\s*#8193ad/s);
+  assert.match(css, /\.creator-world--miner\s*\{[^}]*--sealed-accent:\s*#a87346/s);
+  assert.doesNotMatch(css, /mix-blend-mode:\s*difference/);
+  assert.doesNotMatch(css, /^\s*\.creator-world h2 \{/m);
+
+  for (const source of sealedWorlds) {
+    assert.match(source, /creator-sealed-portal__signal/);
+    assert.match(source, /world\.motifs\.join/);
+  }
+});
+
 test("Creator degrades motion safely and cleans up every global listener", async () => {
   const [controller, css, sequence] = await Promise.all([
     readFile(

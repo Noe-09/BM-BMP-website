@@ -22,6 +22,9 @@ export function PawsonaWorld({ world }: { world: CreatorWorld }) {
             <h2 id={`creator-world-title-${world.slug}`}>{world.name}</h2>
             <p>{world.developmentNote}</p>
           </div>
+          <p className="creator-sealed-portal__signal">
+            {world.motifs.join(" / ")}
+          </p>
         </div>
       </div>
     </section>

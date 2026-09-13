@@ -251,7 +251,10 @@
 
 /* Portal 01: mass resolves from an oversized crop, then compresses into a slab. */
 .creator-world--weins {
-  color: #111113;
+  --weins-type: #15171a;
+  --weins-zinc: #55595b;
+  --weins-chalk: #e7e2d8;
+  color: var(--weins-type);
   background:
     linear-gradient(90deg, rgba(17, 17, 19, 0.06) 1px, transparent 1px) 0 0 / 12.5vw 100%,
     #d8d7d3;
@@ -338,7 +341,7 @@
 
 .weins-portal__identity h2 {
   margin-left: -0.06em;
-  color: #f3f0e9;
+  color: var(--weins-type);
   font-size: clamp(6rem, 18vw, 19rem);
   font-weight: 720;
   line-height: 0.68;
@@ -348,21 +351,26 @@
 
 .weins-portal__identity > div p {
   margin-top: 1.4rem;
-  color: rgba(17, 17, 19, 0.68);
+  color: var(--weins-zinc);
 }
 
 .weins-portal__index {
   align-self: start;
+  color: var(--weins-zinc);
 }
 
 .weins-portal__action {
   align-self: end;
   margin-bottom: 0.25rem;
+  color: var(--weins-type);
 }
 
 /* Portal 02: a crimson editorial wall breaches WEINS' closing slab. */
 .creator-world--slyour {
-  color: #1a1110;
+  --slyour-ink: #1d1211;
+  --slyour-crimson: #a7192a;
+  --slyour-paper: #f1e9dc;
+  color: var(--slyour-ink);
   background: #ede6d8;
 }
 
@@ -459,6 +467,7 @@
 
 .slyour-portal__identity > p {
   align-self: start;
+  color: var(--slyour-crimson);
 }
 
 .slyour-portal__identity > div {
@@ -468,29 +477,31 @@
 }
 
 .slyour-portal__identity h2 {
-  color: #f5eee2;
+  color: var(--slyour-crimson);
   font-size: clamp(4.8rem, 12vw, 12rem);
   font-weight: 720;
   line-height: 0.72;
   letter-spacing: -0.08em;
-  text-shadow: 0 0.08em 0.7em rgba(39, 9, 12, 0.24);
 }
 
 .slyour-portal__identity > div p {
   margin-top: 1rem;
-  color: #f5eee2;
+  color: var(--slyour-ink);
 }
 
 .slyour-portal__identity a {
   grid-column: 2;
   justify-self: end;
-  color: #1a1110;
+  color: var(--slyour-ink);
   pointer-events: auto;
 }
 
 /* Portal 03: one low-light field remains, then its illumination disappears. */
 .creator-world--xide {
-  color: #e8e0d4;
+  --xide-bone: #ded7ca;
+  --xide-smoke: #918a80;
+  --xide-ember: #bd7a3c;
+  color: var(--xide-bone);
   background: #080706;
 }
 
@@ -567,6 +578,7 @@
 
 .xide-portal__identity > p {
   align-self: start;
+  color: var(--xide-ember);
 }
 
 .xide-portal__identity > div {
@@ -576,15 +588,16 @@
 
 .xide-portal__identity h2 {
   max-width: 6ch;
-  font-size: clamp(2.8rem, 6.8vw, 7rem);
-  font-weight: 560;
+  color: var(--xide-bone);
+  font-size: clamp(2.8rem, 6.2vw, 6.5rem);
+  font-weight: 520;
   line-height: 0.82;
   letter-spacing: -0.065em;
 }
 
 .xide-portal__identity > div p {
   margin-top: 1rem;
-  color: rgba(232, 224, 212, 0.58);
+  color: var(--xide-smoke);
 }
 
 .xide-portal__traces {
@@ -607,7 +620,7 @@
 
 .xide-portal__traces li:nth-child(2) {
   --trace-offset: -8vw;
-  color: rgba(232, 224, 212, 0.68);
+  color: var(--xide-ember);
 }
 
 .xide-portal__traces li:nth-child(3) {
@@ -617,6 +630,7 @@
 .xide-portal__identity > a {
   grid-column: 3;
   justify-self: end;
+  color: var(--xide-ember);
 }
 
 /* The threshold is the last light from XIDE becoming an access boundary. */
@@ -685,8 +699,26 @@
 
 /* The unrevealed worlds live in darkness; the veil never becomes a card. */
 .creator-world--sealed {
-  color: #d9d4ca;
+  color: var(--sealed-type, #d9d4ca);
   background: #050505;
+}
+
+.creator-world--pawsona {
+  --sealed-type: #e1e4df;
+  --sealed-muted: #929b95;
+  --sealed-accent: #78988a;
+}
+
+.creator-world--relationship {
+  --sealed-type: #c9cdd4;
+  --sealed-muted: #858c98;
+  --sealed-accent: #8193ad;
+}
+
+.creator-world--miner {
+  --sealed-type: #bdb9b0;
+  --sealed-muted: #8c877f;
+  --sealed-accent: #a87346;
 }
 
 .creator-sealed-portal {
@@ -712,7 +744,11 @@
   display: flex;
   justify-content: space-between;
   grid-column: 1 / -1;
-  color: rgba(217, 212, 202, 0.58);
+  color: var(--sealed-muted);
+}
+
+.creator-sealed-portal__state span:last-child {
+  color: var(--sealed-accent);
 }
 
 .creator-sealed-portal__identity {
@@ -730,8 +766,9 @@
 }
 
 .creator-sealed-portal__identity h2 {
-  font-size: clamp(4.5rem, 13vw, 14rem);
-  font-weight: 620;
+  color: var(--sealed-type);
+  font-size: clamp(4.5rem, 10vw, 11rem);
+  font-weight: 570;
   line-height: 0.72;
   letter-spacing: -0.08em;
 }
@@ -739,13 +776,13 @@
 .creator-sealed-portal__identity > p:last-child {
   max-width: 25rem;
   margin-top: 1.5rem;
-  color: rgba(217, 212, 202, 0.5);
+  color: var(--sealed-muted);
 }
 
 .creator-sealed-portal__signal {
   grid-column: 2;
   align-self: end;
-  color: rgba(217, 212, 202, 0.42);
+  color: var(--sealed-accent);
   font-size: 0.62rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -757,7 +794,13 @@
 }
 
 .creator-world--relationship .creator-sealed-portal__identity h2 {
-  font-size: clamp(3.8rem, 10vw, 11rem);
+  font-size: clamp(3.8rem, 7.8vw, 8.5rem);
+  font-weight: 520;
+}
+
+.creator-world--relationship .creator-sealed-portal__signal {
+  justify-self: end;
+  text-align: right;
 }
 
 .creator-world--miner .creator-sealed-portal__copy {
@@ -772,6 +815,11 @@
 .creator-world--miner .creator-sealed-portal__identity {
   align-self: start;
   padding-top: 13vh;
+}
+
+.creator-world--miner .creator-sealed-portal__identity h2 {
+  font-size: clamp(4.2rem, 9.5vw, 10rem);
+  font-weight: 640;
 }
 
 .creator-veil {
@@ -1342,11 +1390,15 @@
   }
 
   .creator-sealed-portal__identity h2 {
-    font-size: clamp(3.7rem, 20vw, 6.2rem);
+    font-size: clamp(3.7rem, 18vw, 5.8rem);
   }
 
   .creator-world--relationship .creator-sealed-portal__identity h2 {
-    font-size: clamp(3rem, 14vw, 4.7rem);
+    font-size: clamp(3rem, 13vw, 4.4rem);
+  }
+
+  .creator-world--miner .creator-sealed-portal__identity h2 {
+    font-size: clamp(3.4rem, 17vw, 5.6rem);
   }
 
   .creator-world--miner .creator-sealed-portal__copy {
@@ -1808,10 +1860,6 @@
     grid-column: 1 / -1;
     justify-self: start;
     text-align: left;
-  }
-
-  .creator-world h2 {
-    font-size: clamp(3.8rem, 21vw, 7rem);
   }
 
   .creator-world__footer > p:last-child {

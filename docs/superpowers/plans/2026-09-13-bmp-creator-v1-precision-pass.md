@@ -139,15 +139,15 @@
 - Produces: per-world palette tokens/classes for title, metadata, status, and
   accent hierarchy
 
-- [ ] Add failing assertions that each world exposes a distinct chroma hook and
+- [x] Add failing assertions that each world exposes a distinct chroma hook and
       that WEINS does not depend on difference blending.
-- [ ] Confirm the assertions fail for the repeated sealed-world treatment.
-- [ ] Implement the approved graphite/chalk, warm-ink/crimson, bone/copper,
+- [x] Confirm the assertions fail for the repeated sealed-world treatment.
+- [x] Implement the approved graphite/chalk, warm-ink/crimson, bone/copper,
       spectral-green, cool-blue-grey, and oxide systems.
-- [ ] Tune title scale/weight and metadata contrast so XIDE remains object-first
+- [x] Tune title scale/weight and metadata contrast so XIDE remains object-first
       and sealed worlds remain distant.
-- [ ] Run Creator tests, typecheck, and lint.
-- [ ] Commit as `refactor: refine creator typography chroma`.
+- [x] Run Creator tests, typecheck, and lint.
+- [x] Commit as `refactor: refine creator typography chroma`.
 
 ### Task 6: Optical and responsive verification
 
