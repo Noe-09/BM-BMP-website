@@ -3,23 +3,24 @@
 STATUS: RUNNING
 BRANCH: feat/bmp-tech-v1
 BASE_SHA: c1519f74f7b59fcef773451df5afe71f292b94c6
-LAST_VERIFIED_HEAD: b315aa9dc6f8aabf8047f4ef488be850944f53cb
-CURRENT_TASK: Task 6 — Flagship Observatory, Topology, and Human Checkpoint
-CURRENT_STEP: Step 1 — Add failing flagship/accessibility regression
-LAST_COMPLETED_TASK: Task 5
+LAST_VERIFIED_HEAD: ebef403a1cd11186e8c17d2f30120f9fc3ac535d
+CURRENT_TASK: Task 7 — Evidence, Business Tool Spectrum, Register, and Closing
+CURRENT_STEP: Step 1
+LAST_COMPLETED_TASK: Task 6
 LAST_SUCCESSFUL_CHECKS:
-- PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" node --test tests/tech-journey.test.mjs` (2 tests, 0 failures).
+- PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" node --test tests/tech-markup.test.mjs tests/tech-journey.test.mjs` (8 tests, 0 failures).
 - PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm run typecheck` (`tsc --noEmit`, exit 0).
+- PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm run lint` (exit 0).
 - PASS: `git diff --check` (exit 0).
-NEXT_ACTION: add and run failing Task 6 flagship/accessibility regression.
+NEXT_ACTION: begin Task 7 Step 1 by adding and running its prescribed failing regression.
 BLOCKER: NONE
-UPDATED_AT: 2026-09-14T23:21:19+07:00
+UPDATED_AT: 2026-09-15T05:34:42+07:00
 
 ## Verified Baseline
 
 - **Branch:** `feat/bmp-tech-v1`
 - **Base commit:** `c1519f74f7b59fcef773451df5afe71f292b94c6`
-- **LAST_VERIFIED_HEAD:** `b315aa9dc6f8aabf8047f4ef488be850944f53cb` (`feat: add BMP Tech signature system boot`)
+- **LAST_VERIFIED_HEAD:** `ebef403a1cd11186e8c17d2f30120f9fc3ac535d` (`fix: resume BMP Tech checkpoint propagation`)
 - **Remote feature branch:** absent at audit time
 
 ## Task 1 Completion
@@ -60,4 +61,4 @@ The human explicitly approved continuing with a truthful prototype model. Public
 
 ## Resume Rule
 
-Task 6 Step 1 may begin by reading the complete Task 6 plan and current BM Tech route, then adding and running the prescribed failing flagship/accessibility regression before production code. Refine the existing server-rendered `SystemObservatory` rather than moving the page client-side; add a data-driven decorative SVG topology with DOM-equivalent stage semantics and a keyboard-inspectable Human Checkpoint that never blocks native scrolling. Preserve the completed boot contract (`data-tech-boot`, guarded session storage, short timings), the single passive native-scroll controller, shared route-scoped topology coordinates, and all `PLANNED` truth semantics. Do not add wheel interception, programmatic scrolling, fake backend action, unsupported system proof, or generic technology tropes; any `ACTIVE` or `VERIFIED` claim requires a fresh audit of independently evidenced behavior.
+Task 7 Step 1 may begin by reading the complete Task 7 plan, this run state, `CLAUDE.md`, and the current BM Tech route before adding and running its prescribed failing regression. Preserve the Task 6 server-rendered observatory, seven semantic planned stages, decorative data-driven topology, checkpoint propagation pause/resume choreography, and labelled local-only Human Checkpoint. Preserve the Task 5 boot contract, passive native scrolling, shared route-scoped topology coordinates, and all `PLANNED` truth semantics. Do not add wheel interception, programmatic scrolling, fake backend action, unsupported system proof, or generic technology tropes; any `ACTIVE` or `VERIFIED` claim requires a fresh audit of independently evidenced behavior.
