@@ -1,0 +1,17 @@
+.tech-page {
+  --tech-bg: #101111;
+  --tech-panel: #171919;
+  --tech-fg: #f0f0ec;
+  --tech-muted: #969b98;
+  --tech-line: rgba(240, 240, 236, 0.18);
+  --tech-signal: #b9e64a;
+  --tech-human: #d88a45;
+  --tech-planned: #7d8991;
+  background: var(--tech-bg);
+  color: var(--tech-fg);
+}
+
+.tech-page .tech-experience {
+  position: relative;
+  overflow: clip;
+}
