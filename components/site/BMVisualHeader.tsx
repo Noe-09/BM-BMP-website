@@ -13,11 +13,11 @@ export function BMVisualHeader() {
     <header className="site-nav site-nav--flagship bm-visual-nav">
       <Container className="site-nav__inner">
         <Link
-          href={NAVIGATION.home.href.value}
+          href={NAVIGATION.studio.href.value}
           className="site-mark bm-visual-mark"
-          aria-label="BMP home"
+          aria-label="BMP studio"
         >
-          <span>{NAVIGATION.home.label.value}</span>
+          <span>{NAVIGATION.studio.label.value}</span>
           <span aria-hidden="true">/</span>
           <strong>BM Visual</strong>
         </Link>

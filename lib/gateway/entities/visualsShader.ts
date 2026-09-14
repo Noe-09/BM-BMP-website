@@ -1,6 +1,7 @@
 export const visualsVertexShader = /* glsl */ `
 uniform float uTime;
 uniform float uHover;
+uniform float uSelected;
 
 varying vec3 vNormal;
 varying vec3 vViewPosition;
@@ -17,8 +18,9 @@ void main() {
   float wave = sin(position.x * 2.2 + position.y * 1.8 + uTime * 0.4) *
                cos(position.z * 2.0 + position.x * 1.4 - uTime * 0.3);
   
-  float hoverWave = sin(position.y * 3.2 + uTime * 0.6) * 0.035 * uHover;
-  float totalDisp = wave * (0.03 + uHover * 0.02) + hoverWave;
+  float authority = max(uHover, uSelected);
+  float hoverWave = sin(position.y * 3.2 + uTime * 0.6) * 0.035 * authority;
+  float totalDisp = wave * (0.03 + authority * 0.02) + hoverWave;
   vDisplacement = totalDisp;
 
   vec3 displacedPos = position + normal * totalDisp;
@@ -37,6 +39,7 @@ void main() {
 export const visualsFragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uHover;
+uniform float uSelected;
 uniform float uProgress;
 
 varying vec3 vNormal;
@@ -94,7 +97,8 @@ void main() {
 
     vec3 innerColor = mix(lavender, coralRose, sin(nebulaWave * 2.2 + uTime * 0.35) * 0.5 + 0.5);
     innerColor = mix(innerColor, subtleCyan, smoothstep(0.2, 0.7, fresnel) * 0.5);
-    float coreGlow = (1.0 - pow(NdotV, 1.4)) * (0.38 + uHover * 0.35);
+    float authority = max(uHover, uSelected);
+    float coreGlow = (1.0 - pow(NdotV, 1.4)) * (0.38 + authority * 0.35);
 
     // 4. SUBSURFACE SCATTERING
     vec3 sssLight = normalize(lightDir + N * 0.35);
@@ -130,6 +134,7 @@ void main() {
 export const previewFragmentShader = /* glsl */ `
 uniform sampler2D uTexture;
 uniform float uHover;
+uniform float uPreviewVisibility;
 uniform float uTime;
 uniform vec3 uTint;
 
@@ -160,7 +165,7 @@ void main() {
   gradedColor += chromaticRim;
   gradedColor += vec3(0.08, 0.06, 0.10) * uHover;
 
-  float alpha = vignette * smoothstep(0.05, 0.75, uHover) * 0.92;
+  float alpha = vignette * uPreviewVisibility * 0.92;
 
   if (alpha < 0.01) discard;
 

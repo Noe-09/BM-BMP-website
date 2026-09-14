@@ -3,7 +3,6 @@ import test from "node:test";
 import {
   createGatewayState,
   gatewayReducer,
-  getSelectionBias,
 } from "../lib/gateway/state.ts";
 import {
   applyTravelDelta,
@@ -71,16 +70,119 @@ test("return and reduced-motion entry skip the long camera journey", () => {
   assert.equal(reduced.phase, "split");
 });
 
-test("rapid previews replace each other and commit locks selection", () => {
+test("only a returning neutral chamber can replay the journey", () => {
+  const firstVisit = {
+    ...createGatewayState(false),
+    phase: "split",
+    sessionResolved: true,
+  };
+  assert.equal(
+    gatewayReducer(firstVisit, { type: "REPLAY_JOURNEY" }),
+    firstVisit,
+  );
+
+  const preview = {
+    ...createGatewayState(true),
+    phase: "preview",
+    previewDivision: "visuals",
+    returning: true,
+    sessionResolved: true,
+  };
+  assert.equal(
+    gatewayReducer(preview, { type: "REPLAY_JOURNEY" }),
+    preview,
+  );
+
+  const returning = {
+    ...createGatewayState(true),
+    phase: "split",
+    returning: true,
+    sessionResolved: true,
+  };
+  const replaying = gatewayReducer(returning, { type: "REPLAY_JOURNEY" });
+  assert.deepEqual(replaying, {
+    phase: "auto-entry",
+    previewDivision: null,
+    selectedDivision: null,
+    briefingDirection: "idle",
+    returning: true,
+    sessionResolved: true,
+  });
+});
+
+test("replay follows the existing deterministic journey lifecycle back to Three Worlds", () => {
+  let first = {
+    ...createGatewayState(true),
+    phase: "split",
+    returning: true,
+    sessionResolved: true,
+  };
+  let second = { ...first };
+
+  for (const event of [
+    { type: "REPLAY_JOURNEY" },
+    { type: "AUTO_COMPLETE" },
+    { type: "TRAVEL_COMPLETE" },
+  ]) {
+    first = gatewayReducer(first, event);
+    second = gatewayReducer(second, event);
+  }
+
+  assert.deepEqual(first, second);
+  assert.equal(first.phase, "split");
+  assert.equal(first.returning, true);
+  assert.equal(first.selectedDivision, null);
+});
+
+test("rapid previews include Creator and selection enters briefing", () => {
   let state = { ...createGatewayState(false), phase: "split", sessionResolved: true };
   state = gatewayReducer(state, { type: "PREVIEW", division: "visuals" });
-  assert.equal(getSelectionBias(state), -1);
+  assert.equal(state.previewDivision, "visuals");
   state = gatewayReducer(state, { type: "PREVIEW", division: "technical" });
-  assert.equal(getSelectionBias(state), 1);
-  state = gatewayReducer(state, { type: "COMMIT", division: "technical" });
+  assert.equal(state.previewDivision, "technical");
+  state = gatewayReducer(state, { type: "PREVIEW", division: "creator" });
+  assert.equal(state.previewDivision, "creator");
+  state = gatewayReducer(state, { type: "SELECT", division: "creator" });
+  assert.equal(state.phase, "briefing");
+  assert.equal(state.previewDivision, null);
+  assert.equal(state.selectedDivision, "creator");
+
   state = gatewayReducer(state, { type: "PREVIEW", division: "visuals" });
-  assert.equal(state.committed, "technical");
-  assert.equal(getSelectionBias(state), 1);
+  assert.equal(state.selectedDivision, "creator");
+});
+
+test("briefing reaches decision and Go Back restores the neutral chamber", () => {
+  let state = { ...createGatewayState(false), phase: "split", sessionResolved: true };
+  state = gatewayReducer(state, { type: "SELECT", division: "technical" });
+  state = gatewayReducer(state, { type: "BRIEFING_COMPLETE" });
+  assert.equal(state.phase, "decision");
+
+  state = gatewayReducer(state, { type: "GO_BACK" });
+  assert.equal(state.phase, "briefing");
+  assert.equal(state.briefingDirection, "reverse");
+
+  state = gatewayReducer(state, { type: "GO_BACK_COMPLETE" });
+  assert.equal(state.phase, "split");
+  assert.equal(state.previewDivision, null);
+  assert.equal(state.selectedDivision, null);
+  assert.equal(state.briefingDirection, "idle");
+});
+
+test("only a decision for the selected division can commit", () => {
+  let state = { ...createGatewayState(false), phase: "split", sessionResolved: true };
+  state = gatewayReducer(state, { type: "SELECT", division: "technical" });
+  state = gatewayReducer(state, { type: "COMMIT", division: "technical" });
+  assert.equal(state.phase, "briefing");
+
+  state = gatewayReducer(state, { type: "BRIEFING_COMPLETE" });
+  state = gatewayReducer(state, { type: "PREVIEW", division: "visuals" });
+  state = gatewayReducer(state, { type: "COMMIT", division: "visuals" });
+  assert.equal(state.phase, "decision");
+  assert.equal(state.selectedDivision, "technical");
+
+  state = gatewayReducer(state, { type: "COMMIT", division: "technical" });
+  assert.equal(state.phase, "commit");
+  assert.equal(state.selectedDivision, "technical");
 });
 
 test("loader timing is gated, formatted without percent, and travel clamps", () => {

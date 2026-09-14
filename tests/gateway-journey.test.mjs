@@ -12,18 +12,32 @@ const advance = (state, seconds, start = 0, autoplay = true) => {
   return state;
 };
 
-test("the baseline entry profile remains available to the cinematic multiplier", () => {
-  assert.equal(autoplaySpeedMultiplier(0), 1);
-  assert.equal(autoplaySpeedMultiplier(.25), .76);
-  assert.equal(autoplaySpeedMultiplier(.44), .83);
+const autoplayDurationTo = (target) => {
+  let state = createJourney(), elapsed = 0;
+  while (state.targetProgress < target && elapsed < 40) {
+    elapsed += .001;
+    state = stepJourney(state, .001, elapsed * 1000, true);
+  }
+  return elapsed;
+};
+
+test("autoplay accelerates the entrance and blends back by the midpoint", () => {
+  assert.equal(autoplaySpeedMultiplier(0), 1.3);
+  assert.ok(Math.abs(autoplaySpeedMultiplier(.25) - .988) < 1e-12);
+  assert.ok(autoplaySpeedMultiplier(.44) > .83 && autoplaySpeedMultiplier(.44) < 1);
+  assert.equal(autoplaySpeedMultiplier(.55), 1);
   assert.equal(autoplaySpeedMultiplier(.68), 1);
   assert.equal(autoplaySpeedMultiplier(.95), .9);
+
+  assert.ok(Math.abs(autoplayDurationTo(.35) - 7.802) < .02);
+  assert.ok(Math.abs(autoplayDurationTo(.55) - 12.292) < .02);
+  assert.ok(advance(createJourney(), 4).targetProgress > .185);
 });
 
 test("speed ramps are bounded, continuous and independent of input gain in both directions", () => {
   for (const p of [0, .08, .1, .16, .18, .25, .34, .44, .46, .54, .58, .68, .78, .88, .90, 1]) {
     const speed = autoplaySpeedMultiplier(p);
-    assert.ok(speed >= .76 && speed <= 1);
+    assert.ok(speed >= .9 && speed <= 1.3);
     assert.ok(Math.abs(autoplaySpeedMultiplier(p - 1e-7) - autoplaySpeedMultiplier(p + 1e-7)) < .00001);
     for (const pixels of [-100, 100]) {
       const impulse = impulseJourney(createJourney(p), pixels, 1000);
@@ -52,7 +66,7 @@ test("idle autoplay carries the entire journey to an exactly paused endpoint", (
 test("reverse cancels a buffered forward target and suppresses autoplay", () => {
   const buffered = { ...createJourney(0.6), targetProgress: 0.9 };
   const reverse = impulseJourney(buffered, -100, 1000);
-  assert.ok(reverse.targetProgress < 0.6);
+  assert.equal(reverse.targetProgress, 0.525);
   const moved = advance(reverse, 0.8, 1000);
   assert.ok(moved.renderProgress < 0.6);
   assert.equal(moved.autoplayVelocity, 0);
@@ -130,7 +144,13 @@ test("cinematic autoplay creates the approved 20–30 percent longer authored ar
     elapsed += .001;
     state = stepJourney(state, .001, elapsed * 1000, true);
   }
-  assert.ok(Math.abs(elapsed - 25.877) < .02, `cinematic target duration ${elapsed}`);
+  assert.ok(Math.abs(elapsed - 22.85) < .02, `cinematic target duration ${elapsed}`);
+});
+
+test("autoplay progression remains deterministic", () => {
+  const first = advance(createJourney(), 12);
+  const second = advance(createJourney(), 12);
+  assert.deepEqual(second, first);
 });
 
 test("cinematic events and optical energy reconstruct solely from normalized progress", () => {

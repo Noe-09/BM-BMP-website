@@ -7,9 +7,13 @@ const navigationItem = (label: string, href: string): CTA => ({
   href: structuredData(href, "approved-proposal:public-route-slugs"),
 });
 
+const gateway = navigationItem("Switch World", "/");
+
 export const NAVIGATION = {
-  home: navigationItem("BMP", "/"),
+  studio: navigationItem("BMP", "/studio"),
+  gateway,
   items: [
+    gateway,
     navigationItem("Work", "/work"),
     navigationItem("BM Visual", "/bm-visual"),
     navigationItem("BM Tech", "/bm-tech"),
