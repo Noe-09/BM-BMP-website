@@ -7,6 +7,9 @@
   --tech-signal: #b9e64a;
   --tech-human: #d88a45;
   --tech-planned: #7d8991;
+  --tech-route-stroke: 1px;
+  --tech-node-size: 0.5rem;
+  --tech-route-offset: clamp(1.5rem, 5vw, 5rem);
   background: var(--tech-bg);
   color: var(--tech-fg);
 }
@@ -14,4 +17,130 @@
 .tech-page .tech-experience {
   position: relative;
   overflow: clip;
+}
+
+.tech-page .tech-boot {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  align-content: end;
+  gap: 0.45rem;
+  padding: var(--tech-route-offset);
+  pointer-events: none;
+  visibility: hidden;
+  background: color-mix(in srgb, var(--tech-bg) 96%, transparent);
+  color: var(--tech-fg);
+  opacity: 0;
+  transition: opacity 180ms ease, visibility 0s linear 180ms;
+}
+
+.tech-page [data-tech-experience][data-tech-boot="active"] .tech-boot {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 120ms ease;
+}
+
+.tech-page .tech-boot__topology,
+.tech-page [data-tech-experience] > section:first-of-type {
+  --tech-topology-x: var(--tech-route-offset);
+  --tech-topology-y: 42%;
+}
+
+.tech-page .tech-boot__topology {
+  position: absolute;
+  inset: 0;
+}
+
+.tech-page .tech-boot__route,
+.tech-page [data-tech-experience] > section:first-of-type::before,
+.tech-page [data-tech-experience] > section:first-of-type::after {
+  position: absolute;
+  display: block;
+  background: var(--tech-line);
+  content: "";
+}
+
+.tech-page .tech-boot__route--vertical {
+  top: 0;
+  bottom: 0;
+  left: var(--tech-topology-x);
+  width: var(--tech-route-stroke);
+}
+
+.tech-page .tech-boot__route--horizontal {
+  top: var(--tech-topology-y);
+  right: 0;
+  left: var(--tech-topology-x);
+  height: var(--tech-route-stroke);
+}
+
+.tech-page .tech-boot__node,
+.tech-page [data-tech-experience] > section:first-of-type::after {
+  width: var(--tech-node-size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.tech-page .tech-boot__node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: var(--tech-fg);
+}
+
+.tech-page .tech-boot__node--origin {
+  top: var(--tech-topology-y);
+  left: var(--tech-topology-x);
+}
+
+.tech-page .tech-boot__node--signal {
+  top: var(--tech-topology-y);
+  right: var(--tech-route-offset);
+  background: var(--tech-signal);
+  box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--tech-signal) 12%, transparent);
+}
+
+.tech-page .tech-boot__state,
+.tech-page .tech-boot__index {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tech-page .tech-boot__state {
+  font-size: clamp(2rem, 7vw, 5rem);
+  line-height: 0.9;
+}
+
+.tech-page .tech-boot__index {
+  color: var(--tech-muted);
+  font-size: 0.7rem;
+}
+
+.tech-page [data-tech-experience] > section:first-of-type {
+  position: relative;
+  padding: calc(var(--tech-route-offset) * 2) var(--tech-route-offset);
+}
+
+.tech-page [data-tech-experience] > section:first-of-type::before {
+  top: var(--tech-route-offset);
+  right: var(--tech-route-offset);
+  left: var(--tech-route-offset);
+  height: var(--tech-route-stroke);
+}
+
+.tech-page [data-tech-experience] > section:first-of-type::after {
+  top: calc(var(--tech-route-offset) - (var(--tech-node-size) / 2));
+  right: calc(var(--tech-route-offset) - (var(--tech-node-size) / 2));
+  background: var(--tech-signal);
+  box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--tech-signal) 12%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-page .tech-boot {
+    transition: none;
+  }
 }

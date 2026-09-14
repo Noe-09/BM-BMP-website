@@ -25,3 +25,20 @@ test("Tech uses one passive native-scroll controller with damped rendered progre
 
   assert.doesNotMatch(controller, /\bwheel\b|scrollTo|scrollIntoView/);
 });
+
+test("Tech boot is short, session-aware, reduced-motion-aware, and non-blocking", async () => {
+  const boot = await read("components/tech/TechBoot.tsx");
+  const experience = await read("components/tech/TechExperience.tsx");
+  const css = await read("app/bm-tech/tech.css");
+
+  assert.match(boot, /bmp-tech-boot-seen-v1/);
+  assert.match(boot, /sessionStorage/);
+  assert.match(boot, /prefers-reduced-motion/);
+  assert.match(boot, /SIGNAL/);
+  assert.match(boot, /ROUTE/);
+  assert.match(boot, /VERIFY/);
+  assert.match(boot, /ONLINE/);
+  assert.match(experience, /<TechBoot/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.doesNotMatch(boot, /setTimeout\([^,]+,\s*(?:[2-9]\d{3}|\d{5,})/);
+});
