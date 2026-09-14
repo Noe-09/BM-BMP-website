@@ -141,8 +141,305 @@
   box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--tech-signal) 12%, transparent);
 }
 
+.tech-page .tech-observatory {
+  --tech-observatory-gap: clamp(1.5rem, 4vw, 4rem);
+  position: relative;
+  padding: calc(var(--tech-route-offset) * 2) var(--tech-route-offset) 0;
+}
+
+.tech-page .tech-observatory__intro {
+  max-width: 54rem;
+  padding: clamp(2rem, 8vw, 8rem) 0 clamp(6rem, 16vw, 13rem);
+}
+
+.tech-page .tech-observatory__eyebrow,
+.tech-page .tech-observatory__system-heading > p:first-child,
+.tech-page .tech-observatory__stage-index,
+.tech-page .tech-observatory__stage-state,
+.tech-page .human-checkpoint__status {
+  margin: 0;
+  color: var(--tech-muted);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tech-page .tech-observatory h1,
+.tech-page .tech-observatory h2,
+.tech-page .tech-observatory h3 {
+  margin: 0;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+}
+
+.tech-page .tech-observatory h1 {
+  max-width: 10ch;
+  margin-top: 0.75rem;
+  font-size: clamp(3.5rem, 10vw, 9rem);
+  line-height: 0.82;
+}
+
+.tech-page .tech-observatory__supporting-copy,
+.tech-page .tech-observatory__system-heading > p:last-child {
+  max-width: 34rem;
+  color: var(--tech-muted);
+  line-height: 1.5;
+}
+
+.tech-page .tech-observatory__frame {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.9fr) minmax(18rem, 1.1fr);
+  gap: var(--tech-observatory-gap);
+  align-items: start;
+}
+
+.tech-page .tech-observatory__sticky {
+  position: sticky;
+  top: var(--tech-route-offset);
+  min-height: min(44rem, calc(100svh - (var(--tech-route-offset) * 2)));
+  display: grid;
+  align-content: space-between;
+  gap: 2rem;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  border: 1px solid var(--tech-line);
+  background: var(--tech-panel);
+}
+
+.tech-page .tech-observatory__system-heading h2 {
+  max-width: 12ch;
+  margin-top: 0.45rem;
+  font-size: clamp(1.8rem, 3.5vw, 4rem);
+  line-height: 0.9;
+}
+
+.tech-page .tech-observatory__truth-state {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px dashed var(--tech-planned);
+  color: var(--tech-planned);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+
+.tech-page .tech-topology {
+  width: 100%;
+  overflow: visible;
+}
+
+.tech-page .tech-topology__route {
+  fill: none;
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.05 0.035;
+  stroke-width: 0.55;
+  opacity: 0.42;
+  transition: opacity 280ms ease, stroke 280ms ease, stroke-dashoffset 280ms ease;
+}
+
+.tech-page .tech-topology__node circle,
+.tech-page .tech-topology__node rect {
+  fill: var(--tech-panel);
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.8 0.5;
+  stroke-width: 0.7;
+  opacity: 0.75;
+  transition: fill 280ms ease, stroke 280ms ease, opacity 280ms ease;
+}
+
+.tech-page .tech-topology__node text {
+  fill: var(--tech-planned);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 2.4px;
+  letter-spacing: 0.25px;
+  text-anchor: middle;
+  opacity: 0.85;
+}
+
+.tech-page .tech-topology__node[data-node-type="checkpoint"] rect {
+  transform: rotate(45deg);
+  transform-origin: center;
+  stroke: var(--tech-human);
+}
+
+.tech-page .tech-topology__route[data-maturity="active"],
+.tech-page .tech-topology__node[data-maturity="active"] circle,
+.tech-page .tech-topology__node[data-maturity="active"] rect {
+  stroke: var(--tech-signal);
+  stroke-dasharray: none;
+  opacity: 1;
+}
+
+.tech-page .tech-topology__route[data-maturity="verified"],
+.tech-page .tech-topology__node[data-maturity="verified"] circle,
+.tech-page .tech-topology__node[data-maturity="verified"] rect {
+  stroke: var(--tech-fg);
+  stroke-dasharray: none;
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-phase="ingest"] [data-node-phase="ingest"],
+.tech-page [data-tech-experience][data-tech-phase="normalize"] [data-node-phase="normalize"],
+.tech-page [data-tech-experience][data-tech-phase="orchestrate"] [data-node-phase="orchestrate"],
+.tech-page [data-tech-experience][data-tech-phase="assist"] [data-node-phase="assist"],
+.tech-page [data-tech-experience][data-tech-phase="execute"] [data-node-phase="execute"],
+.tech-page [data-tech-experience][data-tech-phase="return"] [data-node-phase="return"] {
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-phase="ingest"] [data-route-phase="ingest"],
+.tech-page [data-tech-experience][data-tech-phase="normalize"] [data-route-phase="normalize"],
+.tech-page [data-tech-experience][data-tech-phase="orchestrate"] [data-route-phase="orchestrate"],
+.tech-page [data-tech-experience][data-tech-phase="assist"] [data-route-phase="assist"],
+.tech-page [data-tech-experience][data-tech-phase="execute"] [data-route-phase="execute"],
+.tech-page [data-tech-experience][data-tech-phase="return"] [data-route-phase="return"] {
+  stroke: var(--tech-signal);
+  stroke-dasharray: none;
+  stroke-dashoffset: calc(-1 * var(--tech-phase-progress, 0));
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-phase="checkpoint"] .tech-topology__node[data-node-id="checkpoint"] rect,
+.tech-page [data-tech-experience][data-tech-phase="checkpoint"] .tech-topology__node[data-node-id="checkpoint"] text {
+  fill: var(--tech-human);
+  stroke: var(--tech-human);
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-phase="checkpoint"] .tech-topology__route[data-route-id="checkpoint-execute"] {
+  opacity: 0.28;
+  stroke-dasharray: 0.05 0.035;
+  stroke: var(--tech-planned);
+}
+
+.tech-page .tech-observatory__stages {
+  display: grid;
+  gap: clamp(3rem, 8vw, 8rem);
+  margin: 0;
+  padding: 0 0 clamp(8rem, 16vw, 14rem);
+  list-style: none;
+}
+
+.tech-page .tech-observatory__stage {
+  position: relative;
+  min-height: 15rem;
+  padding: 1rem 0 1rem 1.25rem;
+  border-left: 1px dashed var(--tech-planned);
+  color: var(--tech-muted);
+  opacity: 0.8;
+  transition: color 220ms ease, opacity 220ms ease;
+}
+
+.tech-page .tech-observatory__stage h3 {
+  margin-top: 0.5rem;
+  color: var(--tech-fg);
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: 0.86;
+}
+
+.tech-page .tech-observatory__stage > p:not(.tech-observatory__stage-index, .tech-observatory__stage-state) {
+  max-width: 31rem;
+  line-height: 1.5;
+}
+
+.tech-page .tech-observatory__stage-state {
+  color: var(--tech-planned);
+}
+
+.tech-page [data-tech-experience][data-tech-phase="ingest"] [data-tech-stage="ingest"],
+.tech-page [data-tech-experience][data-tech-phase="normalize"] [data-tech-stage="normalize"],
+.tech-page [data-tech-experience][data-tech-phase="orchestrate"] [data-tech-stage="orchestrate"],
+.tech-page [data-tech-experience][data-tech-phase="assist"] [data-tech-stage="assist"],
+.tech-page [data-tech-experience][data-tech-phase="checkpoint"] [data-tech-stage="checkpoint"],
+.tech-page [data-tech-experience][data-tech-phase="execute"] [data-tech-stage="execute"],
+.tech-page [data-tech-experience][data-tech-phase="return"] [data-tech-stage="return"] {
+  border-left-color: var(--tech-signal);
+  color: var(--tech-fg);
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-phase="checkpoint"] [data-tech-stage="checkpoint"] {
+  border-left-color: var(--tech-human);
+}
+
+.tech-page .human-checkpoint {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 32rem;
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--tech-human) 55%, var(--tech-line));
+}
+
+.tech-page .human-checkpoint__statement {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+  color: var(--tech-fg);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.tech-page .human-checkpoint__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tech-page .human-checkpoint button {
+  padding: 0.5rem 0.65rem;
+  border: 1px dashed var(--tech-human);
+  background: transparent;
+  color: var(--tech-fg);
+  cursor: pointer;
+  font: inherit;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+
+.tech-page .human-checkpoint button:hover,
+.tech-page .human-checkpoint button[aria-pressed="true"] {
+  background: var(--tech-human);
+  color: var(--tech-bg);
+}
+
+.tech-page .human-checkpoint button:focus-visible {
+  outline: 2px solid var(--tech-fg);
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .tech-page .tech-observatory__frame {
+    grid-template-columns: 1fr;
+  }
+
+  .tech-page .tech-observatory__sticky {
+    position: relative;
+    top: auto;
+    min-height: 0;
+  }
+
+  .tech-page .tech-observatory__stages {
+    gap: 3rem;
+    padding-top: 1rem;
+  }
+
+  .tech-page .tech-observatory__stage {
+    min-height: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tech-page .tech-boot {
+    transition: none;
+  }
+
+  .tech-page .tech-topology__route,
+  .tech-page .tech-topology__node circle,
+  .tech-page .tech-topology__node rect,
+  .tech-page .tech-observatory__stage {
     transition: none;
   }
 }

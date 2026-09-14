@@ -44,3 +44,9 @@ test("Tech boot is short, session-aware, reduced-motion-aware, and non-blocking"
   assert.doesNotMatch(css, /--tech-topology-y:\s*42%/);
   assert.doesNotMatch(boot, /setTimeout\([^,]+,\s*(?:[2-9]\d{3}|\d{5,})/);
 });
+
+test("Tech boot defers its return-session display-state update", async () => {
+  const boot = await read("components/tech/TechBoot.tsx");
+
+  assert.doesNotMatch(boot, /if \(hasSeenBoot\(\)\) \{\s*setState\("ONLINE"\)/);
+});

@@ -3,9 +3,7 @@
 import { useEffect, useState } from "react";
 
 const BOOT_SESSION_KEY = "bmp-tech-boot-seen-v1";
-const BOOT_STATES = ["SIGNAL", "ROUTE", "VERIFY", "ONLINE"] as const;
-
-type BootState = (typeof BOOT_STATES)[number];
+type BootState = "SIGNAL" | "ROUTE" | "VERIFY" | "ONLINE";
 
 function hasSeenBoot() {
   try {
@@ -49,7 +47,7 @@ export function TechBoot() {
     }
 
     if (hasSeenBoot()) {
-      setState("ONLINE");
+      timers.push(window.setTimeout(() => setState("ONLINE"), 0));
       timers.push(window.setTimeout(complete, 160));
     } else {
       timers.push(window.setTimeout(() => setState("ROUTE"), 260));

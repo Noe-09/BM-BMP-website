@@ -25,3 +25,44 @@ test("BM Tech owns route-scoped styling", async () => {
   const layout = await read("app/bm-tech/layout.tsx");
   assert.match(layout, /import "\.\/tech\.css"/);
 });
+
+test("flagship observatory exposes causal semantics without relying on SVG alone", async () => {
+  const [observatory, topology, checkpoint] = await Promise.all([
+    read("components/tech/SystemObservatory.tsx"),
+    read("components/tech/SystemTopology.tsx"),
+    read("components/tech/HumanCheckpoint.tsx"),
+  ]);
+
+  assert.match(observatory, /AI SOCIAL MEDIA POSTING SYSTEM/);
+  assert.match(observatory, /data-tech-stage="ingest"/);
+  assert.match(observatory, /data-tech-stage="normalize"/);
+  assert.match(observatory, /data-tech-stage="orchestrate"/);
+  assert.match(observatory, /data-tech-stage="assist"/);
+  assert.match(observatory, /data-tech-stage="checkpoint"/);
+  assert.match(observatory, /data-tech-stage="execute"/);
+  assert.match(observatory, /data-tech-stage="return"/);
+
+  assert.match(topology, /<svg/);
+  assert.match(topology, /aria-hidden="true"/);
+  assert.match(topology, /system\.nodes|nodes\.map/);
+  assert.match(topology, /routes\.map/);
+
+  assert.match(checkpoint, /APPROVE/);
+  assert.match(checkpoint, /ADJUST/);
+  assert.match(checkpoint, /HOLD/);
+  assert.match(checkpoint, /button|tabIndex/);
+});
+
+test("Tech flagship does not use forbidden generic tech tropes", async () => {
+  const source = (
+    await Promise.all([
+      read("components/tech/SystemObservatory.tsx"),
+      read("components/tech/SystemTopology.tsx"),
+      read("components/tech/HumanCheckpoint.tsx"),
+    ])
+  ).join("\n");
+
+  assert.doesNotMatch(source, /iframe|dangerouslySetInnerHTML/);
+  assert.doesNotMatch(source, /terminal|matrix|glassmorphism|AI orb/i);
+  assert.doesNotMatch(source, /OpenAI|Zapier|Make\.com|n8n|HubSpot|Salesforce/);
+});
