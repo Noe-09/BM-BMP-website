@@ -3,22 +3,22 @@
 STATUS: RUNNING
 BRANCH: feat/bmp-tech-v1
 BASE_SHA: c1519f74f7b59fcef773451df5afe71f292b94c6
-LAST_VERIFIED_HEAD: 92e363210ad4e5a65eca8471bf003a249af17fcc
-CURRENT_TASK: Task 4 — Pure Journey Model and Single Interaction Controller
-CURRENT_STEP: Step 1 — Write the failing controller/source contract test
-LAST_COMPLETED_TASK: Task 3
+LAST_VERIFIED_HEAD: 01b1275fbd6049ab35fc4091b1adfd347e140ec1
+CURRENT_TASK: Task 5 — Signature Boot with Session and Reduced-Motion Semantics
+CURRENT_STEP: Step 1 — Write the failing boot/session regression
+LAST_COMPLETED_TASK: Task 4
 LAST_SUCCESSFUL_CHECKS:
-- PASS: `node --test tests/tech-markup.test.mjs` (2 tests).
+- PASS: `node --test tests/tech-journey.test.mjs` (1 test).
 - PASS: `npm run typecheck`.
-NEXT_ACTION: add and run failing Task 4 controller/source contract test.
+NEXT_ACTION: add and run failing Task 5 boot/session regression.
 BLOCKER: NONE
-UPDATED_AT: 2026-09-14T23:06:18+07:00
+UPDATED_AT: 2026-09-14T23:11:54+07:00
 
 ## Verified Baseline
 
 - **Branch:** `feat/bmp-tech-v1`
 - **Base commit:** `c1519f74f7b59fcef773451df5afe71f292b94c6`
-- **LAST_VERIFIED_HEAD:** `92e363210ad4e5a65eca8471bf003a249af17fcc` (`feat: establish BMP Tech systems observatory route`)
+- **LAST_VERIFIED_HEAD:** `01b1275fbd6049ab35fc4091b1adfd347e140ec1` (`feat: add BMP Tech causal journey controller`)
 - **Remote feature branch:** absent at audit time
 
 ## Task 1 Completion
@@ -59,4 +59,4 @@ The human explicitly approved continuing with a truthful prototype model. Public
 
 ## Resume Rule
 
-Task 4 Step 1 may begin by adding and running its failing controller/source-contract test. Preserve the Task 3 semantic experience root and its compile-safe no-op `TechJourneyController` until that test drives the real controller; do not add wheel interception, programmatic scrolling, or unrelated visual polish. Preserve `PLANNED` for every unsupported stage; future `ACTIVE` or `VERIFIED` use requires a fresh audit of exact independently evidenced behavior.
+Task 5 Step 1 may begin by adding and running the failing boot/session regression before production code. Keep the completed single `TechJourneyController` as the only browser journey boundary: native scrolling remains authoritative, semantic raw phase/direction writes remain immediate, and only `--tech-visual-progress` may be damped. Add one small boot client component without moving the server-rendered experience behind a hard blocker; first-session timing must stay within 700–1200 ms, return-session reacquire within 0–300 ms, and reduced motion must resolve near-instantly. Do not add wheel interception, programmatic scrolling, fake loading, unsupported system proof, or maturity changes; every unsupported flagship stage remains `PLANNED`, and any `ACTIVE` or `VERIFIED` claim requires a fresh audit of independently evidenced behavior.
