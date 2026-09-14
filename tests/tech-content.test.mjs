@@ -58,6 +58,47 @@ test("all seven flagship stages are represented as planned state records", async
   }
 });
 
+// Production break caught: a flagship node or route disappears, changes its stage mapping, or claims a maturity beyond the approved prototype state.
+test("all flagship nodes and routes retain their planned topology contracts", async () => {
+  const source = await read("content/tech.ts");
+  const nodes = [
+    { id: "ingest", label: "INGEST" },
+    { id: "normalize", label: "NORMALIZE" },
+    { id: "orchestrate", label: "ORCHESTRATE" },
+    { id: "assist", label: "ASSIST" },
+    { id: "checkpoint", label: "CHECKPOINT" },
+    { id: "execute", label: "EXECUTE" },
+    { id: "return", label: "RETURN" },
+  ];
+  const routes = [
+    { id: "ingest-normalize", from: "ingest", to: "normalize", phase: "ingest" },
+    { id: "normalize-orchestrate", from: "normalize", to: "orchestrate", phase: "normalize" },
+    { id: "orchestrate-assist", from: "orchestrate", to: "assist", phase: "orchestrate" },
+    { id: "assist-checkpoint", from: "assist", to: "checkpoint", phase: "assist" },
+    { id: "checkpoint-execute", from: "checkpoint", to: "execute", phase: "checkpoint" },
+    { id: "execute-return", from: "execute", to: "return", phase: "execute" },
+    { id: "return-ingest", from: "return", to: "ingest", phase: "return" },
+  ];
+
+  for (const { id, label } of nodes) {
+    assert.match(
+      source,
+      new RegExp(
+        `id: "${id}",[\\s\\S]{0,180}?label: "${label}",[\\s\\S]{0,180}?maturity: "planned"`,
+      ),
+    );
+  }
+
+  for (const { id, from, to, phase } of routes) {
+    assert.match(
+      source,
+      new RegExp(
+        `id: "${id}",\\s*from: "${from}",\\s*to: "${to}",\\s*phase: "${phase}",\\s*maturity: "planned"`,
+      ),
+    );
+  }
+});
+
 // Production break caught: unsupported performance claims enter the canonical Tech content.
 test("Tech canonical content contains no fabricated metric grammar", async () => {
   const source = await read("content/tech.ts");
