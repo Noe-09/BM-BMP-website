@@ -18,7 +18,11 @@ export function HumanCheckpoint({ statement }: HumanCheckpointProps) {
           <span key={line}>{line}</span>
         ))}
       </p>
-      <div aria-label="Local decision inspection" className="human-checkpoint__options">
+      <div
+        aria-label="Local decision inspection"
+        className="human-checkpoint__options"
+        role="group"
+      >
         {OPTIONS.map((option) => (
           <button
             aria-pressed={inspection === option}

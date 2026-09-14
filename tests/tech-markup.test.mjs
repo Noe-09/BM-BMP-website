@@ -66,3 +66,22 @@ test("Tech flagship does not use forbidden generic tech tropes", async () => {
   assert.doesNotMatch(source, /terminal|matrix|glassmorphism|AI orb/i);
   assert.doesNotMatch(source, /OpenAI|Zapier|Make\.com|n8n|HubSpot|Salesforce/);
 });
+
+test("checkpoint propagation resumes after local human inspection without making the controls a form", async () => {
+  const [css, checkpoint] = await Promise.all([
+    read("app/bm-tech/tech.css"),
+    read("components/tech/HumanCheckpoint.tsx"),
+  ]);
+
+  assert.match(
+    css,
+    /data-tech-phase="execute"\] \.tech-topology__route\[data-route-id="checkpoint-execute"\]/,
+  );
+  assert.match(
+    css,
+    /data-tech-phase="return"\] \.tech-topology__route\[data-route-id="checkpoint-execute"\]/,
+  );
+  assert.match(checkpoint, /role="group"/);
+  assert.match(checkpoint, /aria-label="Local decision inspection"/);
+  assert.doesNotMatch(checkpoint, /<form|onSubmit/);
+});

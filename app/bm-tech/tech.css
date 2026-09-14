@@ -313,6 +313,14 @@
   stroke: var(--tech-planned);
 }
 
+.tech-page [data-tech-experience][data-tech-phase="execute"] .tech-topology__route[data-route-id="checkpoint-execute"],
+.tech-page [data-tech-experience][data-tech-phase="return"] .tech-topology__route[data-route-id="checkpoint-execute"] {
+  stroke: var(--tech-signal);
+  stroke-dasharray: 0.05 0.035;
+  stroke-dashoffset: calc(-1 * var(--tech-phase-progress, 0));
+  opacity: 1;
+}
+
 .tech-page .tech-observatory__stages {
   display: grid;
   gap: clamp(3rem, 8vw, 8rem);
