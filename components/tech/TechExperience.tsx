@@ -5,6 +5,7 @@ import {
   TECH_SYSTEM_FAMILIES,
 } from "@/content/tech";
 import { SystemObservatory } from "./SystemObservatory";
+import { SystemPracticeTransition } from "./SystemPracticeTransition";
 import { SystemSpectrum } from "./SystemSpectrum";
 import { SystemState } from "./SystemState";
 import { SystemsRegister } from "./SystemsRegister";
@@ -25,6 +26,7 @@ export function TechExperience() {
       <TechBoot />
       <SystemObservatory system={FLAGSHIP_SYSTEM} tech={TECH} />
       <SystemState stateRecords={FLAGSHIP_SYSTEM.stateRecords} />
+      <SystemPracticeTransition tech={TECH} />
       <SystemSpectrum families={TECH_SYSTEM_FAMILIES} />
       <SystemsRegister rows={TECH_REGISTER} />
       <TechClosing tech={TECH} />

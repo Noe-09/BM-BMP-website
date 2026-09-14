@@ -114,3 +114,17 @@ test("Tech does not present state as fake analytics", async () => {
   const state = await read("components/tech/SystemState.tsx");
   assert.doesNotMatch(state, /progress|chart|percentage|uptime|metric/i);
 });
+
+test("Tech transitions from one system to the wider practice through typed copy", async () => {
+  const [experience, transition] = await Promise.all([
+    read("components/tech/TechExperience.tsx"),
+    read("components/tech/SystemPracticeTransition.tsx"),
+  ]);
+
+  assert.match(transition, /transitionStatement/);
+  assert.match(experience, /SystemPracticeTransition/);
+  assert.ok(
+    experience.indexOf("<SystemState") < experience.indexOf("<SystemPracticeTransition") &&
+      experience.indexOf("<SystemPracticeTransition") < experience.indexOf("<SystemSpectrum"),
+  );
+});

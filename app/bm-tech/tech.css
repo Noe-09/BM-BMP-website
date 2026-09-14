@@ -426,6 +426,60 @@
   border-top: 1px solid var(--tech-line);
 }
 
+.tech-page .tech-practice-transition {
+  display: grid;
+  grid-template-columns: minmax(4rem, 0.45fr) minmax(16rem, 1.55fr);
+  gap: clamp(1.5rem, 6vw, 7rem);
+  align-items: center;
+  padding: clamp(5rem, 12vw, 11rem) var(--tech-route-offset);
+  border-top: 1px solid var(--tech-line);
+}
+
+.tech-page .tech-practice-transition__signal {
+  position: relative;
+  min-height: clamp(7rem, 18vw, 13rem);
+  border-left: 1px dashed var(--tech-planned);
+}
+
+.tech-page .tech-practice-transition__signal::before,
+.tech-page .tech-practice-transition__signal::after {
+  position: absolute;
+  left: -0.25rem;
+  width: 0.5rem;
+  aspect-ratio: 1;
+  border: 1px solid var(--tech-planned);
+  background: var(--tech-bg);
+  content: "";
+}
+
+.tech-page .tech-practice-transition__signal::before {
+  top: 0;
+}
+
+.tech-page .tech-practice-transition__signal::after {
+  bottom: 0;
+  box-shadow: 1.8rem 0 0 -1px var(--tech-bg), 1.8rem 0 0 0 var(--tech-planned), 3.6rem 0 0 -1px var(--tech-bg), 3.6rem 0 0 0 var(--tech-planned);
+}
+
+.tech-page .tech-practice-transition__copy {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.tech-page .tech-practice-transition__copy p {
+  max-width: 26ch;
+  margin: 0;
+  font-size: clamp(2rem, 4.5vw, 5.5rem);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+
+.tech-page .tech-practice-transition__copy p:last-child {
+  color: var(--tech-muted);
+}
+
 .tech-page .tech-system-state__heading,
 .tech-page .tech-system-spectrum__heading,
 .tech-page .tech-systems-register__heading {
@@ -711,6 +765,15 @@
 
   .tech-page .tech-system-state__records {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tech-page .tech-practice-transition {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .tech-page .tech-practice-transition__signal {
+    min-height: 4rem;
   }
 
   .tech-page .tech-system-spectrum__family,
