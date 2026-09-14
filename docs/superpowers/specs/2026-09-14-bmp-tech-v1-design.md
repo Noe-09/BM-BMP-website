@@ -37,7 +37,7 @@ V1 uses an approved **prototype / planned** truth model:
 - The data model retains `active`, `verified`, and `planned` for future independently evidenced implementations, but V1 renders no flagship data, row, or claim as **ACTIVE** or **VERIFIED**.
 - No unsupported metric, uptime figure, post count, conversion result, production claim, integration state, or fake telemetry may appear.
 
-The page later expands from this one proof into the broader BMP Tech capability spectrum.
+The page later expands from this prototype demonstration of intended architecture into the broader BMP Tech capability spectrum.
 
 ## 3. Experience Model — Systems Observatory
 
@@ -204,7 +204,7 @@ Transition copy:
 > **ONE SYSTEM IS NOT THE PRACTICE.**  
 > **THE PRACTICE IS BUILDING THE RIGHT SYSTEM AROUND THE PROBLEM.**
 
-The observatory zooms out conceptually so the visitor understands the social-posting workflow as one proof of a wider systems practice.
+The observatory zooms out conceptually so the visitor understands the social-posting workflow as one prototype demonstration of a wider systems practice.
 
 ## 10. Business Tool Spectrum — System Families
 
