@@ -28,12 +28,13 @@ BMP Tech is not an “AI showcase.” AI may participate in systems, but the del
 
 V1 uses the **Flagship System First** approach.
 
-The page is organized around one concrete proof system: **AI Social Media Posting System**. That system demonstrates the Tech methodology in motion. It is not allowed to define the full scope of BMP Tech.
+The page is organized around one concrete prototype: **AI Social Media Posting System**. It demonstrates BMP Tech's system-design methodology and intended operational architecture; it is not an existing production automation and does not define the full scope of BMP Tech.
 
-The flagship uses a **real-core + designed-future-layers** truth model:
+V1 uses an approved **prototype / planned** truth model:
 
-- Existing or independently evidenced functionality may be marked **ACTIVE** or **VERIFIED**.
-- Future functionality may appear only as **PLANNED**.
+- The public framing is `SYSTEM PROTOTYPE 01`, `AI SOCIAL MEDIA POSTING SYSTEM`, `PROTOTYPE / PLANNED`.
+- `INGEST`, `NORMALIZE`, `ORCHESTRATE`, `ASSIST`, `CHECKPOINT`, `EXECUTE`, and `RETURN` are all **PLANNED** in V1.
+- The data model retains `active`, `verified`, and `planned` for future independently evidenced implementations, but V1 renders no flagship data, row, or claim as **ACTIVE** or **VERIFIED**.
 - No unsupported metric, uptime figure, post count, conversion result, production claim, integration state, or fake telemetry may appear.
 
 The page later expands from this one proof into the broader BMP Tech capability spectrum.
@@ -84,9 +85,9 @@ The approved page sequence is:
 
 1. **Boot / Signal Acquire**
 2. **Opening — Systems in Motion**
-3. **Flagship System — AI Social Media Posting System**
+3. **System Prototype 01 — AI Social Media Posting System**
 4. **Human Decision Checkpoint**
-5. **System Evidence**
+5. **System State**
 6. **One System → Many Business Systems transition**
 7. **Business Tool Spectrum / System Families**
 8. **Systems Register**
@@ -117,17 +118,16 @@ The system field behind the opening should already be alive but restrained. The 
 
 Introduction copy:
 
-**SYSTEM 01**  
+**SYSTEM PROTOTYPE 01**
 **AI SOCIAL MEDIA POSTING SYSTEM**
 
 > A structured workflow for turning business inputs into reviewable publishing outputs.
 
-Truth-state labels may include:
+Public truth-state label:
 
-- `CORE SYSTEM / ACTIVE` when supported.
-- `FUTURE LAYERS / PLANNED` for designed but unimplemented layers.
+- `PROTOTYPE / PLANNED`
 
-The flagship is represented as a single living system graph, not seven cards or a sequence of disconnected diagrams.
+The flagship is represented as a single planned system graph, not seven cards or a sequence of disconnected diagrams. It communicates intended architecture rather than a running automation.
 
 ### Canonical state choreography
 
@@ -161,7 +161,7 @@ The visitor should understand that BMP Tech designs human intervention deliberat
 The approved state propagates to its output destination(s). No unsupported output volume, engagement, or performance claims.
 
 #### 07 — RETURN / FEEDBACK LOOP
-Output may return into observation and adjustment. If automated feedback does not yet exist, it must be shown as **PLANNED**, not active telemetry.
+The designed output returns into observation and adjustment as a planned feedback loop; it is not active telemetry.
 
 ### Choreography rule
 
@@ -177,23 +177,23 @@ Each state gets one dominant visual event:
 
 Do not animate graph, text, counters, background, and decoration simultaneously without causal reason.
 
-## 8. System Evidence
+## 8. System State
 
 Heading:
 
-**SYSTEM EVIDENCE**  
-**WHAT EXISTS. WHAT OPERATES. WHAT COMES NEXT.**
+**SYSTEM STATE**
+**WHAT IS DESIGNED. WHAT IS PLANNED. WHAT GETS BUILT NEXT.**
 
-This area behaves like an inspection ledger or technical manifest, not an analytics dashboard.
+This area behaves like a build-status/state ledger, not analytics or proof.
 
 Example presentation grammar only:
 
-- `CONTENT INPUT — ACTIVE`
-- `ROUTING LOGIC — VERIFIED`
-- `HUMAN REVIEW — ACTIVE`
+- `CONTENT INPUT — PLANNED`
+- `ROUTING LOGIC — PLANNED`
+- `HUMAN REVIEW — PLANNED`
 - `AUTOMATED FEEDBACK — PLANNED`
 
-Actual labels and states must be derived from audited implementation evidence before release.
+All V1 state rows are `PLANNED`. Future independently evidenced implementations may upgrade individual rows only after a new audit.
 
 No fake percentages, fake uptime, fake throughput, fake charts, or invented usage counts.
 
@@ -379,7 +379,7 @@ Use **DOM + SVG first**.
 DOM owns:
 
 - text
-- evidence
+- state records
 - labels
 - register
 - accessibility semantics
@@ -402,7 +402,7 @@ Use one normalized controller/state source rather than independent section liste
 
 Conceptual phases:
 
-`BOOT → OBSERVE → INGEST → NORMALIZE → ORCHESTRATE → ASSIST → CHECKPOINT → EXECUTE → RETURN → EVIDENCE → SPECTRUM → REGISTER → CLOSE`
+`BOOT → OBSERVE → INGEST → NORMALIZE → ORCHESTRATE → ASSIST → CHECKPOINT → EXECUTE → RETURN → STATE → SPECTRUM → REGISTER → CLOSE`
 
 Controller output should include at minimum:
 
@@ -434,9 +434,9 @@ Recommended maturity vocabulary:
 
 `VERIFIED` may be rendered only when actual evidence supports it.
 
-### Evidence data
+### State-record data
 
-Evidence records are separate from visual topology but refer to the same system truth.
+State records are separate from visual topology but refer to the same system truth and identify the designed/planned build state.
 
 Conceptual fields:
 
@@ -478,7 +478,7 @@ The graph cannot be the sole carrier of information.
 - Provide semantic DOM equivalents for causal stages.
 - Decorative SVG routes should be hidden from assistive technology when duplicate text exists.
 - Interactive checkpoint information must be keyboard accessible with visible focus.
-- ACTIVE / PLANNED distinction must use structure/line style/labeling as well as color.
+- `PLANNED` must use structure/line style/labeling as well as color; future `ACTIVE` / `VERIFIED` states require independent evidence before use.
 
 Reduced motion replaces propagation with resolved causal states. The page must remain fully understandable.
 
@@ -583,7 +583,7 @@ BMP Tech V1 is not complete unless all are true:
 1. With animation disabled, the surface still reads unmistakably as BMP Tech.
 2. With explanatory paragraphs hidden, the flagship still communicates `input → processing → human decision → output`.
 3. Screenshots do not resemble a generic SaaS landing page, Creator, or BM Visual.
-4. ACTIVE and PLANNED are distinguishable through optics/behavior/labels, not only color.
+4. V1 `PLANNED` state is unmistakable through optics/behavior/labels, not only color; future maturity states remain reserved for independently evidenced implementations.
 5. Mobile preserves causality rather than merely preserving content.
 6. Signature loading is short, distinctive, non-blocking, and continuous with the hero.
 7. No unsupported proof or fake maturity state appears.

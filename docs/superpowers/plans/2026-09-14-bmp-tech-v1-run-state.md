@@ -1,9 +1,9 @@
 # BMP Tech V1 Run State
 
-STATUS: BLOCKED_HUMAN
+STATUS: RUNNING
 BRANCH: feat/bmp-tech-v1
 BASE_SHA: c1519f74f7b59fcef773451df5afe71f292b94c6
-LAST_VERIFIED_HEAD: 09f0005ff918eae328b9e40c71413593356b82d3
+LAST_VERIFIED_HEAD: 056a35dadabe437a5109958591ad26314372fec5
 CURRENT_TASK: Task 2 — Tech Truth Model and Content Contract
 CURRENT_STEP: Step 1 — Write the failing content/truth regression test
 LAST_COMPLETED_TASK: Task 1
@@ -11,16 +11,16 @@ LAST_SUCCESSFUL_CHECKS:
 - PASS: `cmp -s` verified the copied canonical design spec byte-for-byte.
 - PASS: `cmp -s` verified the copied canonical implementation plan byte-for-byte before checkbox tracking.
 - PASS: `git diff --check` passed before the docs baseline and run-state commits.
-- PASS: `git status --short` was clean after the Task 1 state commit.
-NEXT_ACTION: Wait for the human to provide real AI Social Media Posting System evidence or explicitly approve rendering every flagship stage as `PLANNED`, then re-audit before starting Task 2.
-BLOCKER: Provide real evidence for the AI Social Media Posting System (implementation source, workflow definition, demo or screenshot, ownership/context, and supported operational behavior), or explicitly approve presenting every flagship stage as `PLANNED`. Do not begin Task 2 until one of those conditions is met.
-UPDATED_AT: 2026-09-14T22:39:36+07:00
+- PASS: `git status --short` was clean at `056a35dadabe437a5109958591ad26314372fec5` before the prototype-truth update.
+NEXT_ACTION: add and run the failing Task 2 content/truth test.
+BLOCKER: NONE
+UPDATED_AT: 2026-09-14T22:48:33+07:00
 
 ## Verified Baseline
 
 - **Branch:** `feat/bmp-tech-v1`
 - **Base commit:** `c1519f74f7b59fcef773451df5afe71f292b94c6`
-- **LAST_VERIFIED_HEAD:** `09f0005ff918eae328b9e40c71413593356b82d3` (`docs: define BMP Tech V1 systems observatory`)
+- **LAST_VERIFIED_HEAD:** `056a35dadabe437a5109958591ad26314372fec5` (`fix: complete BMP Tech run state`)
 - **Remote feature branch:** absent at audit time
 
 ## Task 1 Completion
@@ -53,12 +53,12 @@ The audit found generic canonical BM Tech capability copy and non-flagship workf
 | --- | --- |
 | `ACTIVE` | None. |
 | `VERIFIED` | None. |
-| `PLANNED` | `INGEST`, `NORMALIZE`, `ORCHESTRATE`, `ASSIST`, `CHECKPOINT`, `EXECUTE`, and `RETURN`; all related evidence rows and routes. |
+| `PLANNED` | `INGEST`, `NORMALIZE`, `ORCHESTRATE`, `ASSIST`, `CHECKPOINT`, `EXECUTE`, and `RETURN`; all related state records and routes. |
 
-## Exact Blocker
+## Human Truth-Gate Decision
 
-**Provide real evidence for the AI Social Media Posting System (implementation source, workflow definition, demo or screenshot, ownership/context, and supported operational behavior), or explicitly approve presenting every flagship stage as `PLANNED`. Do not begin Task 2 until one of those conditions is met.**
+The human explicitly approved continuing with a truthful prototype model. Public framing is `SYSTEM PROTOTYPE 01`, `AI SOCIAL MEDIA POSTING SYSTEM`, `PROTOTYPE / PLANNED`; all seven flagship stages are `PLANNED` in V1. The prototype demonstrates BMP Tech's system-design methodology and intended operational architecture, not an existing production automation.
 
 ## Resume Rule
 
-On human resolution, re-audit the supplied evidence before changing the mapping. Preserve `PLANNED` for every unsupported stage; use `ACTIVE` or `VERIFIED` only for the exact evidence-supported behavior.
+Task 2 may begin under the approved all-`PLANNED` prototype model. Preserve `PLANNED` for every unsupported stage; future `ACTIVE` or `VERIFIED` use requires a fresh audit of exact independently evidenced behavior.
