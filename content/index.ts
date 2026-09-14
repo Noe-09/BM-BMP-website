@@ -13,6 +13,21 @@ export { HOME } from "./home.ts";
 export { NAVIGATION } from "./navigation.ts";
 export { SERVICES } from "./services.ts";
 export {
+  FLAGSHIP_SYSTEM,
+  TECH,
+  TECH_REGISTER,
+  TECH_SYSTEM_FAMILIES,
+  type TechCapabilityState,
+  type TechMaturity,
+  type TechNodeType,
+  type TechPhase,
+  type TechRegisterRow,
+  type TechStateRecord,
+  type TechSystemFamily,
+  type TechSystemNode,
+  type TechSystemRoute,
+} from "./tech.ts";
+export {
   PROJECT_STATUSES,
   WORK,
   WORK_CATEGORIES,
