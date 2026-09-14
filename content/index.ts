@@ -1,7 +1,14 @@
 export { ABOUT } from "./about.ts";
 export { BRAND } from "./brand.ts";
 export { CONTACT } from "./contact.ts";
-export { CREATOR, type CreatorProduct } from "./creator.ts";
+export {
+  CREATOR,
+  type CreatorDetailSection,
+  type CreatorMedia,
+  type CreatorProduct,
+  type CreatorWorld,
+  type CreatorWorldSlug,
+} from "./creator.ts";
 export { HOME } from "./home.ts";
 export { NAVIGATION } from "./navigation.ts";
 export { SERVICES } from "./services.ts";
