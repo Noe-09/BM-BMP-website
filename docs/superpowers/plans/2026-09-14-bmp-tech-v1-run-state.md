@@ -3,25 +3,25 @@
 STATUS: RUNNING
 BRANCH: feat/bmp-tech-v1
 BASE_SHA: c1519f74f7b59fcef773451df5afe71f292b94c6
-LAST_VERIFIED_HEAD: 4ad4fb79761e838a44ff116e089c5b2a5c321bed
+LAST_VERIFIED_HEAD: e15204d5c2a92f2db22663ebf9ac825f71b4ca6b
 CURRENT_TASK: Task 8 — Responsive Composition, Motion Budget, and Visual Precision
 CURRENT_STEP: Step 1
 LAST_COMPLETED_TASK: Task 7
 LAST_SUCCESSFUL_CHECKS:
-- PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" node --test tests/tech-content.test.mjs tests/tech-markup.test.mjs` (12 tests, 0 failures).
+- PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" node --test tests/tech-content.test.mjs tests/tech-markup.test.mjs` (13 tests, 0 failures).
 - PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" node --test tests/tech-journey.test.mjs` (3 tests, 0 failures).
 - PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm run typecheck` (`tsc --noEmit`, exit 0).
 - PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm run lint` (exit 0).
 - PASS: `git diff --check` (exit 0).
 NEXT_ACTION: begin Task 8 Step 1 by reading its complete brief and the current BM Tech lower-page composition before adding its prescribed failing regression.
 BLOCKER: NONE
-UPDATED_AT: 2026-09-15T06:00:00+07:00
+UPDATED_AT: 2026-09-15T06:15:00+07:00
 
 ## Verified Baseline
 
 - **Branch:** `feat/bmp-tech-v1`
 - **Base commit:** `c1519f74f7b59fcef773451df5afe71f292b94c6`
-- **LAST_VERIFIED_HEAD:** `4ad4fb79761e838a44ff116e089c5b2a5c321bed` (`feat: add BMP Tech system state and business system spectrum`)
+- **LAST_VERIFIED_HEAD:** `e15204d5c2a92f2db22663ebf9ac825f71b4ca6b` (`fix: add BMP Tech practice transition`)
 - **Remote feature branch:** absent at audit time
 
 ## Task 1 Completion
@@ -62,4 +62,4 @@ The human explicitly approved continuing with a truthful prototype model. Public
 
 ## Resume Rule
 
-Task 8 Step 1 may begin by reading the complete Task 8 brief, this run state, `CLAUDE.md`, and the current BM Tech route before adding and running its prescribed failing regression. Preserve the Task 7 planned-only build ledger, causal system-family map, semantic responsive register, and `/contact` closing CTA alongside the Task 6 server-rendered observatory, seven semantic planned stages, decorative data-driven topology, checkpoint propagation pause/resume choreography, and labelled local-only Human Checkpoint. Preserve the Task 5 boot contract, passive native scrolling, shared route-scoped topology coordinates, and all `PLANNED` truth semantics. Do not add wheel interception, programmatic scrolling, fake backend action, unsupported system proof, fake analytics, generic services-card layouts, or generic technology tropes; any `ACTIVE` or `VERIFIED` claim requires a fresh audit of independently evidenced behavior.
+Task 8 Step 1 may begin by reading the complete Task 8 brief, this run state, `CLAUDE.md`, and the current BM Tech route before adding and running its prescribed failing regression. Preserve the Task 7 planned-only build ledger, typed One System → Many Business Systems transition, causal system-family map, semantic responsive register, and `/contact` closing CTA alongside the Task 6 server-rendered observatory, seven semantic planned stages, decorative data-driven topology, checkpoint propagation pause/resume choreography, and labelled local-only Human Checkpoint. Preserve the Task 5 boot contract, passive native scrolling, shared route-scoped topology coordinates, and all `PLANNED` truth semantics. Do not add wheel interception, programmatic scrolling, fake backend action, unsupported system proof, fake analytics, generic services-card layouts, or generic technology tropes; any `ACTIVE` or `VERIFIED` claim requires a fresh audit of independently evidenced behavior.
