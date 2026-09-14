@@ -40,5 +40,7 @@ test("Tech boot is short, session-aware, reduced-motion-aware, and non-blocking"
   assert.match(boot, /ONLINE/);
   assert.match(experience, /<TechBoot/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(css, /--tech-topology-y:\s*var\(--tech-route-offset\)/);
+  assert.doesNotMatch(css, /--tech-topology-y:\s*42%/);
   assert.doesNotMatch(boot, /setTimeout\([^,]+,\s*(?:[2-9]\d{3}|\d{5,})/);
 });

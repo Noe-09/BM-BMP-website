@@ -20,9 +20,10 @@
 }
 
 .tech-page .tech-boot {
-  position: fixed;
+  position: absolute;
   z-index: 20;
-  inset: 0;
+  inset: 0 0 auto;
+  min-height: 100svh;
   display: grid;
   align-content: end;
   gap: 0.45rem;
@@ -44,7 +45,7 @@
 .tech-page .tech-boot__topology,
 .tech-page [data-tech-experience] > section:first-of-type {
   --tech-topology-x: var(--tech-route-offset);
-  --tech-topology-y: 42%;
+  --tech-topology-y: var(--tech-route-offset);
 }
 
 .tech-page .tech-boot__topology {
@@ -69,7 +70,7 @@
 }
 
 .tech-page .tech-boot__route--horizontal {
-  top: var(--tech-topology-y);
+  top: calc(var(--tech-topology-y) - (var(--tech-route-stroke) / 2));
   right: 0;
   left: var(--tech-topology-x);
   height: var(--tech-route-stroke);
@@ -95,7 +96,8 @@
 
 .tech-page .tech-boot__node--signal {
   top: var(--tech-topology-y);
-  right: var(--tech-route-offset);
+  right: calc(var(--tech-topology-x) - (var(--tech-node-size) / 2));
+  transform: translateY(-50%);
   background: var(--tech-signal);
   box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--tech-signal) 12%, transparent);
 }
@@ -126,15 +128,15 @@
 }
 
 .tech-page [data-tech-experience] > section:first-of-type::before {
-  top: var(--tech-route-offset);
-  right: var(--tech-route-offset);
-  left: var(--tech-route-offset);
+  top: calc(var(--tech-topology-y) - (var(--tech-route-stroke) / 2));
+  right: var(--tech-topology-x);
+  left: var(--tech-topology-x);
   height: var(--tech-route-stroke);
 }
 
 .tech-page [data-tech-experience] > section:first-of-type::after {
-  top: calc(var(--tech-route-offset) - (var(--tech-node-size) / 2));
-  right: calc(var(--tech-route-offset) - (var(--tech-node-size) / 2));
+  top: calc(var(--tech-topology-y) - (var(--tech-node-size) / 2));
+  right: calc(var(--tech-topology-x) - (var(--tech-node-size) / 2));
   background: var(--tech-signal);
   box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--tech-signal) 12%, transparent);
 }
