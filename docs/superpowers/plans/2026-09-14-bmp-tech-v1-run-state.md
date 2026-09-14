@@ -3,18 +3,16 @@
 STATUS: RUNNING
 BRANCH: feat/bmp-tech-v1
 BASE_SHA: c1519f74f7b59fcef773451df5afe71f292b94c6
-LAST_VERIFIED_HEAD: 056a35dadabe437a5109958591ad26314372fec5
-CURRENT_TASK: Task 2 — Tech Truth Model and Content Contract
-CURRENT_STEP: Step 1 — Write the failing content/truth regression test
-LAST_COMPLETED_TASK: Task 1
+LAST_VERIFIED_HEAD: a17ba207e1a20f4ea3aa2bfa4660e55fc9163b1f
+CURRENT_TASK: Task 3 — Route Ownership and Semantic Tech Composition
+CURRENT_STEP: Step 1 — Write the failing route ownership test
+LAST_COMPLETED_TASK: Task 2
 LAST_SUCCESSFUL_CHECKS:
-- PASS: `cmp -s` verified the copied canonical design spec byte-for-byte.
-- PASS: `cmp -s` verified the copied canonical implementation plan byte-for-byte before checkbox tracking.
-- PASS: `git diff --check` passed before the docs baseline and run-state commits.
-- PASS: `git status --short` was clean at `056a35dadabe437a5109958591ad26314372fec5` before the prototype-truth update.
-NEXT_ACTION: add and run the failing Task 2 content/truth test.
+- PASS: `node --test tests/tech-content.test.mjs` (4 tests).
+- PASS: `npm run typecheck`.
+NEXT_ACTION: add and run failing Task 3 route test.
 BLOCKER: NONE
-UPDATED_AT: 2026-09-14T22:48:33+07:00
+UPDATED_AT: 2026-09-14T22:57:02+07:00
 
 ## Verified Baseline
 
