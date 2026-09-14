@@ -17,6 +17,7 @@ export function TechClosing({ tech }: TechClosingProps) {
       <h2 id="tech-closing-title">{tech.closingHeadline}</h2>
       <p>{tech.closingCopy}</p>
       <Link
+        aria-label="Tell us the problem"
         className="tech-closing__action"
         href={tech.action.href}
         data-tech-action="TELL US THE PROBLEM"
