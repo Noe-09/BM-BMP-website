@@ -1,9 +1,10 @@
 .tech-page {
-  --tech-bg: #101111;
-  --tech-panel: #171919;
-  --tech-fg: #f0f0ec;
-  --tech-muted: #969b98;
-  --tech-line: rgba(240, 240, 236, 0.18);
+  --tech-bg: #111313;
+  --tech-panel: #171a19;
+  --tech-fg: #edeee9;
+  --tech-muted: #929a97;
+  --tech-line: rgba(237, 238, 233, 0.17);
+  --tech-grid: rgba(237, 238, 233, 0.055);
   --tech-signal: #b9e64a;
   --tech-human: #d88a45;
   --tech-planned: #7d8991;
@@ -98,8 +99,7 @@
   top: var(--tech-topology-y);
   right: calc(var(--tech-topology-x) - (var(--tech-node-size) / 2));
   transform: translateY(-50%);
-  background: var(--tech-signal);
-  box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--tech-signal) 12%, transparent);
+  background: var(--tech-planned);
 }
 
 .tech-page .tech-boot__state,
@@ -137,8 +137,7 @@
 .tech-page [data-tech-experience] > section:first-of-type::after {
   top: calc(var(--tech-topology-y) - (var(--tech-node-size) / 2));
   right: calc(var(--tech-topology-x) - (var(--tech-node-size) / 2));
-  background: var(--tech-signal);
-  box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--tech-signal) 12%, transparent);
+  background: var(--tech-planned);
 }
 
 .tech-page .tech-observatory {
@@ -238,6 +237,12 @@
   transition: opacity 280ms ease, stroke 280ms ease, stroke-dashoffset 280ms ease;
 }
 
+.tech-page .tech-topology__route[data-maturity="planned"] {
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.05 0.035;
+  opacity: 0.48;
+}
+
 .tech-page .tech-topology__node circle,
 .tech-page .tech-topology__node rect {
   fill: var(--tech-panel);
@@ -246,6 +251,12 @@
   stroke-width: 0.7;
   opacity: 0.75;
   transition: fill 280ms ease, stroke 280ms ease, opacity 280ms ease;
+}
+
+.tech-page .tech-topology__node[data-maturity="planned"] circle,
+.tech-page .tech-topology__node[data-maturity="planned"] rect {
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.8 0.5;
 }
 
 .tech-page .tech-topology__node text {
@@ -294,10 +305,10 @@
 .tech-page [data-tech-experience][data-tech-phase="assist"] [data-route-phase="assist"],
 .tech-page [data-tech-experience][data-tech-phase="execute"] [data-route-phase="execute"],
 .tech-page [data-tech-experience][data-tech-phase="return"] [data-route-phase="return"] {
-  stroke: var(--tech-signal);
-  stroke-dasharray: none;
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.05 0.035;
   stroke-dashoffset: calc(-1 * var(--tech-phase-progress, 0));
-  opacity: 1;
+  opacity: 0.82;
 }
 
 .tech-page [data-tech-experience][data-tech-phase="checkpoint"] .tech-topology__node[data-node-id="checkpoint"] rect,
@@ -315,7 +326,7 @@
 
 .tech-page [data-tech-experience][data-tech-phase="execute"] .tech-topology__route[data-route-id="checkpoint-execute"],
 .tech-page [data-tech-experience][data-tech-phase="return"] .tech-topology__route[data-route-id="checkpoint-execute"] {
-  stroke: var(--tech-signal);
+  stroke: var(--tech-planned);
   stroke-dasharray: 0.05 0.035;
   stroke-dashoffset: calc(-1 * var(--tech-phase-progress, 0));
   opacity: 1;
@@ -362,7 +373,7 @@
 .tech-page [data-tech-experience][data-tech-phase="checkpoint"] [data-tech-stage="checkpoint"],
 .tech-page [data-tech-experience][data-tech-phase="execute"] [data-tech-stage="execute"],
 .tech-page [data-tech-experience][data-tech-phase="return"] [data-tech-stage="return"] {
-  border-left-color: var(--tech-signal);
+  border-left-color: var(--tech-planned);
   color: var(--tech-fg);
   opacity: 1;
 }
@@ -568,6 +579,11 @@
   border-top-color: var(--tech-fg);
 }
 
+.tech-page .tech-system-state__record[data-state-record-state="planned"] {
+  border-top-style: dashed;
+  border-top-color: var(--tech-planned);
+}
+
 .tech-page .tech-system-spectrum {
   position: relative;
   overflow: hidden;
@@ -693,7 +709,7 @@
 }
 
 .tech-page .tech-systems-register td[data-register-field="capability-state"] {
-  color: var(--tech-signal);
+  color: var(--tech-fg);
 }
 
 .tech-page .tech-systems-register__table-wrap:focus-visible {
@@ -726,7 +742,7 @@
   width: fit-content;
   margin-top: 1.5rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--tech-signal);
+  border-bottom: 1px solid var(--tech-planned);
   color: var(--tech-fg);
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.78rem;
@@ -735,7 +751,7 @@
 }
 
 .tech-page .tech-closing__action:hover {
-  color: var(--tech-signal);
+  color: var(--tech-fg);
 }
 
 .tech-page .tech-closing__action:focus-visible {
@@ -743,7 +759,67 @@
   outline-offset: 4px;
 }
 
-@media (max-width: 760px) {
+@media (min-width: 1024px) {
+  .tech-page .tech-observatory__sticky {
+    background-color: var(--tech-panel);
+    background-image: linear-gradient(var(--tech-grid) 1px, transparent 1px), linear-gradient(90deg, var(--tech-grid) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  .tech-page {
+    --tech-route-offset: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .tech-page .tech-observatory__intro {
+    padding-bottom: clamp(4rem, 10vw, 7rem);
+  }
+
+  .tech-page .tech-observatory__frame {
+    grid-template-columns: minmax(14rem, 0.8fr) minmax(18rem, 1.2fr);
+    gap: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .tech-page .tech-observatory__sticky {
+    min-height: min(34rem, calc(100svh - (var(--tech-route-offset) * 2)));
+    padding: 1.25rem;
+  }
+
+  .tech-page .tech-topology {
+    max-height: 17rem;
+  }
+
+  .tech-page .tech-topology__route[data-route-id="return-ingest"] {
+    display: none;
+  }
+
+  .tech-page .tech-topology__node text {
+    font-size: 2.1px;
+  }
+
+  .tech-page .tech-observatory__stages {
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .tech-page .tech-observatory__stage {
+    min-height: 12rem;
+  }
+
+  .tech-page .tech-system-state__records {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .tech-page .tech-system-spectrum__family {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 768px) {
+  .tech-page {
+    --tech-route-offset: clamp(1rem, 5vw, 1.5rem);
+  }
+
   .tech-page .tech-observatory__frame {
     grid-template-columns: 1fr;
   }
@@ -752,15 +828,57 @@
     position: relative;
     top: auto;
     min-height: 0;
+    gap: 1.5rem;
+    padding: 1.25rem 0 0;
+    border-width: 1px 0 0;
+    background: transparent;
+  }
+
+  .tech-page .tech-topology {
+    display: none;
   }
 
   .tech-page .tech-observatory__stages {
-    gap: 3rem;
-    padding-top: 1rem;
+    gap: 0;
+    padding: 2rem 0 5rem;
   }
 
   .tech-page .tech-observatory__stage {
-    min-height: 0;
+    min-height: 12rem;
+    padding: 1.25rem 0 1.75rem 1.4rem;
+  }
+
+  .tech-page .tech-observatory__stage::before {
+    position: absolute;
+    top: 1.5rem;
+    left: -0.25rem;
+    width: 0.45rem;
+    aspect-ratio: 1;
+    border: 1px solid var(--tech-planned);
+    background: var(--tech-bg);
+    content: "";
+  }
+
+  .tech-page .tech-observatory__stage[data-tech-stage="checkpoint"] {
+    border-left-color: var(--tech-human);
+  }
+
+  .tech-page .tech-observatory__stage[data-tech-stage="checkpoint"]::before {
+    border-color: var(--tech-human);
+    transform: rotate(45deg);
+  }
+
+  .tech-page .tech-observatory__stage h3 {
+    font-size: clamp(2rem, 10vw, 3.25rem);
+  }
+
+  .tech-page .human-checkpoint {
+    margin-top: 1.25rem;
+    padding: 0.9rem;
+  }
+
+  .tech-page .human-checkpoint button {
+    flex: 1 1 5rem;
   }
 
   .tech-page .tech-system-state__records {
@@ -783,9 +901,80 @@
   .tech-page .tech-system-spectrum__family:nth-child(7) {
     grid-column: span 6;
   }
+
+  .tech-page .tech-systems-register table,
+  .tech-page .tech-systems-register thead,
+  .tech-page .tech-systems-register tbody,
+  .tech-page .tech-systems-register tr,
+  .tech-page .tech-systems-register th,
+  .tech-page .tech-systems-register td {
+    display: block;
+  }
+
+  .tech-page .tech-systems-register table {
+    min-width: 0;
+  }
+
+  .tech-page .tech-systems-register thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .tech-page .tech-systems-register tbody tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    border-bottom: 1px solid var(--tech-line);
+  }
+
+  .tech-page .tech-systems-register th,
+  .tech-page .tech-systems-register td {
+    min-width: 0;
+    padding: 0.85rem 0.75rem;
+    border-bottom: 0;
+  }
+
+  .tech-page .tech-systems-register th::before,
+  .tech-page .tech-systems-register td::before {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--tech-muted);
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+  }
+
+  .tech-page .tech-systems-register [data-register-field="system-type"]::before { content: "SYSTEM TYPE"; }
+  .tech-page .tech-systems-register [data-register-field="business-problem"]::before { content: "BUSINESS PROBLEM"; }
+  .tech-page .tech-systems-register [data-register-field="delivery"]::before { content: "DELIVERY"; }
+  .tech-page .tech-systems-register [data-register-field="capability-state"]::before { content: "CAPABILITY STATE"; }
 }
 
 @media (max-width: 480px) {
+  .tech-page .tech-observatory h1 {
+    font-size: clamp(3rem, 16vw, 4.25rem);
+  }
+
+  .tech-page .tech-observatory__system-heading h2 {
+    font-size: clamp(1.6rem, 9vw, 2.25rem);
+  }
+
+  .tech-page .tech-observatory__stage {
+    min-height: 0;
+    padding-bottom: 1.5rem;
+  }
+
+  .tech-page .tech-observatory__stage h3 {
+    font-size: clamp(1.75rem, 10vw, 2.5rem);
+  }
+
+  .tech-page .human-checkpoint button {
+    flex-basis: 100%;
+  }
+
   .tech-page .tech-system-state__records {
     grid-template-columns: 1fr;
   }
@@ -802,6 +991,10 @@
   .tech-page .tech-closing {
     min-height: 34rem;
   }
+
+  .tech-page .tech-systems-register tbody tr {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -814,5 +1007,16 @@
   .tech-page .tech-topology__node rect,
   .tech-page .tech-observatory__stage {
     transition: none;
+  }
+
+  .tech-page .tech-topology__route {
+    stroke-dashoffset: 0;
+    opacity: 0.8;
+  }
+
+  .tech-page .tech-topology__node circle,
+  .tech-page .tech-topology__node rect,
+  .tech-page .tech-observatory__stage {
+    opacity: 1;
   }
 }

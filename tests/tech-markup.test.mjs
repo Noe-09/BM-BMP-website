@@ -131,3 +131,20 @@ test("Tech transitions from one system to the wider practice through typed copy"
       experience.indexOf("<SystemPracticeTransition") < experience.indexOf("<SystemSpectrum"),
   );
 });
+
+test("Tech CSS has explicit mobile and reduced-motion causal modes", async () => {
+  const css = await read("app/bm-tech/tech.css");
+
+  assert.match(css, /@media[^{]*max-width:\s*768px/);
+  assert.match(css, /@media[^{]*max-width:\s*480px/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(css, /--tech-signal/);
+  assert.match(css, /--tech-human/);
+  assert.match(css, /--tech-planned/);
+  assert.doesNotMatch(css, /backdrop-filter:\s*blur/i);
+});
+
+test("Tech visual system keeps planned state distinguishable beyond color", async () => {
+  const css = await read("app/bm-tech/tech.css");
+  assert.match(css, /\[data-maturity="planned"\][\s\S]*stroke-dasharray/);
+});
