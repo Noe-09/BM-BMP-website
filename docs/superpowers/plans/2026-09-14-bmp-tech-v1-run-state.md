@@ -3,22 +3,22 @@
 STATUS: RUNNING
 BRANCH: feat/bmp-tech-v1
 BASE_SHA: c1519f74f7b59fcef773451df5afe71f292b94c6
-LAST_VERIFIED_HEAD: a17ba207e1a20f4ea3aa2bfa4660e55fc9163b1f
-CURRENT_TASK: Task 3 — Route Ownership and Semantic Tech Composition
-CURRENT_STEP: Step 1 — Write the failing route ownership test
-LAST_COMPLETED_TASK: Task 2
+LAST_VERIFIED_HEAD: 92e363210ad4e5a65eca8471bf003a249af17fcc
+CURRENT_TASK: Task 4 — Pure Journey Model and Single Interaction Controller
+CURRENT_STEP: Step 1 — Write the failing controller/source contract test
+LAST_COMPLETED_TASK: Task 3
 LAST_SUCCESSFUL_CHECKS:
-- PASS: `node --test tests/tech-content.test.mjs` (4 tests).
+- PASS: `node --test tests/tech-markup.test.mjs` (2 tests).
 - PASS: `npm run typecheck`.
-NEXT_ACTION: add and run failing Task 3 route test.
+NEXT_ACTION: add and run failing Task 4 controller/source contract test.
 BLOCKER: NONE
-UPDATED_AT: 2026-09-14T22:57:02+07:00
+UPDATED_AT: 2026-09-14T23:06:18+07:00
 
 ## Verified Baseline
 
 - **Branch:** `feat/bmp-tech-v1`
 - **Base commit:** `c1519f74f7b59fcef773451df5afe71f292b94c6`
-- **LAST_VERIFIED_HEAD:** `056a35dadabe437a5109958591ad26314372fec5` (`fix: complete BMP Tech run state`)
+- **LAST_VERIFIED_HEAD:** `92e363210ad4e5a65eca8471bf003a249af17fcc` (`feat: establish BMP Tech systems observatory route`)
 - **Remote feature branch:** absent at audit time
 
 ## Task 1 Completion
@@ -59,4 +59,4 @@ The human explicitly approved continuing with a truthful prototype model. Public
 
 ## Resume Rule
 
-Task 2 may begin under the approved all-`PLANNED` prototype model. Preserve `PLANNED` for every unsupported stage; future `ACTIVE` or `VERIFIED` use requires a fresh audit of exact independently evidenced behavior.
+Task 4 Step 1 may begin by adding and running its failing controller/source-contract test. Preserve the Task 3 semantic experience root and its compile-safe no-op `TechJourneyController` until that test drives the real controller; do not add wheel interception, programmatic scrolling, or unrelated visual polish. Preserve `PLANNED` for every unsupported stage; future `ACTIVE` or `VERIFIED` use requires a fresh audit of exact independently evidenced behavior.
