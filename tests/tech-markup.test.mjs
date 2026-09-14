@@ -85,3 +85,32 @@ test("checkpoint propagation resumes after local human inspection without making
   assert.match(checkpoint, /aria-label="Local decision inspection"/);
   assert.doesNotMatch(checkpoint, /<form|onSubmit/);
 });
+
+test("Tech state and capabilities remain semantically distinct", async () => {
+  const [state, spectrum, register, closing] = await Promise.all([
+    read("components/tech/SystemState.tsx"),
+    read("components/tech/SystemSpectrum.tsx"),
+    read("components/tech/SystemsRegister.tsx"),
+    read("components/tech/TechClosing.tsx"),
+  ]);
+
+  assert.match(state, /SYSTEM STATE/);
+  assert.match(state, /WHAT IS DESIGNED/);
+  assert.match(state, /data-state-record-state/);
+
+  assert.match(spectrum, /SYSTEM FAMILIES/);
+  assert.match(spectrum, /causalSteps/);
+
+  assert.match(register, /SYSTEMS REGISTER/);
+  assert.match(register, /capabilityState/);
+  assert.match(register, /AVAILABLE/);
+
+  assert.match(closing, /SHOW US THE PROCESS/);
+  assert.match(closing, /TELL US THE PROBLEM/);
+  assert.match(closing, /href=\{tech\.action\.href\}/);
+});
+
+test("Tech does not present state as fake analytics", async () => {
+  const state = await read("components/tech/SystemState.tsx");
+  assert.doesNotMatch(state, /progress|chart|percentage|uptime|metric/i);
+});

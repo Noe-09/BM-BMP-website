@@ -6,14 +6,21 @@ type SystemStateProps = {
 
 export function SystemState({ stateRecords }: SystemStateProps) {
   return (
-    <section aria-labelledby="tech-system-state-title">
-      <h2 id="tech-system-state-title">SYSTEM STATE</h2>
-      <ul>
+    <section className="tech-system-state" aria-labelledby="tech-system-state-title">
+      <header className="tech-system-state__heading">
+        <p>FLAGSHIP / BUILD LEDGER</p>
+        <h2 id="tech-system-state-title">SYSTEM STATE</h2>
+        <p>WHAT IS DESIGNED. WHAT IS PLANNED. WHAT GETS BUILT NEXT.</p>
+      </header>
+      <ul className="tech-system-state__records">
         {stateRecords.map((record) => (
-          <li key={record.id}>
+          <li
+            key={record.id}
+            className="tech-system-state__record"
+            data-state-record-state={record.state}
+          >
             <strong>{record.label}</strong>
-            <span>{record.state}</span>
-            <p>{record.stateNote}</p>
+            <span aria-label={`Build state: ${record.state}`}>{record.state.toUpperCase()}</span>
           </li>
         ))}
       </ul>
