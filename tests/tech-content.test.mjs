@@ -17,7 +17,7 @@ test("BMP Tech owns a typed system truth model instead of reusing generic servic
   assert.match(source, /PROTOTYPE \/ PLANNED/);
   assert.match(source, /SYSTEM STATE/);
   assert.match(source, /SYSTEMS IN MOTION/);
-  assert.match(source, /TELL US THE PROBLEM/);
+  assert.match(source, /SERVICES\.tech\.action\.label\.value/);
   assert.match(source, /WORKFLOW SYSTEMS/);
   assert.match(source, /INTERNAL TOOLS/);
   assert.match(source, /CUSTOMER SYSTEMS/);

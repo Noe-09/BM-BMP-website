@@ -1,3 +1,5 @@
+import { SERVICES } from "./services";
+
 export type TechPhase =
   | "observe"
   | "ingest"
@@ -57,12 +59,32 @@ export type TechSystemFamily = {
   description: string;
 };
 
+export type TechPracticeScope = {
+  headline: string;
+  supportingCopy: string;
+  deliveryScopes: readonly string[];
+  action: {
+    label: string;
+    href: string;
+  };
+};
+
 export type TechRegisterRow = {
   id: string;
   systemType: string;
   businessProblem: string;
   delivery: string;
   capabilityState: TechCapabilityState;
+};
+
+export const TECH_PRACTICE_SCOPE: TechPracticeScope = {
+  headline: SERVICES.tech.headline.value,
+  supportingCopy: SERVICES.tech.supportingCopy.value,
+  deliveryScopes: SERVICES.tech.groups.value,
+  action: {
+    label: SERVICES.tech.action.label.value,
+    href: SERVICES.tech.action.href.value,
+  },
 };
 
 export const TECH = {
@@ -81,10 +103,7 @@ export const TECH = {
   closingHeadline: "SHOW US THE PROCESS THAT SHOULD WORK BETTER.",
   closingCopy:
     "We build practical tools and systems around the problem, the workflow, and the people who use them.",
-  action: {
-    label: "TELL US THE PROBLEM",
-    href: "/contact",
-  },
+  action: TECH_PRACTICE_SCOPE.action,
 } as const;
 
 export const TECH_SYSTEM_FAMILIES: readonly TechSystemFamily[] = [

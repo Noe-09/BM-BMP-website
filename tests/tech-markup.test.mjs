@@ -132,6 +132,25 @@ test("Tech transitions from one system to the wider practice through typed copy"
   );
 });
 
+test("Tech visibly renders its canonical delivery scope without a clipped legacy surface", async () => {
+  const [content, experience, spectrum, css] = await Promise.all([
+    read("content/tech.ts"),
+    read("components/tech/TechExperience.tsx"),
+    read("components/tech/SystemSpectrum.tsx"),
+    read("app/bm-tech/tech.css"),
+  ]);
+
+  assert.match(content, /export const TECH_PRACTICE_SCOPE/);
+  assert.match(content, /SERVICES\.tech/);
+  assert.match(experience, /TECH_PRACTICE_SCOPE/);
+  assert.doesNotMatch(experience, /@\/content\/services|tech-canonical-scope/);
+  assert.match(spectrum, /scope\.headline/);
+  assert.match(spectrum, /scope\.supportingCopy/);
+  assert.match(spectrum, /scope\.deliveryScopes\.map/);
+  assert.doesNotMatch(spectrum, /sr-only|visually-hidden|hidden/);
+  assert.doesNotMatch(css, /tech-canonical-scope/);
+});
+
 test("Tech CSS has explicit mobile and reduced-motion causal modes", async () => {
   const css = await read("app/bm-tech/tech.css");
 
