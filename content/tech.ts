@@ -1,4 +1,4 @@
-import { SERVICES } from "./services";
+import { SERVICES } from "./services.ts";
 
 export type TechPhase =
   | "observe"
