@@ -33,7 +33,7 @@ export function SystemObservatory({ system, tech }: SystemObservatoryProps) {
 
   return (
     <section className="tech-observatory" aria-labelledby="tech-observatory-title">
-      <div className="tech-observatory__intro">
+      <div className="tech-observatory__intro" data-tech-phase-anchor="observe">
         <p className="tech-observatory__eyebrow">{tech.eyebrow}</p>
         <h1 id="tech-observatory-title">{tech.headline}</h1>
         <p className="tech-observatory__supporting-copy">{tech.supportingCopy}</p>
@@ -51,25 +51,25 @@ export function SystemObservatory({ system, tech }: SystemObservatoryProps) {
         </div>
 
         <ol className="tech-observatory__stages" aria-label="Planned system stages">
-          <li className="tech-observatory__stage" data-maturity={system.nodes[0].maturity} data-tech-stage="ingest">
+          <li className="tech-observatory__stage" data-maturity={system.nodes[0].maturity} data-tech-phase-anchor="ingest" data-tech-stage="ingest">
             {stage(system.nodes[0], 0)}
           </li>
-          <li className="tech-observatory__stage" data-maturity={system.nodes[1].maturity} data-tech-stage="normalize">
+          <li className="tech-observatory__stage" data-maturity={system.nodes[1].maturity} data-tech-phase-anchor="normalize" data-tech-stage="normalize">
             {stage(system.nodes[1], 1)}
           </li>
-          <li className="tech-observatory__stage" data-maturity={system.nodes[2].maturity} data-tech-stage="orchestrate">
+          <li className="tech-observatory__stage" data-maturity={system.nodes[2].maturity} data-tech-phase-anchor="orchestrate" data-tech-stage="orchestrate">
             {stage(system.nodes[2], 2)}
           </li>
-          <li className="tech-observatory__stage" data-maturity={system.nodes[3].maturity} data-tech-stage="assist">
+          <li className="tech-observatory__stage" data-maturity={system.nodes[3].maturity} data-tech-phase-anchor="assist" data-tech-stage="assist">
             {stage(system.nodes[3], 3)}
           </li>
-          <li className="tech-observatory__stage" data-maturity={system.nodes[4].maturity} data-tech-stage="checkpoint">
+          <li className="tech-observatory__stage" data-maturity={system.nodes[4].maturity} data-tech-phase-anchor="checkpoint" data-tech-stage="checkpoint">
             {stage(system.nodes[4], 4)}
           </li>
-          <li className="tech-observatory__stage" data-maturity={system.nodes[5].maturity} data-tech-stage="execute">
+          <li className="tech-observatory__stage" data-maturity={system.nodes[5].maturity} data-tech-phase-anchor="execute" data-tech-stage="execute">
             {stage(system.nodes[5], 5)}
           </li>
-          <li className="tech-observatory__stage" data-maturity={system.nodes[6].maturity} data-tech-stage="return">
+          <li className="tech-observatory__stage" data-maturity={system.nodes[6].maturity} data-tech-phase-anchor="return" data-tech-stage="return">
             {stage(system.nodes[6], 6)}
           </li>
         </ol>

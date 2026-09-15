@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import {
   clamp01,
   dampTechProgress,
-  getTechPhase,
+  getAnchoredTechPhase,
 } from "@/lib/tech/journey";
 
 const SETTLED_EPSILON = 0.0005;
@@ -30,23 +30,46 @@ export function TechJourneyController() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let rawProgress = getJourneyProgress(experience);
     let visualProgress = rawProgress;
+    let rawPhaseProgress = 0;
+    let visualPhaseProgress = rawPhaseProgress;
+    let visualPhase = experience.dataset.techPhase ?? "observe";
     let previousRawProgress = rawProgress;
     let lastFrameTime = 0;
     let frameId: number | null = null;
 
     const writeVisualProgress = () => {
       experience.style.setProperty("--tech-visual-progress", String(visualProgress));
+      experience.style.setProperty("--tech-visual-phase-progress", String(visualPhaseProgress));
     };
 
     const writeRawState = () => {
       rawProgress = getJourneyProgress(experience);
-      const { phase, phaseProgress } = getTechPhase(rawProgress);
+      const anchors = Array.from(
+        experience.querySelectorAll<HTMLElement>("[data-tech-phase-anchor]"),
+        (anchor) => ({
+          phase: anchor.dataset.techPhaseAnchor,
+          position: anchor.getBoundingClientRect().top + window.scrollY,
+        }),
+      ).filter(
+        (anchor): anchor is { phase: Parameters<typeof getAnchoredTechPhase>[0][number]["phase"]; position: number } =>
+          Boolean(anchor.phase),
+      );
+      const { phase, phaseProgress } = getAnchoredTechPhase(
+        anchors,
+        window.scrollY + window.innerHeight * 0.2,
+      );
       const direction = Math.sign(rawProgress - previousRawProgress);
+
+      if (phase !== visualPhase) {
+        visualPhase = phase;
+        visualPhaseProgress = phaseProgress;
+      }
 
       experience.dataset.techPhase = phase;
       experience.dataset.techDirection = String(direction);
       experience.style.setProperty("--tech-progress", String(rawProgress));
       experience.style.setProperty("--tech-phase-progress", String(phaseProgress));
+      rawPhaseProgress = phaseProgress;
       previousRawProgress = rawProgress;
     };
 
@@ -67,10 +90,19 @@ export function TechJourneyController() {
         rawProgress,
         deltaSeconds,
       );
+      visualPhaseProgress = dampTechProgress(
+        visualPhaseProgress,
+        rawPhaseProgress,
+        deltaSeconds,
+      );
       writeVisualProgress();
 
-      if (Math.abs(rawProgress - visualProgress) <= SETTLED_EPSILON) {
+      if (
+        Math.abs(rawProgress - visualProgress) <= SETTLED_EPSILON &&
+        Math.abs(rawPhaseProgress - visualPhaseProgress) <= SETTLED_EPSILON
+      ) {
         visualProgress = rawProgress;
+        visualPhaseProgress = rawPhaseProgress;
         writeVisualProgress();
         frameId = null;
         return;
@@ -82,6 +114,7 @@ export function TechJourneyController() {
     const scheduleVisualUpdate = () => {
       if (reducedMotion.matches) {
         visualProgress = rawProgress;
+        visualPhaseProgress = rawPhaseProgress;
         writeVisualProgress();
         cancelFrame();
         return;

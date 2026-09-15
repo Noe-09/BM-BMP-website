@@ -6,7 +6,7 @@ type SystemStateProps = {
 
 export function SystemState({ stateRecords }: SystemStateProps) {
   return (
-    <section className="tech-system-state" aria-labelledby="tech-system-state-title">
+    <section className="tech-system-state" aria-labelledby="tech-system-state-title" data-tech-phase-anchor="state">
       <header className="tech-system-state__heading">
         <p>FLAGSHIP / BUILD LEDGER</p>
         <h2 id="tech-system-state-title">SYSTEM STATE</h2>

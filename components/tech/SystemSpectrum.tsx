@@ -7,7 +7,7 @@ type SystemSpectrumProps = {
 
 export function SystemSpectrum({ families, scope }: SystemSpectrumProps) {
   return (
-    <section className="tech-system-spectrum" aria-labelledby="tech-system-spectrum-title">
+    <section className="tech-system-spectrum" aria-labelledby="tech-system-spectrum-title" data-tech-phase-anchor="spectrum">
       <header className="tech-system-spectrum__heading">
         <p>PRACTICE MAP / 01—07</p>
         <h2 id="tech-system-spectrum-title">SYSTEM FAMILIES</h2>

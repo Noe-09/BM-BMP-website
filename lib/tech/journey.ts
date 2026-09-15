@@ -15,6 +15,11 @@ export const TECH_PHASES: readonly TechPhase[] = [
   "close",
 ];
 
+export type TechPhaseAnchor = {
+  phase: TechPhase;
+  position: number;
+};
+
 export function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
 }
@@ -43,5 +48,32 @@ export function getTechPhase(progress: number) {
   return {
     phase: TECH_PHASES[index],
     phaseProgress,
+  };
+}
+
+export function getAnchoredTechPhase(
+  anchors: readonly TechPhaseAnchor[],
+  readingPosition: number,
+) {
+  const ordered = [...anchors].sort((a, b) => a.position - b.position);
+  const first = ordered[0];
+
+  if (!first) {
+    return { phase: "observe" as const, phaseProgress: 0 };
+  }
+
+  const index = ordered.findIndex((anchor, nextIndex) => {
+    const next = ordered[nextIndex + 1];
+    return readingPosition >= anchor.position && (!next || readingPosition < next.position);
+  });
+  const activeIndex = index === -1 ? 0 : index;
+  const active = ordered[activeIndex];
+  const next = ordered[activeIndex + 1];
+
+  return {
+    phase: active.phase,
+    phaseProgress: next
+      ? clamp01((readingPosition - active.position) / Math.max(1, next.position - active.position))
+      : 1,
   };
 }

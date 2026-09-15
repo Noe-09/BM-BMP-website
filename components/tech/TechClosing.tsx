@@ -11,6 +11,7 @@ export function TechClosing({ tech }: TechClosingProps) {
     <section
       className="tech-closing"
       aria-labelledby="tech-closing-title"
+      data-tech-phase-anchor="close"
       data-tech-copy="SHOW US THE PROCESS THAT SHOULD WORK BETTER."
     >
       <p className="tech-closing__eyebrow">BMP / TECH / NEXT INPUT</p>

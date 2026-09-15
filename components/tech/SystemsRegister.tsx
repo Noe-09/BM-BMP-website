@@ -6,7 +6,7 @@ type SystemsRegisterProps = {
 
 export function SystemsRegister({ rows }: SystemsRegisterProps) {
   return (
-    <section className="tech-systems-register" aria-labelledby="tech-systems-register-title">
+    <section className="tech-systems-register" aria-labelledby="tech-systems-register-title" data-tech-phase-anchor="register">
       <header className="tech-systems-register__heading">
         <p>PRACTICE / CAPABILITY INDEX</p>
         <h2 id="tech-systems-register-title">SYSTEMS REGISTER</h2>

@@ -54,7 +54,7 @@ export function SystemTopology({ nodes, routes }: SystemTopologyProps) {
             transform={`translate(${node.x} ${node.y})`}
           >
             {node.type === "checkpoint" ? (
-              <rect height="5" width="5" x="-2.5" y="-2.5" />
+              <rect height="5" transform="rotate(45)" width="5" x="-2.5" y="-2.5" />
             ) : (
               <circle r="2.1" />
             )}
