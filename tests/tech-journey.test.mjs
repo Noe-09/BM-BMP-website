@@ -76,6 +76,23 @@ test("Tech journey anchors and rendered motion are explicit in the source contra
   assert.match(css, /stroke-dashoffset:\s*0\s*!important/);
 });
 
+test("checkpoint holds the outgoing route stationary until propagation resumes", async () => {
+  const css = await read("app/bm-tech/tech.css");
+
+  assert.match(
+    css,
+    /data-tech-phase="checkpoint"\][\s\S]{0,360}data-route-id="checkpoint-execute"\][\s\S]{0,360}stroke-dashoffset:\s*0\s*!important/,
+  );
+  assert.match(
+    css,
+    /data-tech-phase="execute"\][\s\S]{0,360}data-route-id="checkpoint-execute"\][\s\S]{0,360}stroke-dashoffset:\s*calc\(-1 \* var\(--tech-visual-phase-progress, 0\)\)/,
+  );
+  assert.match(
+    css,
+    /data-tech-phase="return"\][\s\S]{0,360}data-route-id="checkpoint-execute"\][\s\S]{0,360}stroke-dashoffset:\s*calc\(-1 \* var\(--tech-visual-phase-progress, 0\)\)/,
+  );
+});
+
 test("Tech boot is short, session-aware, reduced-motion-aware, and non-blocking", async () => {
   const boot = await read("components/tech/TechBoot.tsx");
   const experience = await read("components/tech/TechExperience.tsx");

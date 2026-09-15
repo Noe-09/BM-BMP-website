@@ -320,6 +320,7 @@
 .tech-page [data-tech-experience][data-tech-phase="checkpoint"] .tech-topology__route[data-route-id="checkpoint-execute"] {
   opacity: 0.28;
   stroke-dasharray: 0.05 0.035;
+  stroke-dashoffset: 0 !important;
   stroke: var(--tech-planned);
 }
 
