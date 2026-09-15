@@ -1,26 +1,31 @@
 # BMP Tech V1 Run State
 
-STATUS: RUNNING
+STATUS: COMPLETE
 BRANCH: feat/bmp-tech-v1
 BASE_SHA: c1519f74f7b59fcef773451df5afe71f292b94c6
-LAST_VERIFIED_HEAD: 45d223eaa706a42224dac1223d7ad4cb105aa822
-CURRENT_TASK: Task 9 — Full Verification, Truth Audit, and Regression Lock
-CURRENT_STEP: Step 1
-LAST_COMPLETED_TASK: Task 8
+LAST_VERIFIED_HEAD: b3e7cafb565dddd0084191660650212940b61d64
+CURRENT_TASK: COMPLETE
+CURRENT_STEP: COMPLETE
+LAST_COMPLETED_TASK: Task 9
 LAST_SUCCESSFUL_CHECKS:
-- PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" node --test tests/tech-content.test.mjs tests/tech-markup.test.mjs tests/tech-journey.test.mjs` (18 tests, 0 failures).
+- PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm test` (209 tests, 0 failures).
 - PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm run typecheck` (`tsc --noEmit`, exit 0).
 - PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm run lint` (exit 0).
+- PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm run build` (Next.js 16.3.1 production build, 21 static pages generated, exit 0).
 - PASS: `git diff --check` (exit 0).
-NEXT_ACTION: begin Task 9 Step 1 by running the entire automated suite and recording the result before production-equivalent route QA.
+- PASS: production-equivalent browser QA for `/`, `/bm-visual`, `/creator`, `/bm-tech`, `/about`, and `/contact` (HTTP 200, meaningful render, no browser warnings or errors).
+- PASS: BMP Tech responsive and interaction QA at 1440, 1024, 768, 390×844, and 360 widths; no horizontal overflow, keyboard checkpoint activation works, phase recovery survives fast scroll, reverse, and halfway reload.
+- PASS: fresh-session signature boot completes, returning-session reacquire completes within the short return interval, and reduced-motion route offsets remain stationary.
+- PASS: truth audit found no unsupported public metrics, `ACTIVE`, `VERIFIED`, autonomous-operation, tool-logo, or outcome claims.
+NEXT_ACTION: keep `feat/bmp-tech-v1` as-is for human review; do not push or merge without explicit human direction.
 BLOCKER: NONE
-UPDATED_AT: 2026-09-15T05:54:43+07:00
+UPDATED_AT: 2026-09-15T22:12:30+07:00
 
 ## Verified Baseline
 
 - **Branch:** `feat/bmp-tech-v1`
 - **Base commit:** `c1519f74f7b59fcef773451df5afe71f292b94c6`
-- **LAST_VERIFIED_HEAD:** `45d223eaa706a42224dac1223d7ad4cb105aa822` (`feat: finalize BMP Tech responsive visual system`)
+- **LAST_VERIFIED_HEAD:** `b3e7cafb565dddd0084191660650212940b61d64` (`fix: pause BMP Tech checkpoint propagation`)
 - **Remote feature branch:** absent at audit time
 
 ## Task 1 Completion
@@ -61,4 +66,14 @@ The human explicitly approved continuing with a truthful prototype model. Public
 
 ## Resume Rule
 
-Task 9 Step 1 may begin by reading the complete Task 9 brief, this run state, `CLAUDE.md`, the current BM Tech route, and the Task 8 report before running the entire automated suite. Preserve the Task 8 route-scoped carbon/mineral visual system: planned routes stay cool, dashed, and non-signal; the warm Human Checkpoint remains distinct; tablet topology retains one causal path; and mobile uses the complete semantic vertical rail without viewport overflow. Preserve the Task 7 planned-only build ledger, typed One System → Many Business Systems transition, causal system-family map, semantic responsive register, and `/contact` closing CTA alongside the Task 6 server-rendered observatory, seven semantic planned stages, decorative data-driven topology, checkpoint propagation pause/resume choreography, and labelled local-only Human Checkpoint. Preserve the Task 5 boot contract, passive native scrolling, shared route-scoped topology coordinates, and all `PLANNED` truth semantics. Do not add wheel interception, programmatic scrolling, fake backend action, unsupported system proof, fake analytics, generic services-card layouts, generic technology tropes, or signal styling for V1 planned propagation; any `ACTIVE` or `VERIFIED` claim requires a fresh audit of independently evidenced behavior.
+BMP Tech V1 is complete on `feat/bmp-tech-v1`. Make no source changes on an automated resume. Preserve the route-scoped carbon/mineral visual system, planned-only flagship truth model, warm Human Checkpoint, checkpoint propagation pause/resume choreography, typed business-system expansion, responsive causal composition, short session-aware boot, passive native scrolling, and all seven `PLANNED` stages/routes/state records. Any future `ACTIVE` or `VERIFIED` upgrade requires a fresh audit of independently evidenced behavior. Keep the branch for human review; do not push, merge, or deploy without explicit human direction.
+
+## Task 9 Completion
+
+- [x] Full automated regression suite passed: 209 tests, typecheck, lint, production build, and diff check.
+- [x] All six protected routes returned HTTP 200 and rendered without runtime overlays, console errors, or warnings.
+- [x] Signature boot, returning-session reacquire, causal phase alignment, checkpoint pause, execute/return propagation resume, reverse scroll, halfway reload, resize, keyboard activation, and reduced-motion behavior were verified.
+- [x] Desktop, tablet, and mobile widths retained all seven planned stages, seven planned routes, and seven planned ledger rows without horizontal overflow.
+- [x] Final truth audit confirmed the flagship remains `SYSTEM PROTOTYPE 01` / `AI SOCIAL MEDIA POSTING SYSTEM` / `PROTOTYPE / PLANNED`, with no unsupported production evidence claims.
+- [x] Branch isolation confirmed Tech V1 changes only; no Gateway, BM Visual, Creator, or `/agent-os` source was modified.
+- [x] Final narrow QA correction committed as `b3e7cafb565dddd0084191660650212940b61d64`.
