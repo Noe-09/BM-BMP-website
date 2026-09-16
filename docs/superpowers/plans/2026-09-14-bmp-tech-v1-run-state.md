@@ -3,29 +3,29 @@
 STATUS: COMPLETE
 BRANCH: feat/bmp-tech-v1
 BASE_SHA: c1519f74f7b59fcef773451df5afe71f292b94c6
-LAST_VERIFIED_HEAD: b3e7cafb565dddd0084191660650212940b61d64
+LAST_VERIFIED_HEAD: 38ca1c8136f5ac07b54c04a04db4558c2218c8e5
 CURRENT_TASK: COMPLETE
 CURRENT_STEP: COMPLETE
-LAST_COMPLETED_TASK: Task 9
+LAST_COMPLETED_TASK: Diagnostic + Color/State Precision Pass
 LAST_SUCCESSFUL_CHECKS:
-- PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm test` (209 tests, 0 failures).
+- PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm test` (211 tests, 0 failures).
 - PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm run typecheck` (`tsc --noEmit`, exit 0).
 - PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm run lint` (exit 0).
 - PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm run build` (Next.js 16.3.1 production build, 21 static pages generated, exit 0).
 - PASS: `git diff --check` (exit 0).
 - PASS: production-equivalent browser QA for `/`, `/bm-visual`, `/creator`, `/bm-tech`, `/about`, and `/contact` (HTTP 200, meaningful render, no browser warnings or errors).
-- PASS: BMP Tech responsive and interaction QA at 1440, 1024, 768, 390×844, and 360 widths; no horizontal overflow, keyboard checkpoint activation works, phase recovery survives fast scroll, reverse, and halfway reload.
+- PASS: BMP Tech responsive and interaction QA at 1440, 1024, 768, 390×844 DPR2, and 360 widths; no horizontal overflow, causal phase mapping remains exact, checkpoint freezes all routes, execute/return resume propagation, and phase recovery survives fast scroll, reverse, and reload.
 - PASS: fresh-session signature boot completes, returning-session reacquire completes within the short return interval, and reduced-motion route offsets remain stationary.
 - PASS: truth audit found no unsupported public metrics, `ACTIVE`, `VERIFIED`, autonomous-operation, tool-logo, or outcome claims.
 NEXT_ACTION: keep `feat/bmp-tech-v1` as-is for human review; do not push or merge without explicit human direction.
 BLOCKER: NONE
-UPDATED_AT: 2026-09-15T22:12:30+07:00
+UPDATED_AT: 2026-09-16T21:18:20+07:00
 
 ## Verified Baseline
 
 - **Branch:** `feat/bmp-tech-v1`
 - **Base commit:** `c1519f74f7b59fcef773451df5afe71f292b94c6`
-- **LAST_VERIFIED_HEAD:** `b3e7cafb565dddd0084191660650212940b61d64` (`fix: pause BMP Tech checkpoint propagation`)
+- **LAST_VERIFIED_HEAD:** `38ca1c8136f5ac07b54c04a04db4558c2218c8e5` (`fix: refine BMP Tech causal system states`)
 - **Remote feature branch:** absent at audit time
 
 ## Task 1 Completion
@@ -66,7 +66,16 @@ The human explicitly approved continuing with a truthful prototype model. Public
 
 ## Resume Rule
 
-BMP Tech V1 is complete on `feat/bmp-tech-v1`. Make no source changes on an automated resume. Preserve the route-scoped carbon/mineral visual system, planned-only flagship truth model, warm Human Checkpoint, checkpoint propagation pause/resume choreography, typed business-system expansion, responsive causal composition, short session-aware boot, passive native scrolling, and all seven `PLANNED` stages/routes/state records. Any future `ACTIVE` or `VERIFIED` upgrade requires a fresh audit of independently evidenced behavior. Keep the branch for human review; do not push, merge, or deploy without explicit human direction.
+BMP Tech V1 is complete on `feat/bmp-tech-v1`. Make no source changes on an automated resume. Preserve the route-scoped carbon/mineral visual system, exact functional color tokens, planned-only flagship truth model, typed causal consequences, warm Human Checkpoint, full-topology checkpoint pause/execute-return resume choreography, typed business-system expansion, readable mobile register, responsive causal composition, short session-aware boot, passive native scrolling, and all seven `PLANNED` stages/routes/state records. Any future `ACTIVE` or `VERIFIED` upgrade requires a fresh audit of independently evidenced behavior. Keep the branch for human review; do not push, merge, or deploy without explicit human direction.
+
+## Diagnostic + Color/State Precision Pass
+
+- [x] Direct Chromium recording and viewport audit found no duplicate DOM text, duplicate IDs, console errors, or genuine content overlaps; the reported camera-only duplication is consistent with capture/display temporal ghosting rather than page scroll, sticky, transform, or animation lifecycle behavior.
+- [x] The seven flagship phases now expose data-driven causal consequences while all nodes, routes, stages, and state records remain explicitly `PLANNED`.
+- [x] Functional color tokens are exact: signal `#C6F35B`, human decision `#E89A52`, planned `#82939E`; current causal paths remain dashed so interaction emphasis does not imply operational maturity.
+- [x] Human Checkpoint freezes all topology routes; execute and return resume propagation. Reduced motion removes the new state transitions and fixes route offsets at zero.
+- [x] System Families spacing and separators, Systems Register proportions/mobile stacking, and closing hierarchy were refined without changing approved content or unrelated routes.
+- [x] Final verification passed: 211 tests, typecheck, lint, production build, diff check, 1440/1024/768/390×844 DPR2/360 browser matrix, slow/fast/reverse scroll, reload, reduced motion, and direct Chromium recording.
 
 ## Task 9 Completion
 
