@@ -152,15 +152,53 @@ test("Tech visibly renders its canonical delivery scope without a clipped legacy
 });
 
 test("Tech CSS has explicit mobile and reduced-motion causal modes", async () => {
-  const css = await read("app/bm-tech/tech.css");
+  const [css, topology] = await Promise.all([
+    read("app/bm-tech/tech.css"),
+    read("components/tech/SystemTopology.tsx"),
+  ]);
 
   assert.match(css, /@media[^{]*max-width:\s*768px/);
   assert.match(css, /@media[^{]*max-width:\s*480px/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(css, /--tech-signal/);
-  assert.match(css, /--tech-human/);
-  assert.match(css, /--tech-planned/);
+  assert.match(
+    css,
+    /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.tech-page \.tech-observatory__stage-index[\s\S]*?transition:\s*none/,
+  );
+  assert.match(css, /--tech-signal:\s*#C6F35B/i);
+  assert.match(css, /--tech-human:\s*#E89A52/i);
+  assert.match(css, /--tech-planned:\s*#82939E/i);
+  assert.match(css, /data-tech-consequence="signal-enter"/);
+  assert.match(css, /data-tech-consequence="data-structure"/);
+  assert.match(css, /data-tech-consequence="route-resolve"/);
+  assert.match(css, /data-tech-consequence="assist-form"/);
+  assert.match(css, /data-tech-consequence="output-propagate"/);
+  assert.match(css, /data-tech-consequence="feedback-return"/);
+  assert.match(
+    css,
+    /data-tech-consequence="output-propagate"\][\s\S]{0,320}data-route-id="checkpoint-execute"\][\s\S]{0,220}stroke:\s*var\(--tech-signal\)/,
+  );
+  assert.match(css, /data-tech-propagation="hold"/);
+  assert.match(topology, /data-glyph-type=\{node\.type\}/);
+  assert.match(topology, /tech-topology__glyph-line/);
+  assert.match(topology, /tech-topology__glyph-frame/);
+  assert.match(topology, /tech-topology__glyph-branch/);
   assert.doesNotMatch(css, /backdrop-filter:\s*blur/i);
+});
+
+test("lower-page hierarchy stays structural instead of relying on clipping or decorative color fields", async () => {
+  const css = await read("app/bm-tech/tech.css");
+
+  assert.doesNotMatch(
+    css,
+    /\.tech-page \.tech-system-spectrum\s*\{[^}]*overflow:\s*hidden/,
+  );
+  assert.match(css, /\.tech-system-spectrum__family[\s\S]{0,260}min-height:\s*clamp\(12rem,\s*20vw,\s*17rem\)/);
+  assert.match(css, /\.tech-systems-register table[\s\S]{0,180}table-layout:\s*fixed/);
+  assert.match(
+    css,
+    /@media \(max-width:\s*768px\)[\s\S]*?\.tech-page \.tech-systems-register :is\(th, td\):nth-child\(n\)\s*\{[\s\S]*?width:\s*auto/,
+  );
+  assert.match(css, /\.tech-closing__action[\s\S]{0,260}border-bottom:\s*1px solid var\(--tech-signal\)/);
 });
 
 test("Tech visual system keeps planned state distinguishable beyond color", async () => {

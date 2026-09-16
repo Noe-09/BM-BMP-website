@@ -54,10 +54,30 @@ export function SystemTopology({ nodes, routes }: SystemTopologyProps) {
             transform={`translate(${node.x} ${node.y})`}
           >
             {node.type === "checkpoint" ? (
-              <rect height="5" transform="rotate(45)" width="5" x="-2.5" y="-2.5" />
+              <rect className="tech-topology__node-shape" height="5" transform="rotate(45)" width="5" x="-2.5" y="-2.5" />
             ) : (
-              <circle r="2.1" />
+              <circle className="tech-topology__node-shape" r="2.1" />
             )}
+            <g className="tech-topology__glyph" data-glyph-type={node.type}>
+              {node.type === "input" ? (
+                <path className="tech-topology__glyph-line" d="M -7 0 H -3.5" />
+              ) : null}
+              {node.id === "normalize" ? (
+                <rect className="tech-topology__glyph-frame" height="7.5" width="7.5" x="-3.75" y="-3.75" />
+              ) : null}
+              {node.id === "orchestrate" ? (
+                <path className="tech-topology__glyph-branch" d="M -4 3 L 0 -1 L 4 3" />
+              ) : null}
+              {node.type === "assist" ? (
+                <path className="tech-topology__glyph-line" d="M -1.6 0 H 1.6 M 0 -1.6 V 1.6" />
+              ) : null}
+              {node.type === "output" ? (
+                <path className="tech-topology__glyph-line" d="M 3.5 0 H 7" />
+              ) : null}
+              {node.type === "feedback" ? (
+                <path className="tech-topology__glyph-line" d="M -3.5 2.8 C -6 -3 3 -6 4 0" />
+              ) : null}
+            </g>
             <text x="0" y="-4.5">{node.shortLabel}</text>
           </g>
         ))}

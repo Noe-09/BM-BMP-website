@@ -6,6 +6,7 @@ import {
   clamp01,
   dampTechProgress,
   getAnchoredTechPhase,
+  getTechCausalConsequence,
 } from "@/lib/tech/journey";
 
 const SETTLED_EPSILON = 0.0005;
@@ -59,6 +60,7 @@ export function TechJourneyController() {
         window.scrollY + window.innerHeight * 0.2,
       );
       const direction = Math.sign(rawProgress - previousRawProgress);
+      const consequence = getTechCausalConsequence(phase);
 
       if (phase !== visualPhase) {
         visualPhase = phase;
@@ -67,6 +69,9 @@ export function TechJourneyController() {
 
       experience.dataset.techPhase = phase;
       experience.dataset.techDirection = String(direction);
+      experience.dataset.techConsequence = consequence.effect;
+      experience.dataset.techPropagation = consequence.propagation;
+      experience.dataset.techTone = consequence.tone;
       experience.style.setProperty("--tech-progress", String(rawProgress));
       experience.style.setProperty("--tech-phase-progress", String(phaseProgress));
       rawPhaseProgress = phaseProgress;

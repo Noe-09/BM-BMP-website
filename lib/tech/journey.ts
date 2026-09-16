@@ -20,8 +20,44 @@ export type TechPhaseAnchor = {
   position: number;
 };
 
+export type TechCausalConsequence = {
+  effect:
+    | "signal-enter"
+    | "data-structure"
+    | "route-resolve"
+    | "assist-form"
+    | "human-hold"
+    | "output-propagate"
+    | "feedback-return"
+    | "context";
+  propagation: "flow" | "hold";
+  tone: "signal" | "human" | "planned";
+};
+
+const TECH_CAUSAL_CONSEQUENCES: Partial<
+  Record<TechPhase, TechCausalConsequence>
+> = {
+  ingest: { effect: "signal-enter", propagation: "flow", tone: "signal" },
+  normalize: { effect: "data-structure", propagation: "flow", tone: "signal" },
+  orchestrate: { effect: "route-resolve", propagation: "flow", tone: "signal" },
+  assist: { effect: "assist-form", propagation: "flow", tone: "signal" },
+  checkpoint: { effect: "human-hold", propagation: "hold", tone: "human" },
+  execute: { effect: "output-propagate", propagation: "flow", tone: "signal" },
+  return: { effect: "feedback-return", propagation: "flow", tone: "signal" },
+};
+
+const CONTEXT_CONSEQUENCE: TechCausalConsequence = {
+  effect: "context",
+  propagation: "hold",
+  tone: "planned",
+};
+
 export function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
+}
+
+export function getTechCausalConsequence(phase: TechPhase) {
+  return TECH_CAUSAL_CONSEQUENCES[phase] ?? CONTEXT_CONSEQUENCE;
 }
 
 export function dampTechProgress(

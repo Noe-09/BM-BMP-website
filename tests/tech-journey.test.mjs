@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { getAnchoredTechPhase } from "../lib/tech/journey.ts";
+import * as journey from "../lib/tech/journey.ts";
 
 const read = (path) =>
   readFile(new URL(`../${path}`, import.meta.url), "utf8");
@@ -19,6 +19,9 @@ test("Tech uses one passive native-scroll controller with damped rendered progre
   assert.match(controller, /--tech-visual-progress/);
   assert.match(controller, /--tech-visual-phase-progress/);
   assert.match(controller, /getAnchoredTechPhase/);
+  assert.match(controller, /getTechCausalConsequence/);
+  assert.match(controller, /dataset\.techConsequence/);
+  assert.match(controller, /dataset\.techPropagation/);
   assert.match(controller, /removeEventListener/);
   assert.match(controller, /cancelAnimationFrame/);
 
@@ -40,16 +43,42 @@ test("Tech semantic phases follow ordered anchor geometry rather than equal page
     { phase: "close", position: 9100 },
   ];
 
-  assert.deepEqual(getAnchoredTechPhase(anchors, 160), {
+  assert.deepEqual(journey.getAnchoredTechPhase(anchors, 160), {
     phase: "observe",
     phaseProgress: 0,
   });
-  assert.deepEqual(getAnchoredTechPhase(anchors, 3220), {
+  assert.deepEqual(journey.getAnchoredTechPhase(anchors, 3220), {
     phase: "checkpoint",
     phaseProgress: 0,
   });
-  assert.equal(getAnchoredTechPhase(anchors, 4760).phase, "return");
-  assert.equal(getAnchoredTechPhase(anchors, 4000).phase, "checkpoint");
+  assert.equal(journey.getAnchoredTechPhase(anchors, 4760).phase, "return");
+  assert.equal(journey.getAnchoredTechPhase(anchors, 4000).phase, "checkpoint");
+});
+
+test("each flagship phase exposes one truthful causal consequence", () => {
+  const getConsequence = journey.getTechCausalConsequence;
+
+  assert.equal(typeof getConsequence, "function");
+  assert.deepEqual(
+    [
+      "ingest",
+      "normalize",
+      "orchestrate",
+      "assist",
+      "checkpoint",
+      "execute",
+      "return",
+    ].map((phase) => getConsequence?.(phase)),
+    [
+      { effect: "signal-enter", propagation: "flow", tone: "signal" },
+      { effect: "data-structure", propagation: "flow", tone: "signal" },
+      { effect: "route-resolve", propagation: "flow", tone: "signal" },
+      { effect: "assist-form", propagation: "flow", tone: "signal" },
+      { effect: "human-hold", propagation: "hold", tone: "human" },
+      { effect: "output-propagate", propagation: "flow", tone: "signal" },
+      { effect: "feedback-return", propagation: "flow", tone: "signal" },
+    ],
+  );
 });
 
 test("Tech journey anchors and rendered motion are explicit in the source contract", async () => {
@@ -79,6 +108,10 @@ test("Tech journey anchors and rendered motion are explicit in the source contra
 test("checkpoint holds the outgoing route stationary until propagation resumes", async () => {
   const css = await read("app/bm-tech/tech.css");
 
+  assert.match(
+    css,
+    /data-tech-propagation="hold"\] \.tech-topology__route\s*\{[\s\S]{0,180}stroke-dashoffset:\s*0\s*!important/,
+  );
   assert.match(
     css,
     /data-tech-phase="checkpoint"\][\s\S]{0,360}data-route-id="checkpoint-execute"\][\s\S]{0,360}stroke-dashoffset:\s*0\s*!important/,

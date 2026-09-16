@@ -5,9 +5,9 @@
   --tech-muted: #929a97;
   --tech-line: rgba(237, 238, 233, 0.17);
   --tech-grid: rgba(237, 238, 233, 0.055);
-  --tech-signal: #b9e64a;
-  --tech-human: #d88a45;
-  --tech-planned: #7d8991;
+  --tech-signal: #C6F35B;
+  --tech-human: #E89A52;
+  --tech-planned: #82939E;
   --tech-route-stroke: 1px;
   --tech-node-size: 0.5rem;
   --tech-route-offset: clamp(1.5rem, 5vw, 5rem);
@@ -244,8 +244,7 @@
   opacity: 0.48;
 }
 
-.tech-page .tech-topology__node circle,
-.tech-page .tech-topology__node rect {
+.tech-page .tech-topology__node-shape {
   fill: var(--tech-panel);
   stroke: var(--tech-planned);
   stroke-dasharray: 0.8 0.5;
@@ -254,10 +253,28 @@
   transition: fill 280ms ease, stroke 280ms ease, opacity 280ms ease;
 }
 
-.tech-page .tech-topology__node[data-maturity="planned"] circle,
-.tech-page .tech-topology__node[data-maturity="planned"] rect {
+.tech-page .tech-topology__node[data-maturity="planned"] .tech-topology__node-shape {
   stroke: var(--tech-planned);
   stroke-dasharray: 0.8 0.5;
+}
+
+.tech-page .tech-topology__glyph > * {
+  fill: none;
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.8 0.5;
+  stroke-width: 0.45;
+  opacity: 0.52;
+  vector-effect: non-scaling-stroke;
+  transition: opacity 280ms ease, stroke 280ms ease;
+}
+
+.tech-page .tech-topology__glyph-frame {
+  stroke-dasharray: 0.65 0.45;
+}
+
+.tech-page .tech-topology__glyph-branch {
+  stroke-linecap: square;
+  stroke-linejoin: bevel;
 }
 
 .tech-page .tech-topology__node text {
@@ -269,54 +286,92 @@
   opacity: 0.85;
 }
 
-.tech-page .tech-topology__node[data-node-type="checkpoint"] rect {
+.tech-page .tech-topology__node[data-node-type="checkpoint"] .tech-topology__node-shape {
   stroke: var(--tech-human);
 }
 
 .tech-page .tech-topology__route[data-maturity="active"],
-.tech-page .tech-topology__node[data-maturity="active"] circle,
-.tech-page .tech-topology__node[data-maturity="active"] rect {
+.tech-page .tech-topology__node[data-maturity="active"] .tech-topology__node-shape {
   stroke: var(--tech-signal);
   stroke-dasharray: none;
   opacity: 1;
 }
 
 .tech-page .tech-topology__route[data-maturity="verified"],
-.tech-page .tech-topology__node[data-maturity="verified"] circle,
-.tech-page .tech-topology__node[data-maturity="verified"] rect {
+.tech-page .tech-topology__node[data-maturity="verified"] .tech-topology__node-shape {
   stroke: var(--tech-fg);
   stroke-dasharray: none;
   opacity: 1;
 }
 
-.tech-page [data-tech-experience][data-tech-phase="ingest"] [data-node-phase="ingest"],
-.tech-page [data-tech-experience][data-tech-phase="normalize"] [data-node-phase="normalize"],
-.tech-page [data-tech-experience][data-tech-phase="orchestrate"] [data-node-phase="orchestrate"],
-.tech-page [data-tech-experience][data-tech-phase="assist"] [data-node-phase="assist"],
-.tech-page [data-tech-experience][data-tech-phase="execute"] [data-node-phase="execute"],
-.tech-page [data-tech-experience][data-tech-phase="return"] [data-node-phase="return"] {
+.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-node-phase="ingest"],
+.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-node-phase="normalize"],
+.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-node-phase="orchestrate"],
+.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-node-phase="assist"],
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-node-phase="execute"],
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-node-phase="return"] {
   opacity: 1;
 }
 
-.tech-page [data-tech-experience][data-tech-phase="ingest"] [data-route-phase="ingest"],
-.tech-page [data-tech-experience][data-tech-phase="normalize"] [data-route-phase="normalize"],
-.tech-page [data-tech-experience][data-tech-phase="orchestrate"] [data-route-phase="orchestrate"],
-.tech-page [data-tech-experience][data-tech-phase="assist"] [data-route-phase="assist"],
-.tech-page [data-tech-experience][data-tech-phase="execute"] [data-route-phase="execute"],
-.tech-page [data-tech-experience][data-tech-phase="return"] [data-route-phase="return"] {
-  stroke: var(--tech-planned);
+.tech-page [data-tech-experience][data-tech-tone="signal"] .tech-topology__node[data-node-phase] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-tone="signal"] .tech-topology__node[data-node-phase] .tech-topology__glyph > * {
+  transition: opacity 280ms ease, stroke 280ms ease;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-node-phase="ingest"] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-node-phase="ingest"] .tech-topology__glyph > *,
+.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-node-phase="normalize"] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-node-phase="normalize"] .tech-topology__glyph > *,
+.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-node-phase="orchestrate"] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-node-phase="orchestrate"] .tech-topology__glyph > *,
+.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-node-phase="assist"] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-node-phase="assist"] .tech-topology__glyph > *,
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-node-phase="execute"] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-node-phase="execute"] .tech-topology__glyph > *,
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-node-phase="return"] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-node-phase="return"] .tech-topology__glyph > * {
+  stroke: var(--tech-signal);
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-node-phase="ingest"] text,
+.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-node-phase="normalize"] text,
+.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-node-phase="orchestrate"] text,
+.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-node-phase="assist"] text,
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-node-phase="execute"] text,
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-node-phase="return"] text {
+  fill: var(--tech-signal);
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-route-phase="ingest"],
+.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-route-phase="normalize"],
+.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-route-phase="orchestrate"],
+.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-route-phase="assist"],
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-route-phase="execute"],
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-route-phase="return"] {
+  stroke: var(--tech-signal);
   stroke-dasharray: 0.05 0.035;
   stroke-dashoffset: calc(-1 * var(--tech-visual-phase-progress, 0));
-  opacity: 0.82;
-}
-
-.tech-page [data-tech-experience][data-tech-phase="checkpoint"] .tech-topology__node[data-node-id="checkpoint"] rect,
-.tech-page [data-tech-experience][data-tech-phase="checkpoint"] .tech-topology__node[data-node-id="checkpoint"] text {
-  fill: var(--tech-human);
-  stroke: var(--tech-human);
   opacity: 1;
 }
 
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__node[data-node-id="checkpoint"] .tech-topology__node-shape {
+  stroke: var(--tech-human);
+  fill: var(--tech-panel);
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__node[data-node-id="checkpoint"] text {
+  fill: var(--tech-human);
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-propagation="hold"] .tech-topology__route {
+  stroke-dashoffset: 0 !important;
+}
+
+.tech-page [data-tech-experience][data-tech-propagation="hold"] .tech-topology__route[data-route-id="checkpoint-execute"],
 .tech-page [data-tech-experience][data-tech-phase="checkpoint"] .tech-topology__route[data-route-id="checkpoint-execute"] {
   opacity: 0.28;
   stroke-dasharray: 0.05 0.035;
@@ -324,9 +379,11 @@
   stroke: var(--tech-planned);
 }
 
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] .tech-topology__route[data-route-id="checkpoint-execute"],
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] .tech-topology__route[data-route-id="checkpoint-execute"],
 .tech-page [data-tech-experience][data-tech-phase="execute"] .tech-topology__route[data-route-id="checkpoint-execute"],
 .tech-page [data-tech-experience][data-tech-phase="return"] .tech-topology__route[data-route-id="checkpoint-execute"] {
-  stroke: var(--tech-planned);
+  stroke: var(--tech-signal);
   stroke-dasharray: 0.05 0.035;
   stroke-dashoffset: calc(-1 * var(--tech-visual-phase-progress, 0));
   opacity: 1;
@@ -366,20 +423,38 @@
   color: var(--tech-planned);
 }
 
-.tech-page [data-tech-experience][data-tech-phase="ingest"] [data-tech-stage="ingest"],
-.tech-page [data-tech-experience][data-tech-phase="normalize"] [data-tech-stage="normalize"],
-.tech-page [data-tech-experience][data-tech-phase="orchestrate"] [data-tech-stage="orchestrate"],
-.tech-page [data-tech-experience][data-tech-phase="assist"] [data-tech-stage="assist"],
-.tech-page [data-tech-experience][data-tech-phase="checkpoint"] [data-tech-stage="checkpoint"],
-.tech-page [data-tech-experience][data-tech-phase="execute"] [data-tech-stage="execute"],
-.tech-page [data-tech-experience][data-tech-phase="return"] [data-tech-stage="return"] {
-  border-left-color: var(--tech-planned);
+.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-tech-stage="ingest"],
+.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-tech-stage="normalize"],
+.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-tech-stage="orchestrate"],
+.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-tech-stage="assist"],
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-tech-stage="execute"],
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-tech-stage="return"] {
+  border-left-color: var(--tech-signal);
   color: var(--tech-fg);
   opacity: 1;
 }
 
-.tech-page [data-tech-experience][data-tech-phase="checkpoint"] [data-tech-stage="checkpoint"] {
+.tech-page [data-tech-experience][data-tech-tone="signal"] .tech-observatory__stage[data-tech-phase-anchor] .tech-observatory__stage-index {
+  transition: color 220ms ease;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-tech-stage="ingest"] .tech-observatory__stage-index,
+.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-tech-stage="normalize"] .tech-observatory__stage-index,
+.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-tech-stage="orchestrate"] .tech-observatory__stage-index,
+.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-tech-stage="assist"] .tech-observatory__stage-index,
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-tech-stage="execute"] .tech-observatory__stage-index,
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-tech-stage="return"] .tech-observatory__stage-index {
+  color: var(--tech-signal);
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] [data-tech-stage="checkpoint"] {
   border-left-color: var(--tech-human);
+  color: var(--tech-fg);
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] [data-tech-stage="checkpoint"] .tech-observatory__stage-index {
+  color: var(--tech-human);
 }
 
 .tech-page .human-checkpoint {
@@ -433,7 +508,7 @@
 .tech-page .tech-system-spectrum,
 .tech-page .tech-systems-register,
 .tech-page .tech-closing {
-  padding: clamp(5rem, 12vw, 11rem) var(--tech-route-offset);
+  padding: clamp(5rem, 10vw, 9rem) var(--tech-route-offset);
   border-top: 1px solid var(--tech-line);
 }
 
@@ -495,7 +570,7 @@
 .tech-page .tech-system-spectrum__heading,
 .tech-page .tech-systems-register__heading {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.65rem;
   max-width: 46rem;
 }
 
@@ -524,14 +599,14 @@
 .tech-page .tech-system-state h2,
 .tech-page .tech-system-spectrum h2,
 .tech-page .tech-systems-register h2 {
-  font-size: clamp(2.5rem, 6vw, 6.5rem);
+  font-size: clamp(2.5rem, 5.6vw, 6.25rem);
 }
 
 .tech-page .tech-system-state__records {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 0;
-  margin: clamp(3rem, 7vw, 7rem) 0 0;
+  margin: clamp(2.75rem, 5vw, 5.5rem) 0 0;
   padding: 0;
   list-style: none;
 }
@@ -540,7 +615,7 @@
   position: relative;
   display: grid;
   gap: 0.8rem;
-  min-height: 8rem;
+  min-height: 7rem;
   padding: 1rem;
   border-top: 1px dashed var(--tech-planned);
   border-left: 1px dashed var(--tech-line);
@@ -562,6 +637,7 @@
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.72rem;
   letter-spacing: 0.1em;
+  line-height: 1.35;
   text-transform: uppercase;
 }
 
@@ -586,23 +662,15 @@
 
 .tech-page .tech-system-spectrum {
   position: relative;
-  overflow: hidden;
-}
-
-.tech-page .tech-system-spectrum::before {
-  position: absolute;
-  inset: clamp(5rem, 12vw, 11rem) var(--tech-route-offset) auto;
-  height: 1px;
-  background: linear-gradient(90deg, var(--tech-line), transparent);
-  content: "";
+  background: var(--tech-bg);
 }
 
 .tech-page .tech-system-spectrum__scope {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
   gap: clamp(1.5rem, 5vw, 6rem);
-  margin-top: clamp(3rem, 7vw, 7rem);
-  padding: clamp(1.25rem, 3vw, 2.5rem) 0;
+  margin-top: clamp(2.75rem, 5vw, 5.5rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0;
   border-top: 1px solid var(--tech-line);
   border-bottom: 1px solid var(--tech-line);
 }
@@ -661,7 +729,7 @@
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 1px;
-  margin: clamp(3rem, 8vw, 8rem) 0 0;
+  margin: clamp(2.75rem, 6vw, 6rem) 0 0;
   padding: 0;
   background: var(--tech-line);
   list-style: none;
@@ -671,7 +739,7 @@
   display: grid;
   grid-column: span 4;
   gap: 1.25rem;
-  min-height: clamp(15rem, 28vw, 22rem);
+  min-height: clamp(12rem, 20vw, 17rem);
   padding: clamp(1rem, 2vw, 2rem);
   background: var(--tech-bg);
 }
@@ -690,7 +758,7 @@
   margin: 0;
   font-size: clamp(1.25rem, 2.3vw, 2.4rem);
   letter-spacing: -0.04em;
-  line-height: 0.92;
+  line-height: 0.96;
 }
 
 .tech-page .tech-system-spectrum__family ol {
@@ -720,7 +788,7 @@
 }
 
 .tech-page .tech-systems-register__table-wrap {
-  margin-top: clamp(3rem, 7vw, 7rem);
+  margin-top: clamp(2.75rem, 5vw, 5.5rem);
   overflow-x: auto;
   border-top: 1px solid var(--tech-line);
   border-bottom: 1px solid var(--tech-line);
@@ -730,11 +798,32 @@
   width: 100%;
   min-width: 54rem;
   border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.tech-page .tech-systems-register th:nth-child(1),
+.tech-page .tech-systems-register td:nth-child(1) {
+  width: 20%;
+}
+
+.tech-page .tech-systems-register th:nth-child(2),
+.tech-page .tech-systems-register td:nth-child(2) {
+  width: 30%;
+}
+
+.tech-page .tech-systems-register th:nth-child(3),
+.tech-page .tech-systems-register td:nth-child(3) {
+  width: 34%;
+}
+
+.tech-page .tech-systems-register th:nth-child(4),
+.tech-page .tech-systems-register td:nth-child(4) {
+  width: 16%;
 }
 
 .tech-page .tech-systems-register th,
 .tech-page .tech-systems-register td {
-  padding: 1rem;
+  padding: 1.15rem 1rem;
   border-bottom: 1px solid var(--tech-line);
   text-align: left;
   vertical-align: top;
@@ -761,6 +850,7 @@
 .tech-page .tech-systems-register tbody th {
   max-width: 15rem;
   font-size: 0.85rem;
+  line-height: 1.35;
 }
 
 .tech-page .tech-systems-register td {
@@ -779,9 +869,9 @@
 
 .tech-page .tech-closing {
   display: grid;
-  min-height: min(42rem, 100svh);
+  min-height: min(40rem, 92svh);
   align-content: center;
-  gap: 1.25rem;
+  gap: 1.4rem;
   border-bottom: 1px solid var(--tech-line);
 }
 
@@ -802,7 +892,7 @@
   width: fit-content;
   margin-top: 1.5rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--tech-planned);
+  border-bottom: 1px solid var(--tech-signal);
   color: var(--tech-fg);
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.78rem;
@@ -811,7 +901,7 @@
 }
 
 .tech-page .tech-closing__action:hover {
-  color: var(--tech-fg);
+  color: var(--tech-signal);
 }
 
 .tech-page .tech-closing__action:focus-visible {
@@ -919,6 +1009,15 @@
     content: "";
   }
 
+  .tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-tech-stage="ingest"]::before,
+  .tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-tech-stage="normalize"]::before,
+  .tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-tech-stage="orchestrate"]::before,
+  .tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-tech-stage="assist"]::before,
+  .tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-tech-stage="execute"]::before,
+  .tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-tech-stage="return"]::before {
+    border-color: var(--tech-signal);
+  }
+
   .tech-page .tech-observatory__stage[data-tech-stage="checkpoint"] {
     border-left-color: var(--tech-human);
   }
@@ -1001,6 +1100,10 @@
     border-bottom: 0;
   }
 
+  .tech-page .tech-systems-register :is(th, td):nth-child(n) {
+    width: auto;
+  }
+
   .tech-page .tech-systems-register th::before,
   .tech-page .tech-systems-register td::before {
     display: block;
@@ -1067,9 +1170,10 @@
   }
 
   .tech-page .tech-topology__route,
-  .tech-page .tech-topology__node circle,
-  .tech-page .tech-topology__node rect,
-  .tech-page .tech-observatory__stage {
+  .tech-page .tech-topology__node-shape,
+  .tech-page .tech-topology__glyph > *,
+  .tech-page .tech-observatory__stage,
+  .tech-page .tech-observatory__stage-index {
     transition: none;
   }
 
@@ -1078,8 +1182,8 @@
     opacity: 0.8;
   }
 
-  .tech-page .tech-topology__node circle,
-  .tech-page .tech-topology__node rect,
+  .tech-page .tech-topology__node-shape,
+  .tech-page .tech-topology__glyph > *,
   .tech-page .tech-observatory__stage {
     opacity: 1;
   }
