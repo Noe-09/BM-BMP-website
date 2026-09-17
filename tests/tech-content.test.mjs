@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { TECH_REGISTER, TECH_SYSTEM_FAMILIES } from "../content/tech.ts";
 
 const read = (path) =>
   readFile(new URL(`../${path}`, import.meta.url), "utf8");
@@ -105,4 +106,17 @@ test("Tech canonical content contains no fabricated metric grammar", async () =>
 
   assert.doesNotMatch(source, /\b(?:uptime|conversion|revenue|engagement rate|posts processed)\b/i);
   assert.doesNotMatch(source, /\b\d+(?:\.\d+)?%\b/);
+});
+
+test("each System Family owns a distinct causal topology", () => {
+  assert.deepEqual(
+    TECH_SYSTEM_FAMILIES.map((family) => family.topology),
+    ["sequence", "branch", "escalation", "gate", "feedback", "handoff", "iteration"],
+  );
+  assert.equal(new Set(TECH_SYSTEM_FAMILIES.map((family) => family.topology)).size, 7);
+});
+
+test("register availability describes a build capability rather than product maturity", () => {
+  assert.ok(TECH_REGISTER.every((row) => row.capabilityState === "available"));
+  assert.ok(TECH_REGISTER.every((row) => row.capabilityLabel === "AVAILABLE TO BUILD"));
 });

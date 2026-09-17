@@ -45,6 +45,7 @@ export function SystemObservatory({ system, tech }: SystemObservatoryProps) {
             <p>{system.eyebrow}</p>
             <h2 aria-label={`AI SOCIAL MEDIA POSTING SYSTEM / ${system.name}`}>{system.name}</h2>
             <p className="tech-observatory__truth-state">{system.truthState}</p>
+            <p className="tech-observatory__simulation-label">SIMULATION FOCUS / CURRENT PHASE</p>
             <p>{system.supportingCopy}</p>
           </div>
           <SystemTopology nodes={system.nodes} routes={system.routes} />

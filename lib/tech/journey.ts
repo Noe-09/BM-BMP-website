@@ -32,24 +32,54 @@ export type TechCausalConsequence = {
     | "context";
   propagation: "flow" | "hold";
   tone: "signal" | "human" | "planned";
+  interaction: "simulation-focus" | "context";
+};
+
+export type TechRouteSimulationState =
+  | "baseline"
+  | "resolved"
+  | "current"
+  | "held";
+
+const TECH_ROUTE_ORDER = [
+  "ingest-normalize",
+  "normalize-orchestrate",
+  "orchestrate-assist",
+  "assist-checkpoint",
+  "checkpoint-execute",
+  "execute-return",
+  "return-ingest",
+] as const;
+
+const TECH_PHASE_ROUTE_STATES: Partial<
+  Record<TechPhase, { current: readonly number[]; resolvedThrough: number; held?: number }>
+> = {
+  ingest: { current: [0], resolvedThrough: -1 },
+  normalize: { current: [1], resolvedThrough: 0 },
+  orchestrate: { current: [2], resolvedThrough: 1 },
+  assist: { current: [3], resolvedThrough: 2 },
+  checkpoint: { current: [], resolvedThrough: 3, held: 4 },
+  execute: { current: [4, 5], resolvedThrough: 3 },
+  return: { current: [6], resolvedThrough: 5 },
 };
 
 const TECH_CAUSAL_CONSEQUENCES: Partial<
   Record<TechPhase, TechCausalConsequence>
 > = {
-  ingest: { effect: "signal-enter", propagation: "flow", tone: "signal" },
-  normalize: { effect: "data-structure", propagation: "flow", tone: "signal" },
-  orchestrate: { effect: "route-resolve", propagation: "flow", tone: "signal" },
-  assist: { effect: "assist-form", propagation: "flow", tone: "signal" },
-  checkpoint: { effect: "human-hold", propagation: "hold", tone: "human" },
-  execute: { effect: "output-propagate", propagation: "flow", tone: "signal" },
-  return: { effect: "feedback-return", propagation: "flow", tone: "signal" },
+  ingest: { effect: "signal-enter", propagation: "flow", tone: "signal", interaction: "simulation-focus" },
+  normalize: { effect: "data-structure", propagation: "flow", tone: "signal", interaction: "simulation-focus" },
+  orchestrate: { effect: "route-resolve", propagation: "flow", tone: "signal", interaction: "simulation-focus" },
+  assist: { effect: "assist-form", propagation: "flow", tone: "signal", interaction: "simulation-focus" },
+  checkpoint: { effect: "human-hold", propagation: "hold", tone: "human", interaction: "simulation-focus" },
+  execute: { effect: "output-propagate", propagation: "flow", tone: "signal", interaction: "simulation-focus" },
+  return: { effect: "feedback-return", propagation: "flow", tone: "signal", interaction: "simulation-focus" },
 };
 
 const CONTEXT_CONSEQUENCE: TechCausalConsequence = {
   effect: "context",
   propagation: "hold",
   tone: "planned",
+  interaction: "context",
 };
 
 export function clamp01(value: number) {
@@ -58,6 +88,30 @@ export function clamp01(value: number) {
 
 export function getTechCausalConsequence(phase: TechPhase) {
   return TECH_CAUSAL_CONSEQUENCES[phase] ?? CONTEXT_CONSEQUENCE;
+}
+
+export function getTechRouteSimulationState(
+  phase: TechPhase,
+  routeId: string,
+): TechRouteSimulationState {
+  const routeIndex = TECH_ROUTE_ORDER.indexOf(
+    routeId as (typeof TECH_ROUTE_ORDER)[number],
+  );
+  const phaseState = TECH_PHASE_ROUTE_STATES[phase];
+
+  if (routeIndex === -1 || !phaseState) {
+    return "baseline";
+  }
+  if (phaseState.held === routeIndex) {
+    return "held";
+  }
+  if (phaseState.current.includes(routeIndex)) {
+    return "current";
+  }
+  if (routeIndex <= phaseState.resolvedThrough) {
+    return "resolved";
+  }
+  return "baseline";
 }
 
 export function dampTechProgress(

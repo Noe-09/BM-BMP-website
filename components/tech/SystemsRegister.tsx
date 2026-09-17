@@ -10,7 +10,7 @@ export function SystemsRegister({ rows }: SystemsRegisterProps) {
       <header className="tech-systems-register__heading">
         <p>PRACTICE / CAPABILITY INDEX</p>
         <h2 id="tech-systems-register-title">SYSTEMS REGISTER</h2>
-        <p>CAPABILITIES / APPLICATIONS / STATE</p>
+        <p>DELIVERY CAPABILITY / NOT PRODUCT MATURITY</p>
       </header>
       <div className="tech-systems-register__table-wrap" tabIndex={0}>
         <table>
@@ -19,7 +19,7 @@ export function SystemsRegister({ rows }: SystemsRegisterProps) {
             <th scope="col">SYSTEM TYPE</th>
             <th scope="col">BUSINESS PROBLEM</th>
             <th scope="col">DELIVERY</th>
-            <th scope="col">CAPABILITY STATE</th>
+            <th scope="col">SERVICE CAPABILITY</th>
           </tr>
         </thead>
         <tbody>
@@ -29,7 +29,7 @@ export function SystemsRegister({ rows }: SystemsRegisterProps) {
               <td data-register-field="business-problem">{row.businessProblem}</td>
               <td data-register-field="delivery">{row.delivery}</td>
               <td data-register-field="capability-state" data-capability-state={row.capabilityState}>
-                AVAILABLE
+                {row.capabilityLabel}
               </td>
             </tr>
           ))}

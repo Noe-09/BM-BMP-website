@@ -1,4 +1,5 @@
 import type { TechPracticeScope, TechSystemFamily } from "@/content/tech";
+import { FamilyCausalTopology } from "./FamilyCausalTopology";
 
 type SystemSpectrumProps = {
   families: readonly TechSystemFamily[];
@@ -32,6 +33,7 @@ export function SystemSpectrum({ families, scope }: SystemSpectrumProps) {
         {families.map((family) => (
           <li key={family.id} className="tech-system-spectrum__family">
             <h3>{family.name}</h3>
+            <FamilyCausalTopology topology={family.topology} />
             <ol aria-label={`${family.name} causal sequence`}>
               {family.causalSteps.map((step) => (
                 <li key={step}>{step}</li>

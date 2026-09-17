@@ -223,6 +223,14 @@
   letter-spacing: 0.1em;
 }
 
+.tech-page .tech-observatory__simulation-label {
+  margin: 0.65rem 0 0;
+  color: var(--tech-signal);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+}
+
 .tech-page .tech-topology {
   width: 100%;
   overflow: visible;
@@ -233,15 +241,15 @@
   stroke: var(--tech-planned);
   stroke-dasharray: 0.05 0.035;
   stroke-width: 0.55;
-  opacity: 0.42;
-  stroke-dashoffset: calc(-1 * var(--tech-visual-progress, 0));
+  opacity: 0.2;
+  stroke-dashoffset: 0;
   transition: opacity 280ms ease, stroke 280ms ease, stroke-dashoffset 280ms ease;
 }
 
 .tech-page .tech-topology__route[data-maturity="planned"] {
   stroke: var(--tech-planned);
   stroke-dasharray: 0.05 0.035;
-  opacity: 0.48;
+  opacity: 0.2;
 }
 
 .tech-page .tech-topology__node-shape {
@@ -251,6 +259,10 @@
   stroke-width: 0.7;
   opacity: 0.75;
   transition: fill 280ms ease, stroke 280ms ease, opacity 280ms ease;
+}
+
+.tech-page .tech-topology__node {
+  transition: opacity 220ms ease;
 }
 
 .tech-page .tech-topology__node[data-maturity="planned"] .tech-topology__node-shape {
@@ -275,6 +287,26 @@
 .tech-page .tech-topology__glyph-branch {
   stroke-linecap: square;
   stroke-linejoin: bevel;
+}
+
+.tech-page .tech-topology__decision-branches {
+  fill: none;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.tech-page .tech-topology__decision-branches path {
+  stroke: var(--tech-human);
+  stroke-dasharray: 0.8 0.55;
+  stroke-width: 0.55;
+  vector-effect: non-scaling-stroke;
+}
+
+.tech-page .tech-topology__decision-branches circle {
+  fill: var(--tech-panel);
+  stroke: var(--tech-human);
+  stroke-width: 0.55;
+  vector-effect: non-scaling-stroke;
 }
 
 .tech-page .tech-topology__node text {
@@ -344,16 +376,25 @@
   opacity: 1;
 }
 
-.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-route-phase="ingest"],
-.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-route-phase="normalize"],
-.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-route-phase="orchestrate"],
-.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-route-phase="assist"],
-.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-route-phase="execute"],
-.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-route-phase="return"] {
+.tech-page .tech-topology__route[data-maturity="planned"][data-simulation-state="resolved"] {
+  stroke: color-mix(in srgb, var(--tech-signal) 28%, var(--tech-planned));
+  stroke-dasharray: 0.05 0.035;
+  stroke-dashoffset: 0;
+  opacity: 0.64;
+}
+
+.tech-page .tech-topology__route[data-maturity="planned"][data-simulation-state="current"] {
   stroke: var(--tech-signal);
   stroke-dasharray: 0.05 0.035;
   stroke-dashoffset: calc(-1 * var(--tech-visual-phase-progress, 0));
   opacity: 1;
+}
+
+.tech-page .tech-topology__route[data-maturity="planned"][data-simulation-state="held"] {
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.05 0.035;
+  stroke-dashoffset: 0 !important;
+  opacity: 0.2;
 }
 
 .tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__node[data-node-id="checkpoint"] .tech-topology__node-shape {
@@ -367,26 +408,41 @@
   opacity: 1;
 }
 
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__node {
+  opacity: 0.2;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__node[data-node-id="assist"] {
+  opacity: 0.52;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__node[data-node-id="checkpoint"] {
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__decision-branches {
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__route {
+  opacity: 0.14;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__route[data-route-id="assist-checkpoint"] {
+  stroke: var(--tech-human);
+  stroke-dashoffset: 0 !important;
+  opacity: 1;
+}
+
 .tech-page [data-tech-experience][data-tech-propagation="hold"] .tech-topology__route {
   stroke-dashoffset: 0 !important;
 }
 
-.tech-page [data-tech-experience][data-tech-propagation="hold"] .tech-topology__route[data-route-id="checkpoint-execute"],
-.tech-page [data-tech-experience][data-tech-phase="checkpoint"] .tech-topology__route[data-route-id="checkpoint-execute"] {
-  opacity: 0.28;
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__route[data-simulation-state="held"] {
+  opacity: 0.24;
   stroke-dasharray: 0.05 0.035;
   stroke-dashoffset: 0 !important;
   stroke: var(--tech-planned);
-}
-
-.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] .tech-topology__route[data-route-id="checkpoint-execute"],
-.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] .tech-topology__route[data-route-id="checkpoint-execute"],
-.tech-page [data-tech-experience][data-tech-phase="execute"] .tech-topology__route[data-route-id="checkpoint-execute"],
-.tech-page [data-tech-experience][data-tech-phase="return"] .tech-topology__route[data-route-id="checkpoint-execute"] {
-  stroke: var(--tech-signal);
-  stroke-dasharray: 0.05 0.035;
-  stroke-dashoffset: calc(-1 * var(--tech-visual-phase-progress, 0));
-  opacity: 1;
 }
 
 .tech-page .tech-observatory__stages {
@@ -495,8 +551,9 @@
 
 .tech-page .human-checkpoint button:hover,
 .tech-page .human-checkpoint button[aria-pressed="true"] {
-  background: var(--tech-human);
-  color: var(--tech-bg);
+  border-style: solid;
+  background: transparent;
+  color: var(--tech-human);
 }
 
 .tech-page .human-checkpoint button:focus-visible {
@@ -759,6 +816,32 @@
   font-size: clamp(1.25rem, 2.3vw, 2.4rem);
   letter-spacing: -0.04em;
   line-height: 0.96;
+}
+
+.tech-page .tech-family-topology {
+  width: 100%;
+  height: 4.25rem;
+  overflow: visible;
+}
+
+.tech-page .tech-family-topology__routes path {
+  fill: none;
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.045 0.03;
+  stroke-width: 0.7;
+  opacity: 0.72;
+  vector-effect: non-scaling-stroke;
+}
+
+.tech-page .tech-family-topology__nodes rect {
+  fill: var(--tech-bg);
+  stroke: var(--tech-planned);
+  stroke-width: 0.65;
+  vector-effect: non-scaling-stroke;
+}
+
+.tech-page .tech-family-topology__signal {
+  fill: var(--tech-signal);
 }
 
 .tech-page .tech-system-spectrum__family ol {
@@ -1117,7 +1200,7 @@
   .tech-page .tech-systems-register [data-register-field="system-type"]::before { content: "SYSTEM TYPE"; }
   .tech-page .tech-systems-register [data-register-field="business-problem"]::before { content: "BUSINESS PROBLEM"; }
   .tech-page .tech-systems-register [data-register-field="delivery"]::before { content: "DELIVERY"; }
-  .tech-page .tech-systems-register [data-register-field="capability-state"]::before { content: "CAPABILITY STATE"; }
+  .tech-page .tech-systems-register [data-register-field="capability-state"]::before { content: "SERVICE CAPABILITY"; }
 }
 
 @media (max-width: 480px) {
@@ -1170,8 +1253,10 @@
   }
 
   .tech-page .tech-topology__route,
+  .tech-page .tech-topology__node,
   .tech-page .tech-topology__node-shape,
   .tech-page .tech-topology__glyph > *,
+  .tech-page .tech-topology__decision-branches,
   .tech-page .tech-observatory__stage,
   .tech-page .tech-observatory__stage-index {
     transition: none;
@@ -1179,7 +1264,6 @@
 
   .tech-page .tech-topology__route {
     stroke-dashoffset: 0 !important;
-    opacity: 0.8;
   }
 
   .tech-page .tech-topology__node-shape,

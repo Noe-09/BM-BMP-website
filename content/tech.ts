@@ -55,6 +55,14 @@ export type TechStateRecord = {
 export type TechSystemFamily = {
   id: string;
   name: string;
+  topology:
+    | "sequence"
+    | "branch"
+    | "escalation"
+    | "gate"
+    | "feedback"
+    | "handoff"
+    | "iteration";
   causalSteps: readonly string[];
   description: string;
 };
@@ -75,6 +83,7 @@ export type TechRegisterRow = {
   businessProblem: string;
   delivery: string;
   capabilityState: TechCapabilityState;
+  capabilityLabel: "AVAILABLE TO BUILD";
 };
 
 export const TECH_PRACTICE_SCOPE: TechPracticeScope = {
@@ -110,42 +119,49 @@ export const TECH_SYSTEM_FAMILIES: readonly TechSystemFamily[] = [
   {
     id: "workflow-systems",
     name: "WORKFLOW SYSTEMS",
+    topology: "sequence",
     causalSteps: ["REPEAT", "ROUTE", "AUTOMATE", "REVIEW"],
     description: "Workflow automation and integrations.",
   },
   {
     id: "internal-tools",
     name: "INTERNAL TOOLS",
+    topology: "branch",
     causalSteps: ["INFORMATION", "STRUCTURE", "ACTION"],
     description: "AI-assisted and practical internal business tools.",
   },
   {
     id: "customer-systems",
     name: "CUSTOMER SYSTEMS",
+    topology: "escalation",
     causalSteps: ["QUERY", "CLASSIFY", "RESPOND / ESCALATE"],
     description: "Customer-facing utilities and support systems.",
   },
   {
     id: "lead-systems",
     name: "LEAD SYSTEMS",
+    topology: "gate",
     causalSteps: ["CAPTURE", "QUALIFY", "ROUTE", "HUMAN"],
     description: "Lead handling and routing systems.",
   },
   {
     id: "operation-systems",
     name: "OPERATION SYSTEMS",
+    topology: "feedback",
     causalSteps: ["COLLECT", "NORMALIZE", "OBSERVE", "DECIDE"],
     description: "CRM-lite and operational dashboard systems.",
   },
   {
     id: "focused-web-systems",
     name: "FOCUSED WEB SYSTEMS",
+    topology: "handoff",
     causalSteps: ["NEED", "INTERFACE", "ACTION", "RESULT"],
     description: "Business websites and focused web systems.",
   },
   {
     id: "custom-mvps",
     name: "CUSTOM MVPs",
+    topology: "iteration",
     causalSteps: ["PROBLEM", "PROTOTYPE", "TEST", "ITERATE"],
     description: "Custom MVPs and practical digital prototypes.",
   },
@@ -265,6 +281,7 @@ export const TECH_REGISTER: readonly TechRegisterRow[] = [
     businessProblem: "A business needs a clear interface for a specific action.",
     delivery: "Business websites and focused web systems.",
     capabilityState: "available",
+    capabilityLabel: "AVAILABLE TO BUILD",
   },
   {
     id: "workflow-systems",
@@ -272,6 +289,7 @@ export const TECH_REGISTER: readonly TechRegisterRow[] = [
     businessProblem: "Repeated work needs clear routing and review.",
     delivery: "Workflow automation and integrations.",
     capabilityState: "available",
+    capabilityLabel: "AVAILABLE TO BUILD",
   },
   {
     id: "internal-tools",
@@ -279,6 +297,7 @@ export const TECH_REGISTER: readonly TechRegisterRow[] = [
     businessProblem: "Information needs structure before people can act.",
     delivery: "AI-assisted internal tools.",
     capabilityState: "available",
+    capabilityLabel: "AVAILABLE TO BUILD",
   },
   {
     id: "customer-systems",
@@ -286,6 +305,7 @@ export const TECH_REGISTER: readonly TechRegisterRow[] = [
     businessProblem: "Customer questions need useful routing and response paths.",
     delivery: "Customer-facing utilities and support systems.",
     capabilityState: "available",
+    capabilityLabel: "AVAILABLE TO BUILD",
   },
   {
     id: "lead-systems",
@@ -293,6 +313,7 @@ export const TECH_REGISTER: readonly TechRegisterRow[] = [
     businessProblem: "Lead signals need capture, qualification, and human follow-up.",
     delivery: "Lead handling and routing systems.",
     capabilityState: "available",
+    capabilityLabel: "AVAILABLE TO BUILD",
   },
   {
     id: "operation-systems",
@@ -300,6 +321,7 @@ export const TECH_REGISTER: readonly TechRegisterRow[] = [
     businessProblem: "Operational information needs a practical shared view.",
     delivery: "CRM-lite and operational dashboard systems.",
     capabilityState: "available",
+    capabilityLabel: "AVAILABLE TO BUILD",
   },
   {
     id: "custom-mvps",
@@ -307,5 +329,6 @@ export const TECH_REGISTER: readonly TechRegisterRow[] = [
     businessProblem: "A specific problem needs a practical digital prototype.",
     delivery: "Custom MVPs and practical digital prototypes.",
     capabilityState: "available",
+    capabilityLabel: "AVAILABLE TO BUILD",
   },
 ] as const;

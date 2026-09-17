@@ -46,6 +46,8 @@ test("flagship observatory exposes causal semantics without relying on SVG alone
   assert.match(topology, /aria-hidden="true"/);
   assert.match(topology, /system\.nodes|nodes\.map/);
   assert.match(topology, /routes\.map/);
+  assert.match(topology, /tech-topology__decision-branches/);
+  assert.match(observatory, /SIMULATION FOCUS \/ CURRENT PHASE/);
 
   assert.match(checkpoint, /APPROVE/);
   assert.match(checkpoint, /ADJUST/);
@@ -75,11 +77,11 @@ test("checkpoint propagation resumes after local human inspection without making
 
   assert.match(
     css,
-    /data-tech-phase="execute"\] \.tech-topology__route\[data-route-id="checkpoint-execute"\]/,
+    /data-simulation-state="current"/,
   );
   assert.match(
     css,
-    /data-tech-phase="return"\] \.tech-topology__route\[data-route-id="checkpoint-execute"\]/,
+    /data-simulation-state="held"/,
   );
   assert.match(checkpoint, /role="group"/);
   assert.match(checkpoint, /aria-label="Local decision inspection"/);
@@ -87,11 +89,12 @@ test("checkpoint propagation resumes after local human inspection without making
 });
 
 test("Tech state and capabilities remain semantically distinct", async () => {
-  const [state, spectrum, register, closing] = await Promise.all([
+  const [state, spectrum, register, closing, css] = await Promise.all([
     read("components/tech/SystemState.tsx"),
     read("components/tech/SystemSpectrum.tsx"),
     read("components/tech/SystemsRegister.tsx"),
     read("components/tech/TechClosing.tsx"),
+    read("app/bm-tech/tech.css"),
   ]);
 
   assert.match(state, /SYSTEM STATE/);
@@ -100,14 +103,28 @@ test("Tech state and capabilities remain semantically distinct", async () => {
 
   assert.match(spectrum, /SYSTEM FAMILIES/);
   assert.match(spectrum, /causalSteps/);
+  assert.match(spectrum, /FamilyCausalTopology/);
 
   assert.match(register, /SYSTEMS REGISTER/);
   assert.match(register, /capabilityState/);
-  assert.match(register, /AVAILABLE/);
+  assert.match(register, /SERVICE CAPABILITY/);
+  assert.match(register, /capabilityLabel/);
+  assert.match(register, /DELIVERY CAPABILITY \/ NOT PRODUCT MATURITY/);
+  assert.match(
+    css,
+    /data-register-field="capability-state"\]::before\s*\{\s*content:\s*"SERVICE CAPABILITY"/,
+  );
 
   assert.match(closing, /SHOW US THE PROCESS/);
   assert.match(closing, /TELL US THE PROBLEM/);
   assert.match(closing, /href=\{tech\.action\.href\}/);
+});
+
+test("family causal diagrams retain their geometry across responsive cards", async () => {
+  const topology = await read("components/tech/FamilyCausalTopology.tsx");
+
+  assert.match(topology, /preserveAspectRatio="xMidYMid meet"/);
+  assert.match(topology, /viewBox="0 0 100 20"/);
 });
 
 test("Tech does not present state as fake analytics", async () => {
@@ -175,9 +192,12 @@ test("Tech CSS has explicit mobile and reduced-motion causal modes", async () =>
   assert.match(css, /data-tech-consequence="feedback-return"/);
   assert.match(
     css,
-    /data-tech-consequence="output-propagate"\][\s\S]{0,320}data-route-id="checkpoint-execute"\][\s\S]{0,220}stroke:\s*var\(--tech-signal\)/,
+    /data-maturity="planned"\]\[data-simulation-state="current"\][\s\S]{0,220}stroke:\s*var\(--tech-signal\)[\s\S]{0,160}stroke-dasharray:\s*0\.05 0\.035/,
   );
   assert.match(css, /data-tech-propagation="hold"/);
+  assert.match(css, /data-simulation-state="current"/);
+  assert.match(css, /data-simulation-state="resolved"/);
+  assert.match(css, /data-simulation-state="held"/);
   assert.match(topology, /data-glyph-type=\{node\.type\}/);
   assert.match(topology, /tech-topology__glyph-line/);
   assert.match(topology, /tech-topology__glyph-frame/);

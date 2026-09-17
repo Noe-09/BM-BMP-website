@@ -70,14 +70,46 @@ test("each flagship phase exposes one truthful causal consequence", () => {
       "return",
     ].map((phase) => getConsequence?.(phase)),
     [
-      { effect: "signal-enter", propagation: "flow", tone: "signal" },
-      { effect: "data-structure", propagation: "flow", tone: "signal" },
-      { effect: "route-resolve", propagation: "flow", tone: "signal" },
-      { effect: "assist-form", propagation: "flow", tone: "signal" },
-      { effect: "human-hold", propagation: "hold", tone: "human" },
-      { effect: "output-propagate", propagation: "flow", tone: "signal" },
-      { effect: "feedback-return", propagation: "flow", tone: "signal" },
+      { effect: "signal-enter", propagation: "flow", tone: "signal", interaction: "simulation-focus" },
+      { effect: "data-structure", propagation: "flow", tone: "signal", interaction: "simulation-focus" },
+      { effect: "route-resolve", propagation: "flow", tone: "signal", interaction: "simulation-focus" },
+      { effect: "assist-form", propagation: "flow", tone: "signal", interaction: "simulation-focus" },
+      { effect: "human-hold", propagation: "hold", tone: "human", interaction: "simulation-focus" },
+      { effect: "output-propagate", propagation: "flow", tone: "signal", interaction: "simulation-focus" },
+      { effect: "feedback-return", propagation: "flow", tone: "signal", interaction: "simulation-focus" },
     ],
+  );
+});
+
+test("route simulation focus never mutates planned maturity", () => {
+  const routes = [
+    "ingest-normalize",
+    "normalize-orchestrate",
+    "orchestrate-assist",
+    "assist-checkpoint",
+    "checkpoint-execute",
+    "execute-return",
+    "return-ingest",
+  ];
+  const expected = {
+    ingest: ["current", "baseline", "baseline", "baseline", "baseline", "baseline", "baseline"],
+    normalize: ["resolved", "current", "baseline", "baseline", "baseline", "baseline", "baseline"],
+    orchestrate: ["resolved", "resolved", "current", "baseline", "baseline", "baseline", "baseline"],
+    assist: ["resolved", "resolved", "resolved", "current", "baseline", "baseline", "baseline"],
+    checkpoint: ["resolved", "resolved", "resolved", "resolved", "held", "baseline", "baseline"],
+    execute: ["resolved", "resolved", "resolved", "resolved", "current", "current", "baseline"],
+    return: ["resolved", "resolved", "resolved", "resolved", "resolved", "resolved", "current"],
+  };
+
+  for (const [phase, states] of Object.entries(expected)) {
+    assert.deepEqual(
+      routes.map((routeId) => journey.getTechRouteSimulationState?.(phase, routeId)),
+      states,
+    );
+  }
+  assert.deepEqual(
+    routes.map((routeId) => journey.getTechRouteSimulationState?.("observe", routeId)),
+    routes.map(() => "baseline"),
   );
 });
 
@@ -101,7 +133,6 @@ test("Tech journey anchors and rendered motion are explicit in the source contra
   assert.match(topology, /transform="rotate\(45\)"/);
   assert.doesNotMatch(css, /tech-topology__node\[data-node-type="checkpoint"\] rect[\s\S]{0,180}transform: rotate/);
   assert.match(css, /--tech-visual-phase-progress/);
-  assert.match(css, /--tech-visual-progress/);
   assert.match(css, /stroke-dashoffset:\s*0\s*!important/);
 });
 
@@ -110,19 +141,15 @@ test("checkpoint holds the outgoing route stationary until propagation resumes",
 
   assert.match(
     css,
-    /data-tech-propagation="hold"\] \.tech-topology__route\s*\{[\s\S]{0,180}stroke-dashoffset:\s*0\s*!important/,
+    /data-simulation-state="held"\][\s\S]{0,240}stroke-dashoffset:\s*0\s*!important/,
   );
   assert.match(
     css,
-    /data-tech-phase="checkpoint"\][\s\S]{0,360}data-route-id="checkpoint-execute"\][\s\S]{0,360}stroke-dashoffset:\s*0\s*!important/,
+    /data-tech-consequence="human-hold"\][\s\S]{0,360}data-route-id="assist-checkpoint"\][\s\S]{0,360}stroke:\s*var\(--tech-human\)/,
   );
   assert.match(
     css,
-    /data-tech-phase="execute"\][\s\S]{0,360}data-route-id="checkpoint-execute"\][\s\S]{0,360}stroke-dashoffset:\s*calc\(-1 \* var\(--tech-visual-phase-progress, 0\)\)/,
-  );
-  assert.match(
-    css,
-    /data-tech-phase="return"\][\s\S]{0,360}data-route-id="checkpoint-execute"\][\s\S]{0,360}stroke-dashoffset:\s*calc\(-1 \* var\(--tech-visual-phase-progress, 0\)\)/,
+    /data-simulation-state="current"\][\s\S]{0,280}stroke-dasharray:\s*0\.05 0\.035[\s\S]{0,180}stroke-dashoffset:\s*calc\(-1 \* var\(--tech-visual-phase-progress, 0\)\)/,
   );
 });
 

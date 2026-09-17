@@ -7,6 +7,7 @@ import {
   dampTechProgress,
   getAnchoredTechPhase,
   getTechCausalConsequence,
+  getTechRouteSimulationState,
 } from "@/lib/tech/journey";
 
 const SETTLED_EPSILON = 0.0005;
@@ -72,6 +73,15 @@ export function TechJourneyController() {
       experience.dataset.techConsequence = consequence.effect;
       experience.dataset.techPropagation = consequence.propagation;
       experience.dataset.techTone = consequence.tone;
+      experience.dataset.techInteraction = consequence.interaction;
+      experience
+        .querySelectorAll<SVGPathElement>("[data-route-id]")
+        .forEach((route) => {
+          route.dataset.simulationState = getTechRouteSimulationState(
+            phase,
+            route.dataset.routeId ?? "",
+          );
+        });
       experience.style.setProperty("--tech-progress", String(rawProgress));
       experience.style.setProperty("--tech-phase-progress", String(phaseProgress));
       rawPhaseProgress = phaseProgress;

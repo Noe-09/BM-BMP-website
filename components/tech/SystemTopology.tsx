@@ -7,6 +7,7 @@ type SystemTopologyProps = {
 
 export function SystemTopology({ nodes, routes }: SystemTopologyProps) {
   const nodesById = new Map(nodes.map((node) => [node.id, node]));
+  const checkpointNode = nodesById.get("checkpoint");
 
   return (
     <svg
@@ -36,12 +37,26 @@ export function SystemTopology({ nodes, routes }: SystemTopologyProps) {
               data-maturity={route.maturity}
               data-route-id={route.id}
               data-route-phase={route.phase}
+              data-simulation-state="baseline"
               key={route.id}
               pathLength="1"
             />
           );
         })}
       </g>
+      {checkpointNode ? (
+        <g
+          className="tech-topology__decision-branches"
+          transform={`translate(${checkpointNode.x} ${checkpointNode.y})`}
+        >
+          <path d="M 0 0 L 5 -5 H 10" />
+          <path d="M 0 0 H 11" />
+          <path d="M 0 0 L 5 5 H 10" />
+          <circle cx="10" cy="-5" r="0.9" />
+          <circle cx="11" cy="0" r="0.9" />
+          <circle cx="10" cy="5" r="0.9" />
+        </g>
+      ) : null}
       <g className="tech-topology__nodes">
         {nodes.map((node) => (
           <g
