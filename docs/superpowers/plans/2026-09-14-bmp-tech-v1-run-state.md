@@ -3,29 +3,29 @@
 STATUS: COMPLETE
 BRANCH: feat/bmp-tech-v1
 BASE_SHA: c1519f74f7b59fcef773451df5afe71f292b94c6
-LAST_VERIFIED_HEAD: 38ca1c8136f5ac07b54c04a04db4558c2218c8e5
+LAST_VERIFIED_HEAD: e6aa79cf6bb70de707d559a6ff934e37f5ccc057
 CURRENT_TASK: COMPLETE
 CURRENT_STEP: COMPLETE
-LAST_COMPLETED_TASK: Diagnostic + Color/State Precision Pass
+LAST_COMPLETED_TASK: Final Interaction Precision Pass
 LAST_SUCCESSFUL_CHECKS:
-- PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm test` (211 tests, 0 failures).
+- PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm test` (215 tests, 0 failures).
 - PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm run typecheck` (`tsc --noEmit`, exit 0).
 - PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm run lint` (exit 0).
 - PASS: `PATH="/Users/noe/.gemini/antigravity/bin:$PATH" npm run build` (Next.js 16.3.1 production build, 21 static pages generated, exit 0).
 - PASS: `git diff --check` (exit 0).
 - PASS: production-equivalent browser QA for `/`, `/bm-visual`, `/creator`, `/bm-tech`, `/about`, and `/contact` (HTTP 200, meaningful render, no browser warnings or errors).
-- PASS: BMP Tech responsive and interaction QA at 1440, 1024, 768, 390×844 DPR2, and 360 widths; no horizontal overflow, causal phase mapping remains exact, checkpoint freezes all routes, execute/return resume propagation, and phase recovery survives fast scroll, reverse, and reload.
+- PASS: BMP Tech responsive and interaction QA at 1440×900 and 390×844 DPR2; no painted text duplication, horizontal overflow, or console errors; exact causal phase mapping survives forward scroll, reverse scroll, and reload.
 - PASS: fresh-session signature boot completes, returning-session reacquire completes within the short return interval, and reduced-motion route offsets remain stationary.
 - PASS: truth audit found no unsupported public metrics, `ACTIVE`, `VERIFIED`, autonomous-operation, tool-logo, or outcome claims.
 NEXT_ACTION: keep `feat/bmp-tech-v1` as-is for human review; do not push or merge without explicit human direction.
 BLOCKER: NONE
-UPDATED_AT: 2026-09-16T21:18:20+07:00
+UPDATED_AT: 2026-09-17T19:14:04+07:00
 
 ## Verified Baseline
 
 - **Branch:** `feat/bmp-tech-v1`
 - **Base commit:** `c1519f74f7b59fcef773451df5afe71f292b94c6`
-- **LAST_VERIFIED_HEAD:** `38ca1c8136f5ac07b54c04a04db4558c2218c8e5` (`fix: refine BMP Tech causal system states`)
+- **LAST_VERIFIED_HEAD:** `e6aa79cf6bb70de707d559a6ff934e37f5ccc057` (`feat: refine BMP Tech simulation causality`)
 - **Remote feature branch:** absent at audit time
 
 ## Task 1 Completion
@@ -76,6 +76,15 @@ BMP Tech V1 is complete on `feat/bmp-tech-v1`. Make no source changes on an auto
 - [x] Human Checkpoint freezes all topology routes; execute and return resume propagation. Reduced motion removes the new state transitions and fixes route offsets at zero.
 - [x] System Families spacing and separators, Systems Register proportions/mobile stacking, and closing hierarchy were refined without changing approved content or unrelated routes.
 - [x] Final verification passed: 211 tests, typecheck, lint, production build, diff check, 1440/1024/768/390×844 DPR2/360 browser matrix, slow/fast/reverse scroll, reload, reduced motion, and direct Chromium recording.
+
+## Final Interaction Precision Pass
+
+- [x] Phase-driven route simulation now distinguishes `baseline`, `resolved`, `current`, and `held` interaction states while every flagship node, route, stage, and state record remains `PLANNED`.
+- [x] Current routes stay dashed and are explicitly framed as `SIMULATION FOCUS / CURRENT PHASE`; no illuminated route is presented as `ACTIVE` or implemented.
+- [x] Human Checkpoint freezes route offsets, isolates the held outgoing branch, reveals decision branches, and limits amber emphasis to the incoming signal and human decision geometry.
+- [x] All seven System Families render distinct data-driven causal mini-topologies with preserved responsive geometry.
+- [x] Systems Register now uses `SERVICE CAPABILITY / AVAILABLE TO BUILD` on desktop and mobile and explicitly separates delivery capability from product maturity.
+- [x] Final verification passed: 215 tests, typecheck, lint, production build, diff check, desktop/mobile DPR2 browser scans, exact reverse-scroll phase recovery, reload, reduced motion, screenshots, and a 1440×900 direct Chromium recording.
 
 ## Task 9 Completion
 
