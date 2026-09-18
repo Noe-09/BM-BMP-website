@@ -7,6 +7,7 @@ import {
   getGatewayDestination,
 } from "@/lib/gateway/destinations";
 import {
+  shouldClearGatewayPreview,
   shouldPreviewGatewayFocus,
   shouldPreviewGatewaySelection,
 } from "@/lib/gateway/navigation";
@@ -76,7 +77,16 @@ export function SelectionOverlay({
       data-enhancement-ready={enhancementReady ? "true" : "false"}
       data-reduced-motion={reducedMotion ? "true" : "false"}
       onKeyDown={handleKeyDown}
-      onPointerLeave={onClearPreview}
+      onPointerLeave={(event) => {
+        if (
+          shouldClearGatewayPreview({
+            coarsePointer,
+            pointerType: event.pointerType,
+          })
+        ) {
+          onClearPreview();
+        }
+      }}
     >
       <header className="gateway-selection__intro">
         <h1>BM</h1>
@@ -116,7 +126,11 @@ export function SelectionOverlay({
               className="gateway-selection__preview"
               data-cursor="gateway"
               data-cursor-label={previewed ? "SELECT" : "PREVIEW"}
-              onBlur={onClearPreview}
+              onBlur={() => {
+                if (shouldClearGatewayPreview({ coarsePointer })) {
+                  onClearPreview();
+                }
+              }}
               onClick={() => handleActivation(division)}
               onFocus={(event) => {
                 if (
