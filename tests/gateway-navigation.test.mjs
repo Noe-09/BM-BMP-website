@@ -4,6 +4,7 @@ import {
   acquireGatewayCommitLock,
   getGatewayExpectedPathname,
   shouldEnhanceGatewayNavigation,
+  shouldClearGatewayPreview,
   shouldMarkGatewaySession,
   shouldPreviewGatewayFocus,
   shouldPreviewGatewaySelection,
@@ -128,6 +129,23 @@ test("coarse pointer focus previews only when focus is visibly keyboard-driven",
     shouldPreviewGatewayFocus({ coarsePointer: false, focusVisible: false }),
     true,
   );
+});
+
+test("touch pointer leave and focus churn preserve the first-tap Gateway preview", () => {
+  assert.equal(
+    shouldClearGatewayPreview({ coarsePointer: true, pointerType: "touch" }),
+    false,
+  );
+  assert.equal(shouldClearGatewayPreview({ coarsePointer: true }), false);
+  assert.equal(
+    shouldClearGatewayPreview({ coarsePointer: false, pointerType: "touch" }),
+    false,
+  );
+  assert.equal(
+    shouldClearGatewayPreview({ coarsePointer: false, pointerType: "mouse" }),
+    true,
+  );
+  assert.equal(shouldClearGatewayPreview({ coarsePointer: false }), true);
 });
 
 test("coarse preview gate leaves fine, keyboard, modified, and reduced-motion activation native", () => {

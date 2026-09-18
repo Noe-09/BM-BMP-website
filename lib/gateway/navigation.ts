@@ -35,10 +35,21 @@ export type GatewayFocusPreview = {
   focusVisible: boolean;
 };
 
+export type GatewayPreviewClear = {
+  coarsePointer: boolean;
+  pointerType?: string;
+};
+
 export function shouldPreviewGatewayFocus(
   context: GatewayFocusPreview,
 ): boolean {
   return !context.coarsePointer || context.focusVisible;
+}
+
+export function shouldClearGatewayPreview(
+  context: GatewayPreviewClear,
+): boolean {
+  return !context.coarsePointer && context.pointerType !== "touch";
 }
 
 export function shouldPreviewGatewaySelection(
