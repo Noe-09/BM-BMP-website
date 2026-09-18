@@ -1,0 +1,1274 @@
+.tech-page {
+  --tech-bg: #111313;
+  --tech-panel: #171a19;
+  --tech-fg: #edeee9;
+  --tech-muted: #929a97;
+  --tech-line: rgba(237, 238, 233, 0.17);
+  --tech-grid: rgba(237, 238, 233, 0.055);
+  --tech-signal: #C6F35B;
+  --tech-human: #E89A52;
+  --tech-planned: #82939E;
+  --tech-route-stroke: 1px;
+  --tech-node-size: 0.5rem;
+  --tech-route-offset: clamp(1.5rem, 5vw, 5rem);
+  background: var(--tech-bg);
+  color: var(--tech-fg);
+}
+
+.tech-page .tech-experience {
+  position: relative;
+  overflow: clip;
+}
+
+.tech-page .tech-boot {
+  position: absolute;
+  z-index: 20;
+  inset: 0 0 auto;
+  min-height: 100svh;
+  display: grid;
+  align-content: end;
+  gap: 0.45rem;
+  padding: var(--tech-route-offset);
+  pointer-events: none;
+  visibility: hidden;
+  background: color-mix(in srgb, var(--tech-bg) 96%, transparent);
+  color: var(--tech-fg);
+  opacity: 0;
+  transition: opacity 180ms ease, visibility 0s linear 180ms;
+}
+
+.tech-page [data-tech-experience][data-tech-boot="active"] .tech-boot {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 120ms ease;
+}
+
+.tech-page .tech-boot__topology,
+.tech-page [data-tech-experience] > section:first-of-type {
+  --tech-topology-x: var(--tech-route-offset);
+  --tech-topology-y: var(--tech-route-offset);
+}
+
+.tech-page .tech-boot__topology {
+  position: absolute;
+  inset: 0;
+}
+
+.tech-page .tech-boot__route,
+.tech-page [data-tech-experience] > section:first-of-type::before,
+.tech-page [data-tech-experience] > section:first-of-type::after {
+  position: absolute;
+  display: block;
+  background: var(--tech-line);
+  content: "";
+}
+
+.tech-page .tech-boot__route--vertical {
+  top: 0;
+  bottom: 0;
+  left: var(--tech-topology-x);
+  width: var(--tech-route-stroke);
+}
+
+.tech-page .tech-boot__route--horizontal {
+  top: calc(var(--tech-topology-y) - (var(--tech-route-stroke) / 2));
+  right: 0;
+  left: var(--tech-topology-x);
+  height: var(--tech-route-stroke);
+}
+
+.tech-page .tech-boot__node,
+.tech-page [data-tech-experience] > section:first-of-type::after {
+  width: var(--tech-node-size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.tech-page .tech-boot__node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: var(--tech-fg);
+}
+
+.tech-page .tech-boot__node--origin {
+  top: var(--tech-topology-y);
+  left: var(--tech-topology-x);
+}
+
+.tech-page .tech-boot__node--signal {
+  top: var(--tech-topology-y);
+  right: calc(var(--tech-topology-x) - (var(--tech-node-size) / 2));
+  transform: translateY(-50%);
+  background: var(--tech-planned);
+}
+
+.tech-page .tech-boot__state,
+.tech-page .tech-boot__index {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tech-page .tech-boot__state {
+  font-size: clamp(2rem, 7vw, 5rem);
+  line-height: 0.9;
+}
+
+.tech-page .tech-boot__index {
+  color: var(--tech-muted);
+  font-size: 0.7rem;
+}
+
+.tech-page [data-tech-experience] > section:first-of-type {
+  position: relative;
+  padding: calc(var(--tech-route-offset) * 2) var(--tech-route-offset);
+}
+
+.tech-page [data-tech-experience] > section:first-of-type::before {
+  top: calc(var(--tech-topology-y) - (var(--tech-route-stroke) / 2));
+  right: var(--tech-topology-x);
+  left: var(--tech-topology-x);
+  height: var(--tech-route-stroke);
+}
+
+.tech-page [data-tech-experience] > section:first-of-type::after {
+  top: calc(var(--tech-topology-y) - (var(--tech-node-size) / 2));
+  right: calc(var(--tech-topology-x) - (var(--tech-node-size) / 2));
+  background: var(--tech-planned);
+}
+
+.tech-page .tech-observatory {
+  --tech-observatory-gap: clamp(1.5rem, 4vw, 4rem);
+  position: relative;
+  padding: calc(var(--tech-route-offset) * 2) var(--tech-route-offset) 0;
+}
+
+.tech-page .tech-observatory__intro {
+  max-width: 54rem;
+  padding: clamp(2rem, 8vw, 8rem) 0 clamp(6rem, 16vw, 13rem);
+}
+
+.tech-page .tech-observatory__eyebrow,
+.tech-page .tech-observatory__system-heading > p:first-child,
+.tech-page .tech-observatory__stage-index,
+.tech-page .tech-observatory__stage-state,
+.tech-page .human-checkpoint__status {
+  margin: 0;
+  color: var(--tech-muted);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tech-page .tech-observatory h1,
+.tech-page .tech-observatory h2,
+.tech-page .tech-observatory h3 {
+  margin: 0;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+}
+
+.tech-page .tech-observatory h1 {
+  max-width: 10ch;
+  margin-top: 0.75rem;
+  font-size: clamp(3.5rem, 10vw, 9rem);
+  line-height: 0.82;
+}
+
+.tech-page .tech-observatory__supporting-copy,
+.tech-page .tech-observatory__system-heading > p:last-child {
+  max-width: 34rem;
+  color: var(--tech-muted);
+  line-height: 1.5;
+}
+
+.tech-page .tech-observatory__frame {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.9fr) minmax(18rem, 1.1fr);
+  gap: var(--tech-observatory-gap);
+  align-items: start;
+}
+
+.tech-page .tech-observatory__sticky {
+  position: sticky;
+  top: var(--tech-route-offset);
+  min-height: min(44rem, calc(100svh - (var(--tech-route-offset) * 2)));
+  display: grid;
+  align-content: space-between;
+  gap: 2rem;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  border: 1px solid var(--tech-line);
+  background: var(--tech-panel);
+}
+
+.tech-page .tech-observatory__system-heading h2 {
+  max-width: 12ch;
+  margin-top: 0.45rem;
+  font-size: clamp(1.8rem, 3.5vw, 4rem);
+  line-height: 0.9;
+}
+
+.tech-page .tech-observatory__truth-state {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px dashed var(--tech-planned);
+  color: var(--tech-planned);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+
+.tech-page .tech-observatory__simulation-label {
+  margin: 0.65rem 0 0;
+  color: var(--tech-signal);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+}
+
+.tech-page .tech-topology {
+  width: 100%;
+  overflow: visible;
+}
+
+.tech-page .tech-topology__route {
+  fill: none;
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.05 0.035;
+  stroke-width: 0.55;
+  opacity: 0.2;
+  stroke-dashoffset: 0;
+  transition: opacity 280ms ease, stroke 280ms ease, stroke-dashoffset 280ms ease;
+}
+
+.tech-page .tech-topology__route[data-maturity="planned"] {
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.05 0.035;
+  opacity: 0.2;
+}
+
+.tech-page .tech-topology__node-shape {
+  fill: var(--tech-panel);
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.8 0.5;
+  stroke-width: 0.7;
+  opacity: 0.75;
+  transition: fill 280ms ease, stroke 280ms ease, opacity 280ms ease;
+}
+
+.tech-page .tech-topology__node {
+  transition: opacity 220ms ease;
+}
+
+.tech-page .tech-topology__node[data-maturity="planned"] .tech-topology__node-shape {
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.8 0.5;
+}
+
+.tech-page .tech-topology__glyph > * {
+  fill: none;
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.8 0.5;
+  stroke-width: 0.45;
+  opacity: 0.52;
+  vector-effect: non-scaling-stroke;
+  transition: opacity 280ms ease, stroke 280ms ease;
+}
+
+.tech-page .tech-topology__glyph-frame {
+  stroke-dasharray: 0.65 0.45;
+}
+
+.tech-page .tech-topology__glyph-branch {
+  stroke-linecap: square;
+  stroke-linejoin: bevel;
+}
+
+.tech-page .tech-topology__decision-branches {
+  fill: none;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.tech-page .tech-topology__decision-branches path {
+  stroke: var(--tech-human);
+  stroke-dasharray: 0.8 0.55;
+  stroke-width: 0.55;
+  vector-effect: non-scaling-stroke;
+}
+
+.tech-page .tech-topology__decision-branches circle {
+  fill: var(--tech-panel);
+  stroke: var(--tech-human);
+  stroke-width: 0.55;
+  vector-effect: non-scaling-stroke;
+}
+
+.tech-page .tech-topology__node text {
+  fill: var(--tech-planned);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 2.4px;
+  letter-spacing: 0.25px;
+  text-anchor: middle;
+  opacity: 0.85;
+}
+
+.tech-page .tech-topology__node[data-node-type="checkpoint"] .tech-topology__node-shape {
+  stroke: var(--tech-human);
+}
+
+.tech-page .tech-topology__route[data-maturity="active"],
+.tech-page .tech-topology__node[data-maturity="active"] .tech-topology__node-shape {
+  stroke: var(--tech-signal);
+  stroke-dasharray: none;
+  opacity: 1;
+}
+
+.tech-page .tech-topology__route[data-maturity="verified"],
+.tech-page .tech-topology__node[data-maturity="verified"] .tech-topology__node-shape {
+  stroke: var(--tech-fg);
+  stroke-dasharray: none;
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-node-phase="ingest"],
+.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-node-phase="normalize"],
+.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-node-phase="orchestrate"],
+.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-node-phase="assist"],
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-node-phase="execute"],
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-node-phase="return"] {
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-tone="signal"] .tech-topology__node[data-node-phase] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-tone="signal"] .tech-topology__node[data-node-phase] .tech-topology__glyph > * {
+  transition: opacity 280ms ease, stroke 280ms ease;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-node-phase="ingest"] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-node-phase="ingest"] .tech-topology__glyph > *,
+.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-node-phase="normalize"] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-node-phase="normalize"] .tech-topology__glyph > *,
+.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-node-phase="orchestrate"] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-node-phase="orchestrate"] .tech-topology__glyph > *,
+.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-node-phase="assist"] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-node-phase="assist"] .tech-topology__glyph > *,
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-node-phase="execute"] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-node-phase="execute"] .tech-topology__glyph > *,
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-node-phase="return"] .tech-topology__node-shape,
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-node-phase="return"] .tech-topology__glyph > * {
+  stroke: var(--tech-signal);
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-node-phase="ingest"] text,
+.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-node-phase="normalize"] text,
+.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-node-phase="orchestrate"] text,
+.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-node-phase="assist"] text,
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-node-phase="execute"] text,
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-node-phase="return"] text {
+  fill: var(--tech-signal);
+  opacity: 1;
+}
+
+.tech-page .tech-topology__route[data-maturity="planned"][data-simulation-state="resolved"] {
+  stroke: color-mix(in srgb, var(--tech-signal) 28%, var(--tech-planned));
+  stroke-dasharray: 0.05 0.035;
+  stroke-dashoffset: 0;
+  opacity: 0.64;
+}
+
+.tech-page .tech-topology__route[data-maturity="planned"][data-simulation-state="current"] {
+  stroke: var(--tech-signal);
+  stroke-dasharray: 0.05 0.035;
+  stroke-dashoffset: calc(-1 * var(--tech-visual-phase-progress, 0));
+  opacity: 1;
+}
+
+.tech-page .tech-topology__route[data-maturity="planned"][data-simulation-state="held"] {
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.05 0.035;
+  stroke-dashoffset: 0 !important;
+  opacity: 0.2;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__node[data-node-id="checkpoint"] .tech-topology__node-shape {
+  stroke: var(--tech-human);
+  fill: var(--tech-panel);
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__node[data-node-id="checkpoint"] text {
+  fill: var(--tech-human);
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__node {
+  opacity: 0.2;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__node[data-node-id="assist"] {
+  opacity: 0.52;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__node[data-node-id="checkpoint"] {
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__decision-branches {
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__route {
+  opacity: 0.14;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__route[data-route-id="assist-checkpoint"] {
+  stroke: var(--tech-human);
+  stroke-dashoffset: 0 !important;
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-propagation="hold"] .tech-topology__route {
+  stroke-dashoffset: 0 !important;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] .tech-topology__route[data-simulation-state="held"] {
+  opacity: 0.24;
+  stroke-dasharray: 0.05 0.035;
+  stroke-dashoffset: 0 !important;
+  stroke: var(--tech-planned);
+}
+
+.tech-page .tech-observatory__stages {
+  display: grid;
+  gap: clamp(3rem, 8vw, 8rem);
+  margin: 0;
+  padding: 0 0 clamp(8rem, 16vw, 14rem);
+  list-style: none;
+}
+
+.tech-page .tech-observatory__stage {
+  position: relative;
+  min-height: 15rem;
+  padding: 1rem 0 1rem 1.25rem;
+  border-left: 1px dashed var(--tech-planned);
+  color: var(--tech-muted);
+  opacity: 0.8;
+  transition: color 220ms ease, opacity 220ms ease;
+}
+
+.tech-page .tech-observatory__stage h3 {
+  margin-top: 0.5rem;
+  color: var(--tech-fg);
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: 0.86;
+}
+
+.tech-page .tech-observatory__stage > p:not(.tech-observatory__stage-index, .tech-observatory__stage-state) {
+  max-width: 31rem;
+  line-height: 1.5;
+}
+
+.tech-page .tech-observatory__stage-state {
+  color: var(--tech-planned);
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-tech-stage="ingest"],
+.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-tech-stage="normalize"],
+.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-tech-stage="orchestrate"],
+.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-tech-stage="assist"],
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-tech-stage="execute"],
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-tech-stage="return"] {
+  border-left-color: var(--tech-signal);
+  color: var(--tech-fg);
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-tone="signal"] .tech-observatory__stage[data-tech-phase-anchor] .tech-observatory__stage-index {
+  transition: color 220ms ease;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-tech-stage="ingest"] .tech-observatory__stage-index,
+.tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-tech-stage="normalize"] .tech-observatory__stage-index,
+.tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-tech-stage="orchestrate"] .tech-observatory__stage-index,
+.tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-tech-stage="assist"] .tech-observatory__stage-index,
+.tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-tech-stage="execute"] .tech-observatory__stage-index,
+.tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-tech-stage="return"] .tech-observatory__stage-index {
+  color: var(--tech-signal);
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] [data-tech-stage="checkpoint"] {
+  border-left-color: var(--tech-human);
+  color: var(--tech-fg);
+  opacity: 1;
+}
+
+.tech-page [data-tech-experience][data-tech-consequence="human-hold"] [data-tech-stage="checkpoint"] .tech-observatory__stage-index {
+  color: var(--tech-human);
+}
+
+.tech-page .human-checkpoint {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 32rem;
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--tech-human) 55%, var(--tech-line));
+}
+
+.tech-page .human-checkpoint__statement {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+  color: var(--tech-fg);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.tech-page .human-checkpoint__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tech-page .human-checkpoint button {
+  padding: 0.5rem 0.65rem;
+  border: 1px dashed var(--tech-human);
+  background: transparent;
+  color: var(--tech-fg);
+  cursor: pointer;
+  font: inherit;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+
+.tech-page .human-checkpoint button:hover,
+.tech-page .human-checkpoint button[aria-pressed="true"] {
+  border-style: solid;
+  background: transparent;
+  color: var(--tech-human);
+}
+
+.tech-page .human-checkpoint button:focus-visible {
+  outline: 2px solid var(--tech-fg);
+  outline-offset: 3px;
+}
+
+.tech-page .tech-system-state,
+.tech-page .tech-system-spectrum,
+.tech-page .tech-systems-register,
+.tech-page .tech-closing {
+  padding: clamp(5rem, 10vw, 9rem) var(--tech-route-offset);
+  border-top: 1px solid var(--tech-line);
+}
+
+.tech-page .tech-practice-transition {
+  display: grid;
+  grid-template-columns: minmax(4rem, 0.45fr) minmax(16rem, 1.55fr);
+  gap: clamp(1.5rem, 6vw, 7rem);
+  align-items: center;
+  padding: clamp(5rem, 12vw, 11rem) var(--tech-route-offset);
+  border-top: 1px solid var(--tech-line);
+}
+
+.tech-page .tech-practice-transition__signal {
+  position: relative;
+  min-height: clamp(7rem, 18vw, 13rem);
+  border-left: 1px dashed var(--tech-planned);
+}
+
+.tech-page .tech-practice-transition__signal::before,
+.tech-page .tech-practice-transition__signal::after {
+  position: absolute;
+  left: -0.25rem;
+  width: 0.5rem;
+  aspect-ratio: 1;
+  border: 1px solid var(--tech-planned);
+  background: var(--tech-bg);
+  content: "";
+}
+
+.tech-page .tech-practice-transition__signal::before {
+  top: 0;
+}
+
+.tech-page .tech-practice-transition__signal::after {
+  bottom: 0;
+  box-shadow: 1.8rem 0 0 -1px var(--tech-bg), 1.8rem 0 0 0 var(--tech-planned), 3.6rem 0 0 -1px var(--tech-bg), 3.6rem 0 0 0 var(--tech-planned);
+}
+
+.tech-page .tech-practice-transition__copy {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.tech-page .tech-practice-transition__copy p {
+  max-width: 26ch;
+  margin: 0;
+  font-size: clamp(2rem, 4.5vw, 5.5rem);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+
+.tech-page .tech-practice-transition__copy p:last-child {
+  color: var(--tech-muted);
+}
+
+.tech-page .tech-system-state__heading,
+.tech-page .tech-system-spectrum__heading,
+.tech-page .tech-systems-register__heading {
+  display: grid;
+  gap: 0.65rem;
+  max-width: 46rem;
+}
+
+.tech-page .tech-system-state__heading > p,
+.tech-page .tech-system-spectrum__heading > p,
+.tech-page .tech-systems-register__heading > p,
+.tech-page .tech-closing__eyebrow {
+  margin: 0;
+  color: var(--tech-muted);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tech-page .tech-system-state h2,
+.tech-page .tech-system-spectrum h2,
+.tech-page .tech-systems-register h2,
+.tech-page .tech-closing h2 {
+  margin: 0;
+  letter-spacing: -0.055em;
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+
+.tech-page .tech-system-state h2,
+.tech-page .tech-system-spectrum h2,
+.tech-page .tech-systems-register h2 {
+  font-size: clamp(2.5rem, 5.6vw, 6.25rem);
+}
+
+.tech-page .tech-system-state__records {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0;
+  margin: clamp(2.75rem, 5vw, 5.5rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tech-page .tech-system-state__record {
+  position: relative;
+  display: grid;
+  gap: 0.8rem;
+  min-height: 7rem;
+  padding: 1rem;
+  border-top: 1px dashed var(--tech-planned);
+  border-left: 1px dashed var(--tech-line);
+}
+
+.tech-page .tech-system-state__record::before {
+  position: absolute;
+  top: -0.2rem;
+  left: -0.2rem;
+  width: 0.35rem;
+  aspect-ratio: 1;
+  border: 1px solid var(--tech-planned);
+  background: var(--tech-bg);
+  content: "";
+}
+
+.tech-page .tech-system-state__record strong,
+.tech-page .tech-system-state__record span {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.tech-page .tech-system-state__record span {
+  color: var(--tech-planned);
+}
+
+.tech-page .tech-system-state__record[data-state-record-state="active"] {
+  border-top-style: solid;
+  border-top-color: var(--tech-signal);
+}
+
+.tech-page .tech-system-state__record[data-state-record-state="verified"] {
+  border-top-style: solid;
+  border-top-color: var(--tech-fg);
+}
+
+.tech-page .tech-system-state__record[data-state-record-state="planned"] {
+  border-top-style: dashed;
+  border-top-color: var(--tech-planned);
+}
+
+.tech-page .tech-system-spectrum {
+  position: relative;
+  background: var(--tech-bg);
+}
+
+.tech-page .tech-system-spectrum__scope {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
+  gap: clamp(1.5rem, 5vw, 6rem);
+  margin-top: clamp(2.75rem, 5vw, 5.5rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0;
+  border-top: 1px solid var(--tech-line);
+  border-bottom: 1px solid var(--tech-line);
+}
+
+.tech-page .tech-system-spectrum__scope-index {
+  margin: 0 0 0.65rem;
+  color: var(--tech-planned);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+
+.tech-page .tech-system-spectrum__scope h3 {
+  max-width: 17ch;
+  margin: 0;
+  font-size: clamp(1.8rem, 3.5vw, 3.8rem);
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.tech-page .tech-system-spectrum__scope > div > p:last-child {
+  max-width: 39rem;
+  margin: 1rem 0 0;
+  color: var(--tech-muted);
+  line-height: 1.5;
+}
+
+.tech-page .tech-system-spectrum__scope ol {
+  display: grid;
+  align-content: start;
+  margin: 0;
+  padding: 0;
+  border-top: 1px dashed var(--tech-planned);
+  list-style: none;
+}
+
+.tech-page .tech-system-spectrum__scope li {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px dashed var(--tech-line);
+  color: var(--tech-fg);
+  line-height: 1.35;
+}
+
+.tech-page .tech-system-spectrum__scope li > span {
+  color: var(--tech-planned);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+}
+
+.tech-page .tech-system-spectrum__map {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1px;
+  margin: clamp(2.75rem, 6vw, 6rem) 0 0;
+  padding: 0;
+  background: var(--tech-line);
+  list-style: none;
+}
+
+.tech-page .tech-system-spectrum__family {
+  display: grid;
+  grid-column: span 4;
+  gap: 1.25rem;
+  min-height: clamp(12rem, 20vw, 17rem);
+  padding: clamp(1rem, 2vw, 2rem);
+  background: var(--tech-bg);
+}
+
+.tech-page .tech-system-spectrum__family:nth-child(4),
+.tech-page .tech-system-spectrum__family:nth-child(5) {
+  grid-column: span 6;
+}
+
+.tech-page .tech-system-spectrum__family:nth-child(6),
+.tech-page .tech-system-spectrum__family:nth-child(7) {
+  grid-column: span 6;
+}
+
+.tech-page .tech-system-spectrum__family h3 {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.3vw, 2.4rem);
+  letter-spacing: -0.04em;
+  line-height: 0.96;
+}
+
+.tech-page .tech-family-topology {
+  width: 100%;
+  height: 4.25rem;
+  overflow: visible;
+}
+
+.tech-page .tech-family-topology__routes path {
+  fill: none;
+  stroke: var(--tech-planned);
+  stroke-dasharray: 0.045 0.03;
+  stroke-width: 0.7;
+  opacity: 0.72;
+  vector-effect: non-scaling-stroke;
+}
+
+.tech-page .tech-family-topology__nodes rect {
+  fill: var(--tech-bg);
+  stroke: var(--tech-planned);
+  stroke-width: 0.65;
+  vector-effect: non-scaling-stroke;
+}
+
+.tech-page .tech-family-topology__signal {
+  fill: var(--tech-signal);
+}
+
+.tech-page .tech-system-spectrum__family ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: auto 0 0;
+  padding: 0;
+  color: var(--tech-planned);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.67rem;
+  letter-spacing: 0.07em;
+  list-style: none;
+}
+
+.tech-page .tech-system-spectrum__family ol li:not(:last-child)::after {
+  margin-left: 0.4rem;
+  color: var(--tech-muted);
+  content: "→";
+}
+
+.tech-page .tech-system-spectrum__family > p {
+  max-width: 28rem;
+  margin: 0;
+  color: var(--tech-muted);
+  line-height: 1.45;
+}
+
+.tech-page .tech-systems-register__table-wrap {
+  margin-top: clamp(2.75rem, 5vw, 5.5rem);
+  overflow-x: auto;
+  border-top: 1px solid var(--tech-line);
+  border-bottom: 1px solid var(--tech-line);
+}
+
+.tech-page .tech-systems-register table {
+  width: 100%;
+  min-width: 54rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.tech-page .tech-systems-register th:nth-child(1),
+.tech-page .tech-systems-register td:nth-child(1) {
+  width: 20%;
+}
+
+.tech-page .tech-systems-register th:nth-child(2),
+.tech-page .tech-systems-register td:nth-child(2) {
+  width: 30%;
+}
+
+.tech-page .tech-systems-register th:nth-child(3),
+.tech-page .tech-systems-register td:nth-child(3) {
+  width: 34%;
+}
+
+.tech-page .tech-systems-register th:nth-child(4),
+.tech-page .tech-systems-register td:nth-child(4) {
+  width: 16%;
+}
+
+.tech-page .tech-systems-register th,
+.tech-page .tech-systems-register td {
+  padding: 1.15rem 1rem;
+  border-bottom: 1px solid var(--tech-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.tech-page .tech-systems-register thead th,
+.tech-page .tech-systems-register td[data-register-field="capability-state"] {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.tech-page .tech-systems-register thead th {
+  color: var(--tech-muted);
+  font-weight: 400;
+}
+
+.tech-page .tech-systems-register tbody tr:last-child th,
+.tech-page .tech-systems-register tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.tech-page .tech-systems-register tbody th {
+  max-width: 15rem;
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+
+.tech-page .tech-systems-register td {
+  color: var(--tech-muted);
+  line-height: 1.45;
+}
+
+.tech-page .tech-systems-register td[data-register-field="capability-state"] {
+  color: var(--tech-fg);
+}
+
+.tech-page .tech-systems-register__table-wrap:focus-visible {
+  outline: 2px solid var(--tech-fg);
+  outline-offset: 4px;
+}
+
+.tech-page .tech-closing {
+  display: grid;
+  min-height: min(40rem, 92svh);
+  align-content: center;
+  gap: 1.4rem;
+  border-bottom: 1px solid var(--tech-line);
+}
+
+.tech-page .tech-closing h2 {
+  max-width: 11ch;
+  font-size: clamp(3.2rem, 9vw, 10rem);
+}
+
+.tech-page .tech-closing > p:not(.tech-closing__eyebrow) {
+  max-width: 37rem;
+  margin: 0;
+  color: var(--tech-muted);
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  line-height: 1.5;
+}
+
+.tech-page .tech-closing__action {
+  width: fit-content;
+  margin-top: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--tech-signal);
+  color: var(--tech-fg);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+}
+
+.tech-page .tech-closing__action:hover {
+  color: var(--tech-signal);
+}
+
+.tech-page .tech-closing__action:focus-visible {
+  outline: 2px solid var(--tech-fg);
+  outline-offset: 4px;
+}
+
+@media (min-width: 1024px) {
+  .tech-page .tech-observatory__sticky {
+    background-color: var(--tech-panel);
+    background-image: linear-gradient(var(--tech-grid) 1px, transparent 1px), linear-gradient(90deg, var(--tech-grid) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  .tech-page {
+    --tech-route-offset: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .tech-page .tech-observatory__intro {
+    padding-bottom: clamp(4rem, 10vw, 7rem);
+  }
+
+  .tech-page .tech-observatory__frame {
+    grid-template-columns: minmax(14rem, 0.8fr) minmax(18rem, 1.2fr);
+    gap: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .tech-page .tech-observatory__sticky {
+    min-height: min(34rem, calc(100svh - (var(--tech-route-offset) * 2)));
+    padding: 1.25rem;
+  }
+
+  .tech-page .tech-topology {
+    max-height: 17rem;
+  }
+
+  .tech-page .tech-topology__route[data-route-id="return-ingest"] {
+    display: none;
+  }
+
+  .tech-page .tech-topology__node text {
+    font-size: 2.1px;
+  }
+
+  .tech-page .tech-observatory__stages {
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .tech-page .tech-observatory__stage {
+    min-height: 12rem;
+  }
+
+  .tech-page .tech-system-state__records {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .tech-page .tech-system-spectrum__family {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 768px) {
+  .tech-page {
+    --tech-route-offset: clamp(1rem, 5vw, 1.5rem);
+  }
+
+  .tech-page .tech-observatory__frame {
+    grid-template-columns: 1fr;
+  }
+
+  .tech-page .tech-observatory__sticky {
+    position: relative;
+    top: auto;
+    min-height: 0;
+    gap: 1.5rem;
+    padding: 1.25rem 0 0;
+    border-width: 1px 0 0;
+    background: transparent;
+  }
+
+  .tech-page .tech-topology {
+    display: none;
+  }
+
+  .tech-page .tech-observatory__stages {
+    gap: 0;
+    padding: 2rem 0 5rem;
+  }
+
+  .tech-page .tech-observatory__stage {
+    min-height: 12rem;
+    padding: 1.25rem 0 1.75rem 1.4rem;
+  }
+
+  .tech-page .tech-observatory__stage::before {
+    position: absolute;
+    top: 1.5rem;
+    left: -0.25rem;
+    width: 0.45rem;
+    aspect-ratio: 1;
+    border: 1px solid var(--tech-planned);
+    background: var(--tech-bg);
+    content: "";
+  }
+
+  .tech-page [data-tech-experience][data-tech-consequence="signal-enter"] [data-tech-stage="ingest"]::before,
+  .tech-page [data-tech-experience][data-tech-consequence="data-structure"] [data-tech-stage="normalize"]::before,
+  .tech-page [data-tech-experience][data-tech-consequence="route-resolve"] [data-tech-stage="orchestrate"]::before,
+  .tech-page [data-tech-experience][data-tech-consequence="assist-form"] [data-tech-stage="assist"]::before,
+  .tech-page [data-tech-experience][data-tech-consequence="output-propagate"] [data-tech-stage="execute"]::before,
+  .tech-page [data-tech-experience][data-tech-consequence="feedback-return"] [data-tech-stage="return"]::before {
+    border-color: var(--tech-signal);
+  }
+
+  .tech-page .tech-observatory__stage[data-tech-stage="checkpoint"] {
+    border-left-color: var(--tech-human);
+  }
+
+  .tech-page .tech-observatory__stage[data-tech-stage="checkpoint"]::before {
+    border-color: var(--tech-human);
+    transform: rotate(45deg);
+  }
+
+  .tech-page .tech-observatory__stage h3 {
+    font-size: clamp(2rem, 10vw, 3.25rem);
+  }
+
+  .tech-page .human-checkpoint {
+    margin-top: 1.25rem;
+    padding: 0.9rem;
+  }
+
+  .tech-page .human-checkpoint button {
+    flex: 1 1 5rem;
+  }
+
+  .tech-page .tech-system-state__records {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tech-page .tech-practice-transition {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .tech-page .tech-system-spectrum__scope {
+    grid-template-columns: 1fr;
+  }
+
+  .tech-page .tech-practice-transition__signal {
+    min-height: 4rem;
+  }
+
+  .tech-page .tech-system-spectrum__family,
+  .tech-page .tech-system-spectrum__family:nth-child(4),
+  .tech-page .tech-system-spectrum__family:nth-child(5),
+  .tech-page .tech-system-spectrum__family:nth-child(6),
+  .tech-page .tech-system-spectrum__family:nth-child(7) {
+    grid-column: span 6;
+  }
+
+  .tech-page .tech-systems-register table,
+  .tech-page .tech-systems-register thead,
+  .tech-page .tech-systems-register tbody,
+  .tech-page .tech-systems-register tr,
+  .tech-page .tech-systems-register th,
+  .tech-page .tech-systems-register td {
+    display: block;
+  }
+
+  .tech-page .tech-systems-register table {
+    min-width: 0;
+  }
+
+  .tech-page .tech-systems-register thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .tech-page .tech-systems-register tbody tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    border-bottom: 1px solid var(--tech-line);
+  }
+
+  .tech-page .tech-systems-register th,
+  .tech-page .tech-systems-register td {
+    min-width: 0;
+    padding: 0.85rem 0.75rem;
+    border-bottom: 0;
+  }
+
+  .tech-page .tech-systems-register :is(th, td):nth-child(n) {
+    width: auto;
+  }
+
+  .tech-page .tech-systems-register th::before,
+  .tech-page .tech-systems-register td::before {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--tech-muted);
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+  }
+
+  .tech-page .tech-systems-register [data-register-field="system-type"]::before { content: "SYSTEM TYPE"; }
+  .tech-page .tech-systems-register [data-register-field="business-problem"]::before { content: "BUSINESS PROBLEM"; }
+  .tech-page .tech-systems-register [data-register-field="delivery"]::before { content: "DELIVERY"; }
+  .tech-page .tech-systems-register [data-register-field="capability-state"]::before { content: "SERVICE CAPABILITY"; }
+}
+
+@media (max-width: 480px) {
+  .tech-page .tech-observatory h1 {
+    font-size: clamp(3rem, 16vw, 4.25rem);
+  }
+
+  .tech-page .tech-observatory__system-heading h2 {
+    font-size: clamp(1.6rem, 9vw, 2.25rem);
+  }
+
+  .tech-page .tech-observatory__stage {
+    min-height: 0;
+    padding-bottom: 1.5rem;
+  }
+
+  .tech-page .tech-observatory__stage h3 {
+    font-size: clamp(1.75rem, 10vw, 2.5rem);
+  }
+
+  .tech-page .human-checkpoint button {
+    flex-basis: 100%;
+  }
+
+  .tech-page .tech-system-state__records {
+    grid-template-columns: 1fr;
+  }
+
+  .tech-page .tech-system-spectrum__family,
+  .tech-page .tech-system-spectrum__family:nth-child(4),
+  .tech-page .tech-system-spectrum__family:nth-child(5),
+  .tech-page .tech-system-spectrum__family:nth-child(6),
+  .tech-page .tech-system-spectrum__family:nth-child(7) {
+    grid-column: span 12;
+    min-height: 0;
+  }
+
+  .tech-page .tech-closing {
+    min-height: 34rem;
+  }
+
+  .tech-page .tech-systems-register tbody tr {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-page .tech-boot {
+    transition: none;
+  }
+
+  .tech-page .tech-topology__route,
+  .tech-page .tech-topology__node,
+  .tech-page .tech-topology__node-shape,
+  .tech-page .tech-topology__glyph > *,
+  .tech-page .tech-topology__decision-branches,
+  .tech-page .tech-observatory__stage,
+  .tech-page .tech-observatory__stage-index {
+    transition: none;
+  }
+
+  .tech-page .tech-topology__route {
+    stroke-dashoffset: 0 !important;
+  }
+
+  .tech-page .tech-topology__node-shape,
+  .tech-page .tech-topology__glyph > *,
+  .tech-page .tech-observatory__stage {
+    opacity: 1;
+  }
+}
